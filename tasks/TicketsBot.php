@@ -191,7 +191,7 @@ foreach ($mails as $mail)
     }
     elseif (in_array($from, $admins, true))
     {
-        $q = $bdd->prepare(
+        $q = $bdd2->prepare(
             'SELECT a.id, t.short_name
              FROM accounts a
              LEFT JOIN team t ON t.account_id = a.id

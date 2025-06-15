@@ -37,7 +37,7 @@ $SQL = <<<SQL
     ORDER BY accounts.signup_date DESC
     SQL;
 $n = 0;
-foreach ($bdd->query($SQL) as $data)
+foreach ($bdd2->query($SQL) as $data)
 {
     $sets = json_decode((string) $data['settings'], true);
     printf(

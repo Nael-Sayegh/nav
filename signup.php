@@ -38,7 +38,7 @@ if (isset($_GET['a']) && $_GET['a'] === 'form' && isset($_POST['username']) && i
         $SQL = <<<SQL
             SELECT username,email FROM accounts WHERE username=:username OR email=:mail LIMIT 1
             SQL;
-        $req = $bdd->prepare($SQL);
+        $req = $bdd2->prepare($SQL);
         $req->execute([':username' => $username, ':mail' => $_POST['mail']]);
         if ($data = $req->fetch())
         {
@@ -63,7 +63,7 @@ if (isset($_GET['a']) && $_GET['a'] === 'form' && isset($_POST['username']) && i
                 $SQL = <<<SQL
                     SELECT id FROM accounts WHERE id64=:id
                     SQL;
-                $req = $bdd->prepare($SQL);
+                $req = $bdd2->prepare($SQL);
                 $req->execute([':id' => $id64]);
                 if ($req->fetch())
                 {
@@ -103,7 +103,7 @@ if (isset($_GET['a']) && $_GET['a'] === 'form' && isset($_POST['username']) && i
             $SQL = <<<SQL
                 INSERT INTO accounts (username, email, id64, password, signup_date, settings, rights) VALUES(:username,:mail,:id,:psw,:date,:set,:rights)
                 SQL;
-            $req = $bdd->prepare($SQL);
+            $req = $bdd2->prepare($SQL);
             $req->execute([':username' => $username, ':mail' => $email, ':id' => $id64, ':psw' => $password, ':date' => time(), ':set' => json_encode($settings), ':rights' => json_encode($right)]);
             $id = $bdd->lastInsertId();
 

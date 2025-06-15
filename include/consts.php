@@ -200,14 +200,14 @@ function setTimeZone($timezone, $lc_code)
 
 function getUsernameById($id)
 {
-    global $bdd;
+    global $bdd2;
     if (is_numeric($id))
     {
         $id = (int) $id;
         $SQL = <<<SQL
             SELECT * FROM accounts WHERE id=:id
             SQL;
-        $req = $bdd->prepare($SQL);
+        $req = $bdd2->prepare($SQL);
         $req->execute([':id' => $id]);
         if ($user = $req->fetch())
         {
@@ -231,7 +231,7 @@ function getUsernameById($id)
 
 function getTeamEmails(?string $right = null)
 {
-    global $bdd;
+    global $bdd2;
 
     $sql = <<<SQL
         SELECT
@@ -243,7 +243,7 @@ function getTeamEmails(?string $right = null)
         WHERE team.works IN ('1', '2')
         SQL;
 
-    $req = $bdd->prepare($sql);
+    $req = $bdd2->prepare($sql);
     $req->execute();
     $rows = $req->fetchAll(PDO::FETCH_ASSOC);
     $emails = [];

@@ -33,7 +33,7 @@ if (isset($_POST['code']))
         $SQL = <<<SQL
             INSERT INTO sessions (account, session, connectid, expire, created, token) VALUES (:acc,:session,:connectid,:exp,:create,:token)
             SQL;
-        $req2 = $bdd->prepare($SQL);
+        $req2 = $bdd2->prepare($SQL);
         $req2->execute([':acc' => $account['id'], ':session' => password_hash($session, PASSWORD_DEFAULT), ':connectid' => $connectid, ':exp' => $expire, ':create' => $created, ':token' => $token]);
         unset($_SESSION['2fa_pending'], $_SESSION['2fa_temp_data']);
         $_SESSION['after_login_to'] = $_SESSION['intended_after_login'] ?? '/';

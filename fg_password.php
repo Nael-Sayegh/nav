@@ -17,7 +17,7 @@ if ($step === 'request' && $_SERVER['REQUEST_METHOD'] === 'POST')
     $SQL = <<<SQL
         SELECT id, email, username FROM accounts WHERE username=:user OR email=:user LIMIT 1
         SQL;
-    $req = $bdd->prepare($SQL);
+    $req = $bdd2->prepare($SQL);
     $req->execute([':user' => $requestedUser]);
     $user = $req->fetch();
     if ($user)
@@ -25,14 +25,14 @@ if ($step === 'request' && $_SERVER['REQUEST_METHOD'] === 'POST')
         $SQLDel = <<<SQL
             DELETE FROM password_resets WHERE user_id = :uid
             SQL;
-        $reqDel = $bdd->prepare($SQLDel);
+        $reqDel = $bdd2->prepare($SQLDel);
         $reqDel->execute([':uid' => $user['id']]);
         $token = bin2hex(random_bytes(32));
         $expires = date('Y-m-d H:i:s', strtotime('+1 hour'));
         $SQLTok = <<<SQL
             INSERT INTO password_resets (user_id, token, expires_at) VALUES (:uid, :tok, :exp)
             SQL;
-        $reqTok = $bdd->prepare($SQLTok);
+        $reqTok = $bdd2->prepare($SQLTok);
         $reqTok->execute([':uid' => $user['id'], ':tok' => $token, ':exp' => $expires]);
         $link = SITE_URL."/fg_password.php?step=reset&token={$token}";
         $subject = 'Réinitialisation de mot de passe';
@@ -57,7 +57,7 @@ if ($step === 'reset')
     $SQL = <<<SQL
         SELECT pr.id AS pr_id, pr.user_id, a.username, a.password FROM password_resets pr JOIN accounts a ON a.id = pr.user_id WHERE pr.token = :token AND pr.expires_at > NOW() AND pr.used = FALSE LIMIT 1
         SQL;
-    $req = $bdd->prepare($SQL);
+    $req = $bdd2->prepare($SQL);
     $req->execute([':token' => $token]);
     $reset = $req->fetch();
 
@@ -89,12 +89,12 @@ if ($step === 'reset')
             $SQLU = <<<SQL
                 UPDATE accounts SET password = :h WHERE id = :uid
                 SQL;
-            $reqU = $bdd->prepare($SQLU);
+            $reqU = $bdd2->prepare($SQLU);
             $reqU->execute([':h' => $hash, ':uid' => $reset['user_id']]);
             $SQLU2 = <<<SQL
                 UPDATE password_resets SET used = TRUE WHERE id = :prid
                 SQL;
-            $reqU2 = $bdd->prepare($SQLU2);
+            $reqU2 = $bdd2->prepare($SQLU2);
             $reqU2->execute([':prid' => $reset['pr_id']]);
 
             $success = tr($tr, 'reset_success');

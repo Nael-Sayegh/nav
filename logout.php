@@ -11,7 +11,7 @@ if (isset($_GET['token']) && $_GET['token'] === $login['token'])
     $SQL = <<<SQL
         UPDATE sessions SET expire=:exp WHERE id=:id
         SQL;
-    $req = $bdd->prepare($SQL);
+    $req = $bdd2->prepare($SQL);
     $req->execute([':exp' => time() - 1, ':id' => $login['session_id']]);
     header('Location: /');
     exit();

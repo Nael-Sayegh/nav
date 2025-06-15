@@ -10,7 +10,7 @@ require_once($document_root.'/include/lib/discord_publisher.php');
 $SQL = <<<SQL
     SELECT * FROM team ORDER BY age DESC
     SQL;
-foreach ($bdd->query($SQL) as $data)
+foreach ($bdd2->query($SQL) as $data)
 {
     if (date('d/m') === date('d/m', $data['age']))
     {
@@ -33,7 +33,7 @@ if (date('d/m') === '24/12')
     $SQL = <<<SQL
         SELECT * FROM team ORDER BY age DESC
         SQL;
-    foreach ($bdd->query($SQL) as $data)
+    foreach ($bdd2->query($SQL) as $data)
     {
         if ($data['works'] === '1' || $data['works'] === '2')
         {
@@ -50,7 +50,7 @@ elseif (date('d/m') === '01/01')
     $SQL = <<<SQL
         SELECT * FROM team ORDER BY age DESC
         SQL;
-    foreach ($bdd->query($SQL) as $data)
+    foreach ($bdd2->query($SQL) as $data)
     {
         if ($data['works'] === '1' || $data['works'] === '2')
         {

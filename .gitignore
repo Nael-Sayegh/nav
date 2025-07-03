@@ -10,3 +10,7 @@ rss_feed.xml
 /vendor/
 .php-cs-fixer.cache
 GEOIP
+
+# Temporary test files
+include/config.local.php
+cache/langs*.php

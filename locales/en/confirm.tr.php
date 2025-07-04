@@ -4,7 +4,7 @@ $tr = [
   '_' => 'confirm',
   '_todo_level' => 0,
   '_last_author' => 'Nael Sayegh',
-  '_last_modif' => 1751647840,
+  '_last_modif' => 1751647975,
   'mail_info_subject' => 'Your member information',
   'mail_info_body_html' => <<<HTML
       <h2>Hello {{username}} and welcome to the {{site}} community</h2>

@@ -1,8 +1,10 @@
 <?php
 
 set_include_path($_SERVER['DOCUMENT_ROOT']);
+$require_once('include/log.php');
 require_once('include/consts.php');
 require_once('include/sendMail.php');
+$tr = load_tr($lang,'confirm');
 
 if (isset($_GET['id']) && isset($_GET['h']))
 {
@@ -30,29 +32,19 @@ if (isset($_GET['id']) && isset($_GET['h']))
                 $params[':adminRank'] = 'a';
             }
             $req->execute($params);
-            $subject = 'Vos informations de membre';
+            $subject = tr($tr,'mail_info_subject');
             $username = htmlentities((string) $data['username']);
             $memberSignupDate = date('d/m/Y à H:i', $data['signup_date']);
-            $body = <<<HTML
-                <h2>Bonjour {$username} et bienvenue dans la communauté {$site_name}</h2>
-                Vos informations sont les suivantes :</p>
-                <ul>
-                <li>Nom d'utilisateur : {$username}</li>
-                <li>Adresse mail : {$data['email']}</li>
-                <li>Numéro de membre : M{$data['id']}</li>
-                <li>Date d'inscription : {$memberSignupDate}</li>
-                </ul>
-                HTML;
-            $altBody = <<<TEXT
-                Bonjour {$username} et bienvenue dans la communauté {$site_name}
-
-                Vos informations sont les suivantes :
-                - Nom d'utilisateur : {$username}
-                - Adresse mail : {$data['email']}
-                - Numéro de membre : M{$data['id']}
-                - Date d'inscription : {$memberSignupDate}
-
-                TEXT;
+            $body = tr($tr,'mail_info_body_html', ['username' => $username,
+                'email' => $data['email'],
+                'id' => $data['id'],
+                'signup_date' => $memberSignupDate]
+            );
+            $altBody = tr($tr,'mail_info_body_text', ['username' => $username,
+                'email' => $data['email'],
+                'id' => $data['id'],
+                'signup_date' => $memberSignupDate]
+            );
             sendMail($data['email'], $subject, $body, $altBody);
             header('Location: /login.php?confirmed');
             $SQL2 = <<<SQL

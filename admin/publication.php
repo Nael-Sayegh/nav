@@ -1,7 +1,6 @@
 <?php $logonly = true;
 $adminonly = true;
 $justna = true;
-
 $titlePAdm = 'Publier sur les réseaux sociaux';
 require_once($_SERVER['DOCUMENT_ROOT'].'/include/log.php');
 require_once($_SERVER['DOCUMENT_ROOT'].'/include/consts.php');

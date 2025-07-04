@@ -1,0 +1,2098 @@
+diff --git a/.github/dependabot.yml b/.github/dependabot.yml
+deleted file mode 100644
+index 68d9301..0000000
+--- a/.github/dependabot.yml
++++ /dev/null
+@@ -1,35 +0,0 @@
+-version: 2
+-updates:
+-  # Composer dependencies for main project
+-  - package-ecosystem: "composer"
+-    directory: "/"
+-    schedule:
+-      interval: "daily"
+-    rebase-strategy: "auto"
+-    open-pull-requests-limit: 10
+-    assignees:
+-      - "Nael-Sayegh"
+-    labels:
+-      - "dependencies"
+-    # Group all Composer dependencies into a single PR
+-    groups:
+-      composer-dependencies:
+-        patterns:
+-          - "*"
+-    # Note: Dependabot automatically ignores vendor/ directories
+-    # is handled by only monitoring the root directory
+-
+-  - package-ecosystem: "gitsubmodule"
+-    directory: "/"
+-    schedule:
+-      interval: "daily"
+-    open-pull-requests-limit: 5
+-    assignees:
+-      - "Nael-Sayegh"
+-    labels:
+-      - "dependencies"
+-    # Group all submodule updates into a single PR
+-    groups:
+-      submodule-updates:
+-        patterns:
+-          - "*"
+diff --git a/.gitignore b/.gitignore
+index 10896eb..1af3eea 100755
+--- a/.gitignore
++++ b/.gitignore
+@@ -1,4 +1,3 @@
+-audio
+ cache
+ !cache/.htaccess
+ files
+diff --git a/.pre-commit-config.yaml b/.pre-commit-config.yaml
+index 62591ce..a975ee9 100644
+--- a/.pre-commit-config.yaml
++++ b/.pre-commit-config.yaml
+@@ -16,7 +16,7 @@ default_install_hook_types:
+ 
+ repos:
+   - repo: https://github.com/pre-commit/pre-commit-hooks
+-    rev: v5.0.0
++    rev: v4.6.0
+     hooks:
+       - id: check-added-large-files
+       - id: check-merge-conflict
+diff --git a/2fa_check.php b/2fa_check.php
+index fee22aa..c3f3f3c 100755
+--- a/2fa_check.php
++++ b/2fa_check.php
+@@ -33,7 +33,7 @@ if (isset($_POST['code']))
+         $SQL = <<<SQL
+             INSERT INTO sessions (account, session, connectid, expire, created, token) VALUES (:acc,:session,:connectid,:exp,:create,:token)
+             SQL;
+-        $req2 = $bdd->prepare($SQL);
++        $req2 = $bdd2->prepare($SQL);
+         $req2->execute([':acc' => $account['id'], ':session' => password_hash($session, PASSWORD_DEFAULT), ':connectid' => $connectid, ':exp' => $expire, ':create' => $created, ':token' => $token]);
+         unset($_SESSION['2fa_pending'], $_SESSION['2fa_temp_data']);
+         $_SESSION['after_login_to'] = $_SESSION['intended_after_login'] ?? '/';
+diff --git a/admin/cache_update.php b/admin/cache_update.php
+index 21d4ceb..d793fbe 100755
+--- a/admin/cache_update.php
++++ b/admin/cache_update.php
+@@ -1,6 +1,6 @@
+ <?php $logonly = true;
+ $adminonly = true;
+-$justbn = true;
++$justna = true;
+ $titlePAdm = 'Caches';
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/log.php');
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/consts.php');
+diff --git a/admin/index.php b/admin/index.php
+index 4e65c2d..0ac7165 100755
+--- a/admin/index.php
++++ b/admin/index.php
+@@ -1,6 +1,6 @@
+ <?php $logonly = true;
+ $adminonly = true;
+-$justbn = true;
++$justna = true;
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/log.php');
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/consts.php');
+ ?>
+diff --git a/admin/maintenance.php b/admin/maintenance.php
+index c661683..69b7bd4 100755
+--- a/admin/maintenance.php
++++ b/admin/maintenance.php
+@@ -1,6 +1,6 @@
+ <?php $logonly = true;
+ $adminonly = true;
+-$justbn = true;
++$justna = true;
+ $titlePAdm = 'Mode maintenance';
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/log.php');
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/consts.php');
+diff --git a/admin/members_mgr.php b/admin/members_mgr.php
+index fdcd9af..eb6d59f 100755
+--- a/admin/members_mgr.php
++++ b/admin/members_mgr.php
+@@ -1,7 +1,7 @@
+ <?php
+ $logonly = true;
+ $adminonly = true;
+-$justbn = true;
++$justna = true;
+ $titlePAdm = 'Gestion des comptes membres';
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/log.php');
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/consts.php');
+@@ -12,7 +12,7 @@ if (isset($_GET['delete']))
+     $SQL = <<<SQL
+         DELETE FROM accounts WHERE id=:id
+         SQL;
+-    $req = $bdd->prepare($SQL);
++    $req = $bdd2->prepare($SQL);
+     $req->execute([':id' => $_GET['delete']]);
+ }
+ if (isset($_GET['mod2']) && isset($_POST['username'], $_POST['email'], $_POST['rank']))
+@@ -20,7 +20,7 @@ if (isset($_GET['mod2']) && isset($_POST['username'], $_POST['email'], $_POST['r
+     $SQLOld = <<<SQL
+         SELECT rights, twofa_enabled FROM accounts WHERE id = :id
+         SQL;
+-    $reqOld = $bdd->prepare($SQLOld);
++    $reqOld = $bdd2->prepare($SQLOld);
+     $reqOld->execute([':id' => $_GET['mod2']]);
+     if ($oldData = $reqOld->fetch())
+     {
+@@ -63,7 +63,7 @@ if (isset($_GET['mod2']) && isset($_POST['username'], $_POST['email'], $_POST['r
+         $SQL = <<<SQL
+             UPDATE accounts SET username=:username, email=:email, password=:psw, rank=:rank, rights=:rights WHERE id=:id
+             SQL;
+-        $req = $bdd->prepare($SQL);
++        $req = $bdd2->prepare($SQL);
+         $req->execute([':username' => htmlentities((string) $_POST['username']), ':email' => $_POST['email'], ':psw' => $password, ':rank' => $_POST['rank'], ':rights' => $json, ':id' => $_GET['mod2']]);
+     }
+     else
+@@ -71,7 +71,7 @@ if (isset($_GET['mod2']) && isset($_POST['username'], $_POST['email'], $_POST['r
+         $SQL = <<<SQL
+             UPDATE accounts SET username=:username, email=:email, rank=:rank, rights=:rights WHERE id=:id
+             SQL;
+-        $req = $bdd->prepare($SQL);
++        $req = $bdd2->prepare($SQL);
+         $req->execute([':username' => htmlentities((string) $_POST['username']), ':email' => $_POST['email'], ':rank' => $_POST['rank'], ':rights' => $json, ':id' => $_GET['mod2']]);
+     }
+     $subject = 'Modification de votre compte membre';
+@@ -99,7 +99,7 @@ if (isset($_GET['mod2']) && isset($_POST['username'], $_POST['email'], $_POST['r
+         $SQL = <<<SQL
+             UPDATE accounts SET twofa_enabled=false, twofa_secret=NULL WHERE id=:id
+             SQL;
+-        $req = $bdd->prepare($SQL);
++        $req = $bdd2->prepare($SQL);
+         $req->execute([':id' => $_GET['mod2']]);
+         $body .= <<<HTML
+                         <p><strong>L'authentification à 2 facteurs sur votre compte a été désactivée.</strong></p>
+@@ -175,7 +175,7 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/include/user_rank.php';
+ $SQL = <<<SQL
+     SELECT * FROM accounts
+     SQL;
+-foreach ($bdd->query($SQL) as $data)
++foreach ($bdd2->query($SQL) as $data)
+ {
+     echo '<tr><td>'.$data['username'].'</td><td><a href="mailto:'.$data['email'].'" title="Envoyer un mail">'.$data['email'].'</a></td><td>'.urank($data['rank']).'</td><td><details><summary>Droits</summary><ul>';
+     $rightsMap = json_decode((string) $data['rights'], true) ?: [];
+@@ -195,7 +195,7 @@ if (isset($_GET['mod']))
+     $SQL = <<<SQL
+         SELECT * FROM accounts WHERE id=:id LIMIT 1
+         SQL;
+-    $req = $bdd->prepare($SQL);
++    $req = $bdd2->prepare($SQL);
+     $req->execute([':id' => $_GET['mod']]);
+     if ($data = $req->fetch())
+     {
+diff --git a/admin/nl_last.php b/admin/nl_last.php
+index 26efdb2..77ed202 100755
+--- a/admin/nl_last.php
++++ b/admin/nl_last.php
+@@ -1,6 +1,6 @@
+ <?php $logonly = true;
+ $adminonly = true;
+-$justbn = true;
++$justna = true;
+ $titlePAdm = 'Réinitialiser la date de dernier envoi';
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/log.php');
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/consts.php');
+diff --git a/admin/nl_list.php b/admin/nl_list.php
+index 763631e..c5ed291 100755
+--- a/admin/nl_list.php
++++ b/admin/nl_list.php
+@@ -1,6 +1,6 @@
+ <?php $logonly = true;
+ $adminonly = true;
+-$justbn = true;
++$justna = true;
+ $titlePAdm = 'Liste des abonnés à la lettre d\'informations';
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/log.php');
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/consts.php');
+diff --git a/admin/nl_send.php b/admin/nl_send.php
+index 42c9dc1..c03da06 100755
+--- a/admin/nl_send.php
++++ b/admin/nl_send.php
+@@ -1,6 +1,6 @@
+ <?php $logonly = true;
+ $adminonly = true;
+-$justbn = true;
++$justna = true;
+ $titlePAdm = 'Envoyer la lettre d\'informations';
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/log.php');
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/consts.php');
+diff --git a/admin/publication.php b/admin/publication.php
+index cbb036c..68db92a 100755
+--- a/admin/publication.php
++++ b/admin/publication.php
+@@ -1,6 +1,6 @@
+ <?php $logonly = true;
+ $adminonly = true;
+-$justbn = true;
++$justna = true;
+ 
+ $titlePAdm = 'Publier sur les réseaux sociaux';
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/log.php');
+diff --git a/admin/showstats.php b/admin/showstats.php
+index 09b74c6..74d9b29 100755
+--- a/admin/showstats.php
++++ b/admin/showstats.php
+@@ -1,6 +1,6 @@
+ <?php $logonly = true;
+ $adminonly = true;
+-$justbn = true;
++$justna = true;
+ $titlePAdm = 'Statistiques';
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/log.php');
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/consts.php');
+diff --git a/admin/slidermgr.php b/admin/slidermgr.php
+index 3477969..11ff796 100755
+--- a/admin/slidermgr.php
++++ b/admin/slidermgr.php
+@@ -1,6 +1,6 @@
+ <?php $logonly = true;
+ $adminonly = true;
+-$justbn = true;
++$justna = true;
+ $titlePAdm = 'Slider';
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/log.php');
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/consts.php');
+diff --git a/admin/sw_add.php b/admin/sw_add.php
+index 4fbcdd3..c430bef 100755
+--- a/admin/sw_add.php
++++ b/admin/sw_add.php
+@@ -1,7 +1,7 @@
+ <?php
+ $logonly = true;
+ $adminonly = true;
+-$justbn = true;
++$justna = true;
+ $titlePAdm = 'Ajout d\'un article';
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/log.php');
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/consts.php');
+diff --git a/admin/sw_categories.php b/admin/sw_categories.php
+index 6868177..472adcc 100755
+--- a/admin/sw_categories.php
++++ b/admin/sw_categories.php
+@@ -1,6 +1,6 @@
+ <?php $logonly = true;
+ $adminonly = true;
+-$justbn = true;
++$justna = true;
+ $titlePAdm = 'Catégories';
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/log.php');
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/consts.php');
+diff --git a/admin/sw_mod.php b/admin/sw_mod.php
+index 03d848b..c4b955b 100755
+--- a/admin/sw_mod.php
++++ b/admin/sw_mod.php
+@@ -1,6 +1,6 @@
+ <?php $logonly = true;
+ $adminonly = true;
+-$justbn = true;
++$justna = true;
+ $titlePAdm = 'Modification d\'un article';
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/log.php');
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/consts.php');
+diff --git a/admin/team_mgr.php b/admin/team_mgr.php
+index 84ee88c..d2e6f12 100755
+--- a/admin/team_mgr.php
++++ b/admin/team_mgr.php
+@@ -1,7 +1,7 @@
+ <?php
+ $logonly = true;
+ $adminonly = true;
+-$justbn = true;
++$justna = true;
+ $titlePAdm = 'Gestion de l\'équipe';
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/log.php');
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/consts.php');
+@@ -24,7 +24,7 @@ if (isset($_GET['add']) && isset($_POST['name']) && isset($_POST['status']) && i
+     $SQL = <<<SQL
+         INSERT INTO team (name, status, date, age, account_id, short_name, bio, works, mastodon, rights) VALUES(:name,:status,:date,:age,:acc,:short,:bio,:works,:masto,:rights)
+         SQL;
+-    $req = $bdd->prepare($SQL);
++    $req = $bdd2->prepare($SQL);
+     $req->execute([':name' => $_POST['name'], ':status' => $_POST['status'], ':date' => time(), ':age' => strtotime(preg_replace('/^(\d{2})\/(\d{2})\/(\d{4})$/', '$3-$2-$1', $_POST['age'])), ':acc' => $account_id, ':short' => $_POST['short_name'], ':bio' => $_POST['bio'], ':works' => $_POST['works'], ':masto' => $_POST['mastodon'], ':rights' => $json]);
+ }
+ if (isset($_GET['delete']))
+@@ -32,7 +32,7 @@ if (isset($_GET['delete']))
+     $SQL = <<<SQL
+         DELETE FROM team WHERE id=:id
+         SQL;
+-    $req = $bdd->prepare($SQL);
++    $req = $bdd2->prepare($SQL);
+     $req->execute([':id' => $_GET['delete']]);
+ }
+ if (isset($_GET['mod2']) && isset($_POST['name']) && isset($_POST['status']) && isset($_POST['age']) && isset($_POST['account_id']) && isset($_POST['short_name']) && isset($_POST['bio']) && isset($_POST['works']) && isset($_POST['mastodon']))
+@@ -47,7 +47,7 @@ if (isset($_GET['mod2']) && isset($_POST['name']) && isset($_POST['status']) &&
+     $SQL = <<<SQL
+         UPDATE team SET name=:name, status=:status, age=:age, account_id=:acc, short_name=:short, bio=:bio, works=:works, mastodon=:masto, rights=:rights WHERE id=:id
+         SQL;
+-    $req = $bdd->prepare($SQL);
++    $req = $bdd2->prepare($SQL);
+     $req->execute([':name' => htmlentities((string) $_POST['name']), ':status' => $_POST['status'], ':age' => strtotime(preg_replace('/^(\d{2})\/(\d{2})\/(\d{4})$/', '$3-$2-$1', $_POST['age'])), ':acc' => $_POST['account_id'], ':short' => $_POST['short_name'], ':bio' => $_POST['bio'], ':works' => $_POST['works'], ':masto' => $_POST['mastodon'], ':rights' => $json, ':id' => $_GET['mod2']]);
+ }
+ ?>
+@@ -68,7 +68,7 @@ if (isset($_GET['mod2']) && isset($_POST['name']) && isset($_POST['status']) &&
+ $SQL = <<<SQL
+     SELECT * FROM team ORDER BY name ASC
+     SQL;
+-foreach ($bdd->query($SQL) as $data)
++foreach ($bdd2->query($SQL) as $data)
+ {
+     echo '<tr><td>M'.$data['account_id'].'/E'.$data['id'].'</td><td>'.$data['name'].'</td><td>'.$data['short_name'].'</td><td>'.$data['status'].'</td><td>'.date('d/m/Y H:i', $data['date']).'</td><td>'.intval((time() - $data['age']) / 31557600).'</td><td>@'.$data['mastodon'].'</td><td><details><summary>Droits</summary><ul>';
+     $rightsMap = json_decode((string) $data['rights'], true) ?: [];
+@@ -88,7 +88,7 @@ if (isset($_GET['mod']))
+     $SQL = <<<SQL
+         SELECT * FROM team WHERE id=:id LIMIT 1
+         SQL;
+-    $req = $bdd->prepare($SQL);
++    $req = $bdd2->prepare($SQL);
+     $req->execute([':id' => $_GET['mod']]);
+     if ($data = $req->fetch())
+     { ?>
+@@ -104,7 +104,7 @@ if (isset($_GET['mod']))
+         $SQL2 = <<<SQL
+             SELECT id, username FROM accounts WHERE rank='a' ORDER BY id ASC
+             SQL;
+-        foreach ($bdd->query($SQL2) as $data2)
++        foreach ($bdd2->query($SQL2) as $data2)
+         {
+             echo '<option value="'.$data2['id'].'"'.(($data2['id'] === $data['account_id']) ? ' selected' : '').'>M'.$data2['id'].' '.htmlentities((string) $data2['username']).'</option>';
+         }
+@@ -159,7 +159,7 @@ if (isset($_GET['mod']))
+ $SQL = <<<SQL
+     SELECT id, username FROM accounts WHERE rank='a' ORDER BY id ASC
+     SQL;
+-foreach ($bdd->query($SQL) as $data)
++foreach ($bdd2->query($SQL) as $data)
+ {
+     echo '<option value="'.$data['id'].'">M'.$data['id'].' '.htmlentities((string) $data['username']).'</option>';
+ }
+diff --git a/admin/techniques.php b/admin/techniques.php
+index f80a425..3e15ef0 100755
+--- a/admin/techniques.php
++++ b/admin/techniques.php
+@@ -2,7 +2,7 @@
+ 
+ $logonly = true;
+ $adminonly = true;
+-$justbn = true;
++$justna = true;
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/log.php');
+ requireAdminRight('view_phpinfo');
+ echo phpinfo();
+diff --git a/admin/tickets.php b/admin/tickets.php
+index a9cd93f..9882e1c 100755
+--- a/admin/tickets.php
++++ b/admin/tickets.php
+@@ -1,6 +1,6 @@
+ <?php $logonly = true;
+ $adminonly = true;
+-$justbn = true;
++$justna = true;
+ $titlePAdm = 'Tickets';
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/log.php');
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/consts.php');
+diff --git a/admin/translate.php b/admin/translate.php
+index 6a1eb79..e09557d 100755
+--- a/admin/translate.php
++++ b/admin/translate.php
+@@ -1,7 +1,7 @@
+ <?php
+ $logonly = true;
+ $adminonly = true;
+-$justbn = true;
++$justna = true;
+ $titlePAdm = 'Traductions';
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/log.php');
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/consts.php');
+diff --git a/admin/translate_todo.php b/admin/translate_todo.php
+index 7e94c75..82b5575 100755
+--- a/admin/translate_todo.php
++++ b/admin/translate_todo.php
+@@ -1,7 +1,7 @@
+ <?php
+ $logonly    = true;
+ $adminonly  = true;
+-$justbn     = true;
++$justna     = true;
+ $titlePAdm  = 'Traductions';
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/log.php');
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/consts.php');
+diff --git a/admin/up_publish.php b/admin/up_publish.php
+index c0abc1a..0111520 100755
+--- a/admin/up_publish.php
++++ b/admin/up_publish.php
+@@ -1,6 +1,6 @@
+ <?php $logonly = true;
+ $adminonly = true;
+-$justbn = true;
++$justna = true;
+ $titlePAdm = 'Versions du site';
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/log.php');
+ require_once($_SERVER['DOCUMENT_ROOT'].'/include/consts.php');
+diff --git a/article.php b/article.php
+index d915957..8dd1cfb 100755
+--- a/article.php
++++ b/article.php
+@@ -81,7 +81,7 @@ function getSoftwareFiles($swId)
+     return $req->fetchAll();
+ }
+ 
+-function canManageComment(array $comment)
++/*function canManageComment(array $comment)
+ {
+     global $logged, $login;
+     if (empty($logged) || !$logged)
+@@ -278,7 +278,7 @@ if (isset($_GET['deleterating']) && isset($logged) && $logged && checkMemberRigh
+     $req->execute([':sw' => $sw['id'], 'acc' => $login['id']]);
+     header("Location: /a{$sw['id']}");
+     exit();
+-}
++}*/
+ $catMap = [];
+ $SQL = <<<SQL
+     SELECT id, name FROM softwares_categories
+@@ -305,7 +305,7 @@ if (isset($logged) && $logged && $login['rank'] === 'a' && in_array($login['work
+ </ul>
+ <?php
+ }
+-if (isset($logged) && $logged && $login['rank'] !== 'a')
++/*if (isset($logged) && $logged && $login['rank'] !== 'a')
+ {
+     $SQL = <<<SQL
+         SELECT id FROM subscriptions_comments WHERE account=:acc AND article=:id LIMIT 1
+@@ -315,7 +315,7 @@ if (isset($logged) && $logged && $login['rank'] !== 'a')
+     $sub = $req->fetch() ? true : false;
+     echo '<a id="btunsub1" class="comments_btsubscription" href="?id='.$sw['id'].'&unsubscribe-comments&token='.$login['token'].'" title="'.tr($tr, 'comments_unsubscribe_long').'" onclick="subscribe_comments(event, false)" style="display:'.($sub ? 'initial' : 'none').'">'.tr($tr, 'comments_unsubscribe').'</a>';
+     echo '<a id="btsub1" class="comments_btsubscription" href="?id='.$sw['id'].'&subscribe-comments&token='.$login['token'].'" title="'.tr($tr, 'comments_subscribe_long').'" onclick="subscribe_comments(event, true)" style="display:'.($sub ? 'none' : 'initial').'">'.tr($tr, 'comments_subscribe').'</a>';
+-}
++}*/
+ echo '<div id="descart" role="article">'.convertToMD(str_replace('{{site}}', $site_name, $sw_tr['text'])).'</div>';
+ $fichiersexistants = false;
+ $first = true;
+@@ -510,15 +510,15 @@ if (!$first)
+         $avg = rtrim(rtrim($avg, '0'), '.');
+     }
+ ?>
+-<tr>
++<!--<tr>
+ <td><?= tr($tr, 'rating_average') ?></td>
+-<td><?php if ($rating_count === 0): ?>
++<td><?php //if ($rating_count === 0): ?>
+ <em><?= tr($tr, 'rating_no_votes') ?></em>
+-<?php else:
++<?php /*else:
+     echo tr($tr, 'rating_details', ['avg' => numberlocale($avg), 'count' => $rating_count]);
+-endif; ?>
++endif;*/ ?>
+ </td>
+-</tr>
++</tr>-->
+ </tbody>
+ </table>
+ <details>
+@@ -530,29 +530,29 @@ endif; ?>
+ }
+ ?></ul>
+ </details>
+-<h2><?= tr($tr, 'comments_title') ?></h2>
+-<?php if (isset($logged) && $logged && checkMemberRights('comment_articles')): ?>
+-<form action="?id=<?= $sw['id'] ?>&rate" method="post" class="rating-form">
++<!--<h2><?= tr($tr, 'comments_title') ?></h2>-->
++<?php /*if (isset($logged) && $logged && checkMemberRights('comment_articles')):*/ ?>
++<!--<form action="?id=<?= $sw['id'] ?>&rate" method="post" class="rating-form">
+ <fieldset>
+ <legend><?= tr($tr, 'rating_label') ?></legend>
+ <div class="rating-radios">
+-<?php for ($i = 1; $i <= 5; $i++): ?>
++<?php /*for ($i = 1; $i <= 5; $i++):*/ ?>
+ <input type="radio" name="rating" id="rating<?= $i ?>" value="<?= $i ?>"<?= $user_rating === $i ? 'checked' : '' ?>>
+ <label for="rating<?= $i ?>"><?= $i == 1 ? $i . " (".tr($tr,'rating_1_explanation').")" : ($i == 5 ? $i ." (".tr($tr,'rating_5_explanation').")" : $i) ?></label>
+-<?php endfor; ?>
++<?php //endfor; ?>
+ </div>
+ </fieldset>
+-<button type="submit"><?= tr($tr, ($user_rating === null) ? 'rating_submit' : 'rating_update') ?></button><?php if ($user_rating !== null)
++<button type="submit"><?= tr($tr, ($user_rating === null) ? 'rating_submit' : 'rating_update') ?></button><?php /* if ($user_rating !== null)
+ {
+     echo ' | <a href="?deleterating">'.tr($tr, 'delete_rating').'</a>';
+-} ?>
++} */ ?>
+ </form>
+-<?php else: ?>
++<?php //else: ?>
+ <p><em><?= tr($tr, 'rating_login_required') ?></em></p>
+-<?php endif; ?>
++<?php //endif; ?>
+ <div id="comments">
+ <?php
+-$SQL = <<<SQL
++/*$SQL = <<<SQL
+     SELECT * FROM softwares_comments WHERE sw_id=:swid ORDER BY date DESC LIMIT 20
+     SQL;
+ $req = $bdd->prepare($SQL);
+@@ -581,7 +581,7 @@ if (isset($_GET['cedit']))
+     if ($data = $req->fetch())
+     {
+         if (canManageComment($data))
+-        {
++        {*/
+             ?>
+ <form action="?id=<?php echo $sw['id'].'&cedit2='.$data['id'] ?>" method="post" id="cedit">
+ <fieldset><legend><?= tr($tr, 'comments_mod') ?></legend>
+@@ -591,33 +591,33 @@ if (isset($_GET['cedit']))
+ </fieldset>
+ </form>
+ <script>init_close_confirm();</script>
+-<?php }
++<?php /*}
+         } $req->closeCursor();
+ }
+ if (isset($logged) && $logged && (checkMemberRights('comment_articles') || ($login['rank'] === 'a' && checkAdminRights('manage_comments'))))
+-{ ?>
++{*/ ?>
+ <form action="?id=<?php echo $sw['id'] ?>&comment" method="post" id="comment_write">
+-<?php if ($comlog !== '')
++<?php /*if ($comlog !== '')
+ {
+     echo '<strong>'.$comlog.'</strong>';
+-} ?>
++}*/ ?>
+ <fieldset><legend><?= tr($tr, 'comments_send') ?></legend>
+ <p><?= tr($tr, 'comments_warn') ?></p>
+ <p><?= tr($tr, 'comments_nickname', ['nickname' => getUsernameById($login['id'])]) ?></p>
+ <label for="fc_text"><?= tr($tr, 'comments_text') ?></label><br>
+-<textarea id="fc_text" class="ta" name="text" maxlength="1023" onkeyup="close_confirm=true"><?php if (isset($_POST['text']) && strlen((string) $_POST['text']) <= 1023)
++<textarea id="fc_text" class="ta" name="text" maxlength="1023" onkeyup="close_confirm=true"><?php /*if (isset($_POST['text']) && strlen((string) $_POST['text']) <= 1023)
+ {
+     echo htmlentities((string) $_POST['text']);
+-} ?></textarea><br>
++}*/ ?></textarea><br>
+ <input type="submit" value="<?= tr($tr, 'comments_ok') ?>">
+ </fieldset>
+ </form>
+ <script>init_close_confirm();</script>
+-<?php }
++<?php /*}
+ else
+ {
+     echo tr($tr, 'limitcommentext');
+-} ?>
++}*/ ?>-->
+ </div>
+ </main>
+ <?php require_once('include/footer.php');
+diff --git a/composer.json b/composer.json
+index 33c1515..c160563 100755
+--- a/composer.json
++++ b/composer.json
+@@ -9,7 +9,9 @@
+         "composer/ca-bundle": "^1.5",
+         "league/commonmark": "^2.7",
+         "robthree/twofactorauth": "^3.0",
+-        "endroid/qr-code": "^6.0"
++        "endroid/qr-code": "^6.0",
++        "stripe/stripe-php": "^14.0",
++        "guzzlehttp/guzzle": "^7.8"
+     },
+     "require-dev": {
+         "friendsofphp/php-cs-fixer": "^3.75",
+diff --git a/confirm.php b/confirm.php
+index 8935168..1a88e0c 100755
+--- a/confirm.php
++++ b/confirm.php
+@@ -1,23 +1,21 @@
+ <?php
+ 
+ set_include_path($_SERVER['DOCUMENT_ROOT']);
+-$require_once('include/log.php');
+ require_once('include/consts.php');
+ require_once('include/sendMail.php');
+-$tr = load_tr($lang,'confirm');
+ 
+ if (isset($_GET['id']) && isset($_GET['h']))
+ {
+     $SQL = <<<SQL
+         SELECT id, username, email, signup_date, settings FROM accounts WHERE id=:id AND signup_date<:date AND confirmed=false
+         SQL;
+-    $req = $bdd->prepare($SQL);
++    $req = $bdd2->prepare($SQL);
+     $req->execute([':id' => $_GET['id'], ':date' => time() + 86400]);
+     while ($data = $req->fetch())
+     {
+         if (json_decode((string) $data['settings'], true)['mhash'] === $_GET['h'])
+         {
+-            $countReq = $bdd->query('SELECT COUNT(*) FROM accounts');
++            $countReq = $bdd2->query('SELECT COUNT(*) FROM accounts');
+             $totalAccounts = (int) $countReq->fetchColumn();
+             $SQL = "UPDATE accounts SET confirmed = true";
+             if ($totalAccounts === 1)
+@@ -25,26 +23,36 @@ if (isset($_GET['id']) && isset($_GET['h']))
+                 $SQL .= ", rank = :adminRank";
+             }
+             $SQL .= " WHERE id = :id";
+-            $req = $bdd->prepare($SQL);
++            $req = $bdd2->prepare($SQL);
+             $params = [':id' => $data['id']];
+             if ($totalAccounts === 1)
+             {
+                 $params[':adminRank'] = 'a';
+             }
+             $req->execute($params);
+-            $subject = tr($tr,'mail_info_subject');
++            $subject = 'Vos informations de membre';
+             $username = htmlentities((string) $data['username']);
+             $memberSignupDate = date('d/m/Y à H:i', $data['signup_date']);
+-            $body = tr($tr,'mail_info_body_html', ['username' => $username,
+-                'email' => $data['email'],
+-                'id' => $data['id'],
+-                'signup_date' => $memberSignupDate]
+-            );
+-            $altBody = tr($tr,'mail_info_body_text', ['username' => $username,
+-                'email' => $data['email'],
+-                'id' => $data['id'],
+-                'signup_date' => $memberSignupDate]
+-            );
++            $body = <<<HTML
++                <h2>Bonjour {$username} et bienvenue dans la communauté {$site_name}</h2>
++                Vos informations sont les suivantes :</p>
++                <ul>
++                <li>Nom d'utilisateur : {$username}</li>
++                <li>Adresse mail : {$data['email']}</li>
++                <li>Numéro de membre : M{$data['id']}</li>
++                <li>Date d'inscription : {$memberSignupDate}</li>
++                </ul>
++                HTML;
++            $altBody = <<<TEXT
++                Bonjour {$username} et bienvenue dans la communauté {$site_name}
++
++                Vos informations sont les suivantes :
++                - Nom d'utilisateur : {$username}
++                - Adresse mail : {$data['email']}
++                - Numéro de membre : M{$data['id']}
++                - Date d'inscription : {$memberSignupDate}
++
++                TEXT;
+             sendMail($data['email'], $subject, $body, $altBody);
+             header('Location: /login.php?confirmed');
+             $SQL2 = <<<SQL
+diff --git a/fg_password.php b/fg_password.php
+index 8462d12..8a5e7c4 100755
+--- a/fg_password.php
++++ b/fg_password.php
+@@ -17,7 +17,7 @@ if ($step === 'request' && $_SERVER['REQUEST_METHOD'] === 'POST')
+     $SQL = <<<SQL
+         SELECT id, email, username FROM accounts WHERE username=:user OR email=:user LIMIT 1
+         SQL;
+-    $req = $bdd->prepare($SQL);
++    $req = $bdd2->prepare($SQL);
+     $req->execute([':user' => $requestedUser]);
+     $user = $req->fetch();
+     if ($user)
+@@ -25,19 +25,27 @@ if ($step === 'request' && $_SERVER['REQUEST_METHOD'] === 'POST')
+         $SQLDel = <<<SQL
+             DELETE FROM password_resets WHERE user_id = :uid
+             SQL;
+-        $reqDel = $bdd->prepare($SQLDel);
++        $reqDel = $bdd2->prepare($SQLDel);
+         $reqDel->execute([':uid' => $user['id']]);
+         $token = bin2hex(random_bytes(32));
+         $expires = date('Y-m-d H:i:s', strtotime('+1 hour'));
+         $SQLTok = <<<SQL
+             INSERT INTO password_resets (user_id, token, expires_at) VALUES (:uid, :tok, :exp)
+             SQL;
+-        $reqTok = $bdd->prepare($SQLTok);
++        $reqTok = $bdd2->prepare($SQLTok);
+         $reqTok->execute([':uid' => $user['id'], ':tok' => $token, ':exp' => $expires]);
+         $link = SITE_URL."/fg_password.php?step=reset&token={$token}";
+-        $subject = tr($tr,'mail_reset_subject');
+-        $body = tr($tr,'mail_reset_body_html', ['username' => $user['username'], 'link' => $link]);
+-        $altBody = tr($tr,'mail_reset_body_text', ['username' => $user['username'], 'link' => $link]);
++        $subject = 'Réinitialisation de mot de passe';
++        $body = <<<HTML
++            <p>Bonjour {$user['username']},<br>
++            Cliquez sur ce lien valable 1h pour choisir votre nouveau mot de passe&nbsp;:<br>
++            <a href="{$link}">Choisir mon mot de passe</a>.</p>
++            HTML;
++        $altBody = <<<TEXT
++            <p>Bonjour {$user['username']},
++            Cliquez sur ce lien valable 1h pour choisir votre nouveau mot de passe:
++            {$link}
++            TEXT;
+         sendMail($user['email'], $subject, $body, $altBody);
+     }
+ 
+@@ -49,7 +57,7 @@ if ($step === 'reset')
+     $SQL = <<<SQL
+         SELECT pr.id AS pr_id, pr.user_id, a.username, a.password FROM password_resets pr JOIN accounts a ON a.id = pr.user_id WHERE pr.token = :token AND pr.expires_at > NOW() AND pr.used = FALSE LIMIT 1
+         SQL;
+-    $req = $bdd->prepare($SQL);
++    $req = $bdd2->prepare($SQL);
+     $req->execute([':token' => $token]);
+     $reset = $req->fetch();
+ 
+@@ -81,12 +89,12 @@ if ($step === 'reset')
+             $SQLU = <<<SQL
+                 UPDATE accounts SET password = :h WHERE id = :uid
+                 SQL;
+-            $reqU = $bdd->prepare($SQLU);
++            $reqU = $bdd2->prepare($SQLU);
+             $reqU->execute([':h' => $hash, ':uid' => $reset['user_id']]);
+             $SQLU2 = <<<SQL
+                 UPDATE password_resets SET used = TRUE WHERE id = :prid
+                 SQL;
+-            $reqU2 = $bdd->prepare($SQLU2);
++            $reqU2 = $bdd2->prepare($SQLU2);
+             $reqU2->execute([':prid' => $reset['pr_id']]);
+ 
+             $success = tr($tr, 'reset_success');
+diff --git a/home.php b/home.php
+index 550c126..d0271d8 100755
+--- a/home.php
++++ b/home.php
+@@ -44,7 +44,7 @@ if ((isset($_GET['token']) && $_GET['token'] === $login['token']) || (isset($_PO
+         $SQL = <<<SQL
+             SELECT username,email FROM accounts WHERE (username=:username OR email=:email) AND id!=:id LIMIT 1
+             SQL;
+-        $req = $bdd->prepare($SQL);
++        $req = $bdd2->prepare($SQL);
+         $req->execute([':username' => $username, ':email' => $_POST['mail'], ':id' => $login['id']]);
+         if ($data = $req->fetch())
+         {
+@@ -80,7 +80,7 @@ if ((isset($_GET['token']) && $_GET['token'] === $login['token']) || (isset($_PO
+                 $SQL = <<<SQL
+                     UPDATE accounts SET username=:username, email=:email, confirmed=false, settings=:set, subscribed_comments=:sub WHERE id=:id
+                     SQL;
+-                $req = $bdd->prepare($SQL);
++                $req = $bdd2->prepare($SQL);
+                 $req->execute([':username' => $username, ':email' => $_POST['mail'], ':set' => json_encode($settings), ':sub' => $comments_sub, ':id' => $login['id']]);
+                 header('Location: /home.php?settings_ok&mail_sent');
+                 require_once('include/sendconfirm.php');
+@@ -92,7 +92,7 @@ if ((isset($_GET['token']) && $_GET['token'] === $login['token']) || (isset($_PO
+                 $SQL = <<<SQL
+                     UPDATE accounts SET username=:username, email=:email, settings=:set, subscribed_comments=:sub WHERE id=:id
+                     SQL;
+-                $req = $bdd->prepare($SQL);
++                $req = $bdd2->prepare($SQL);
+                 $req->execute([':username' => $username, ':email' => $_POST['mail'], ':set' => json_encode($settings), ':sub' => $comments_sub, ':id' => $login['id']]);
+                 header('Location: /home.php?settings_ok');
+                 exit();
+@@ -124,7 +124,7 @@ if ((isset($_GET['token']) && $_GET['token'] === $login['token']) || (isset($_PO
+             $SQL = <<<SQL
+                 UPDATE accounts SET password=:psw WHERE id=:id
+                 SQL;
+-            $req = $bdd->prepare($SQL);
++            $req = $bdd2->prepare($SQL);
+             $req->execute([':psw' => password_hash($_POST['newpsw'], PASSWORD_DEFAULT), ':id' => $login['id']]);
+             header('Location: /home.php?psw_ok');
+             exit();
+@@ -149,7 +149,7 @@ if ((isset($_GET['token']) && $_GET['token'] === $login['token']) || (isset($_PO
+             $SQL = <<<SQL
+                 DELETE FROM accounts WHERE id=:id
+                 SQL;
+-            $req = $bdd->prepare($SQL);
++            $req = $bdd2->prepare($SQL);
+             $req->execute([':id' => $login['id']]);
+             $subject = 'Suppression de compte';
+             $msgH = strip_tags((string) $_POST['msgrm']);
+diff --git a/include/banner.php b/include/banner.php
+index 6770bfe..50c94c4 100755
+--- a/include/banner.php
++++ b/include/banner.php
+@@ -5,7 +5,7 @@ if (isset($_SERVER['HTTP_USER_AGENT']) && str_contains((string) $_SERVER['HTTP_U
+ {
+     include 'include/trident.php';
+ }
+-include 'include/loginbox.php';
++//include 'include/loginbox.php';
+ include 'include/searchtool.php'; ?>
+ </header>
+ <?php include 'include/menu.php'; ?>
+diff --git a/include/consts.php b/include/consts.php
+index 9ab9ff0..2126f24 100755
+--- a/include/consts.php
++++ b/include/consts.php
+@@ -200,20 +200,20 @@ function setTimeZone($timezone, $lc_code)
+ 
+ function getUsernameById($id)
+ {
+-    global $bdd;
++    global $bdd2;
+     if (is_numeric($id))
+     {
+         $id = (int) $id;
+         $SQL = <<<SQL
+             SELECT * FROM accounts WHERE id=:id
+             SQL;
+-        $req = $bdd->prepare($SQL);
++        $req = $bdd2->prepare($SQL);
+         $req->execute([':id' => $id]);
+         if ($user = $req->fetch())
+         {
+             if ($user['rank'] === "a")
+             {
+-                $req2 = $bdd->prepare('SELECT short_name FROM team WHERE account_id = '.$user['id']);
++                $req2 = $bdd2->prepare('SELECT short_name FROM team WHERE account_id = '.$user['id']);
+                 $req2->execute();
+                 if ($admin = $req2->fetch())
+                 {
+@@ -231,7 +231,7 @@ function getUsernameById($id)
+ 
+ function getTeamEmails(?string $right = null)
+ {
+-    global $bdd;
++    global $bdd2;
+ 
+     $sql = <<<SQL
+         SELECT
+@@ -243,7 +243,7 @@ function getTeamEmails(?string $right = null)
+         WHERE team.works IN ('1', '2')
+         SQL;
+ 
+-    $req = $bdd->prepare($sql);
++    $req = $bdd2->prepare($sql);
+     $req->execute();
+     $rows = $req->fetchAll(PDO::FETCH_ASSOC);
+     $emails = [];
+diff --git a/include/dbconnect.php b/include/dbconnect.php
+index a3605af..ada9005 100755
+--- a/include/dbconnect.php
++++ b/include/dbconnect.php
+@@ -9,6 +9,18 @@ try
+ }
+ catch (PDOException $e)
+ {
+-    print 'Erreur de connexion à la base de données';
++    print 'Erreur de connexion à la base de données 1';
+     error_log('DB connect error: '.$e->getMessage());
+ }
++
++try
++{
++    $bdd2 = new PDO(DB_STRING2, DB_USER2, DB_PSW2);
++    $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
++}
++catch (PDOException $e)
++{
++    print 'Erreur de connexion à la base de données 2';
++    error_log('DB connect error: '.$e->getMessage());
++}
++
+diff --git a/include/log.php b/include/log.php
+index 078aaf5..e100b8f 100755
+--- a/include/log.php
++++ b/include/log.php
+@@ -6,7 +6,7 @@ require_once('Rights.php');
+ 
+ function check_login($session, $connectid)
+ {
+-    global $bdd, $login, $nolog, $settings, $admin_name;
++    global $bdd, $bdd2, $login, $nolog, $settings, $admin_name;
+     require_once($_SERVER['DOCUMENT_ROOT'].'/include/dbconnect.php');
+     $SQL = <<<SQL
+         SELECT sessions.id AS session_id, sessions.session, sessions.connectid, sessions.expire, sessions.token, accounts.id, accounts.id64, accounts.email, accounts.username, accounts.signup_date, accounts.password, accounts.settings, accounts.confirmed, accounts.subscribed_comments, accounts.rank, accounts.rights AS member_rights, accounts.twofa_enabled, accounts.twofa_secret, team.id AS team_id, team.works AS works, team.short_name AS short_name, team.rights AS admin_rights
+@@ -15,7 +15,7 @@ function check_login($session, $connectid)
+         LEFT JOIN team ON team.account_id = sessions.account
+         WHERE sessions.connectid=:connectid AND sessions.expire>:expire LIMIT 1
+         SQL;
+-    $req = $bdd->prepare($SQL);
++    $req = $bdd2->prepare($SQL);
+     $req->execute([':connectid' => $connectid, ':expire' => time()]);
+     if ($login = $req->fetch())
+     {
+@@ -36,7 +36,7 @@ function check_login($session, $connectid)
+             $SQL = <<<SQL
+                 UPDATE sessions SET expire=:expire WHERE id=:id
+                 SQL;
+-            $req = $bdd->prepare($SQL);
++            $req = $bdd2->prepare($SQL);
+             $req->execute([':expire' => time() + 31557600, ':id' => $login['session_id']]);
+             # check settings cookies
+             $settings = json_decode((string) $login['settings'], true);
+@@ -104,8 +104,8 @@ if (isset($adminonly) && $adminonly && $login['rank'] !== 'a')
+     require_once($_SERVER['DOCUMENT_ROOT'].'/403/403.php');
+     exit();
+ }
+-if (isset($justbn) && $justbn && $login['works'] === '1')
++if (isset($justna) && $justna && $login['works'] === '0')
+ {
+-    header('Location: https://www.nael-accessvision.com/admin/');
++    header('Location: https://www.blog.nael-accessvision.com/admin/');
+     exit();
+ }
+diff --git a/include/loginbox.php b/include/loginbox.php
+index 4a860cf..26f816e 100755
+--- a/include/loginbox.php
++++ b/include/loginbox.php
+@@ -42,7 +42,7 @@ function buildUserMenu(int $nNotifs)
+         {
+             $cid = urlencode((string) $_COOKIE['connectid']);
+             $ses = urlencode((string) $_COOKIE['session']);
+-            $items[] = ['href' => "https://www.nael-accessvision.com/admin?cid={$cid}&ses={$ses}", 'label' => tr($tr0, 'loginbox_adminlink').' (nael-accessvision)'];
++            $items[] = ['href' => "https://www.blog.nael-accessvision.com/admin?cid={$cid}&ses={$ses}", 'label' => tr($tr0, 'loginbox_adminlink').' (Blog nael-accessvision)'];
+         }
+     }
+ 
+diff --git a/include/sendMail.php b/include/sendMail.php
+index 8ab7759..3c15002 100755
+--- a/include/sendMail.php
++++ b/include/sendMail.php
+@@ -12,6 +12,7 @@ function sendMail($recipients, string $subject, string $contentHtml, string $con
+     $css = $options['css'] ?? '';
+     $includeNotice = $options['includeAutoReplyNotice'] ?? true;
+     $logoUrl = SITE_URL.'/images/logo128-170.png';
++    $contactFormUrl = SITE_URL.'/contact_form.php';
+     $styleBlock = $css
+         ? <<<HTML
+             <style>
+@@ -29,7 +30,7 @@ function sendMail($recipients, string $subject, string $contentHtml, string $con
+     $noticeHtml = $includeNotice
+         ? <<<HTML
+             <p style="font-size:.9em; color:#666;">Ne répondez pas à ce mail qui a été envoyé automatiquement.<br>
+-            Pour nous contacter, écrivez nous à l'adresse <a href="mailto:infos@nael-accessvision.com">infos@nael-accessvision.com</a>.</p>
++            Pour nous contacter, utilisez le <a href="{$contactFormUrl}">formulaire de contact</a>.</p>
+             HTML
+         : '';
+ 
+@@ -69,7 +70,7 @@ function sendMail($recipients, string $subject, string $contentHtml, string $con
+     $noticeText = $includeNotice
+         ? <<<TEXT
+             Ne répondez pas à ce mail qui a été envoyé automatiquement.
+-            Pour nous contacter, écrivez nos à : infos@nael-accessvision.com
++            Pour nous contacter, utilisez le formulaire de contact : {$contactFormUrl}
+ 
+             TEXT
+         : '';
+diff --git a/locales/en/art_list.tr.php b/locales/en/art_list.tr.php
+deleted file mode 100644
+index b69071a..0000000
+--- a/locales/en/art_list.tr.php
++++ /dev/null
+@@ -1,15 +0,0 @@
+-<?php
+-
+-$tr = [
+-  '_' => 'art_list',
+-  '_todo_level' => 0,
+-  '_last_author' => 'Nael Sayegh',
+-  '_last_modif' => 1750595022,
+-  'title' => 'List of articles',
+-  'sort_label' => 'Sort by&nbsp;:',
+-  'sort_article_id' => 'Article number',
+-  'sort_alpha_order' => 'Alphabetical order',
+-  'sort_date' => 'Update date',
+-  'sort_btn' => 'Sort',
+-  'nb_found' => '<b>{{count}}</b> articles found',
+-];
+diff --git a/locales/en/article.tr.php b/locales/en/article.tr.php
+deleted file mode 100755
+index 5ae1545..0000000
+--- a/locales/en/article.tr.php
++++ /dev/null
+@@ -1,60 +0,0 @@
+-<?php
+-
+-$tr = [
+-  '_' => 'article',
+-  '_todo_level' => 1,
+-  '_last_author' => 'Corentin',
+-  '_last_modif' => 1589314773,
+-  'comment_sent' => 'The comment has been sent.',
+-  'comment_toolong' => 'The pseudo cannot exceed 31 characters.<br>The text cannot exceed 1023 characters.',
+-  'commentmod_toolong' => 'The text cannot exceed 1023 characters.',
+-  'commentmod_error' => 'Error modifying the comment',
+-  'categories_link' => 'See here the complete article list',
+-  'files_title' => 'Available files for <em>{{title}}</em>:',
+-  'files_size' => 'File\'s title (size)',
+-  'files_date' => 'Modified on',
+-  'files_hits' => 'Downloads',
+-  'files_sums' => 'Check sums',
+-  'mirrors_title' => 'Mirrored files for <em>{{title}}</em>:',
+-  'mirrors_filetitle' => 'Title',
+-  'mirrors_mirrors' => 'Mirrors',
+-  'infos' => 'Other infos:',
+-  'website' => 'Official website:',
+-  'hits' => 'Total number of downloads:',
+-  'visits' => 'Total number of visits:',
+-  'id' => 'Article number (category):',
+-  'lastmodif' => 'Last change:',
+-  'lastmodif_val' => 'By {{author}} ({{date}})',
+-  'comments_title' => 'Comments',
+-  'comments_mod' => 'Edit the comment',
+-  'comments_rm' => 'Delete the comment',
+-  'comments_ok' => 'Send',
+-  'comments_send' => 'Send a comment',
+-  'comments_warn' => 'Write here your comment about this software. You will be able to edit or remove it within 24h after the publication.',
+-  'comments_pseudo' => 'Pseudo:',
+-  'comments_text' => 'Text:',
+-  'adminlink_article' => 'Edit',
+-  'adminlink_listfiles' => 'Show files of',
+-  'adminlink_trs' => 'Show translations of',
+-  'comments_subscribe' => 'Follow',
+-  'comments_subscribe_long' => 'Be notified on new comments on this article',
+-  'comments_unsubscribe' => 'Don\'t follow anymore',
+-  'comments_unsubscribe_long' => 'Do not be notified anymore on new comments on this article',
+-  'sort_label' => 'Sort the files&nbsp;:',
+-  'sort_date' => 'By date',
+-  'sort_dl' => 'By number of downloads',
+-  'sort_filename' => 'By name',
+-  'sort_title' => 'By title',
+-  'sort_size' => 'By size',
+-  'js_to_sort' => 'Enable JavaScript to sort the files',
+-  'rating_label' => 'Rate this article',
+-  'rating_submit' => 'Rate',
+-  'rating_update' => 'Update my rating',
+-  'rating_login_required' => 'You must be logged in and have the required permission to rate',
+-  'rating_average' => 'Rating',
+-  'rating_details' => '{{avg}} (based on {{count}} reviewers)',
+-  'rating_no_votes' => 'No one has rated this article yet',
+-  'delete_rating' => 'Delete my rating',
+-  'rating_1_explanation' => 'Poor',
+-  'rating_5_explanation' => 'Excellent',
+-];
+diff --git a/locales/en/cat.tr.php b/locales/en/cat.tr.php
+deleted file mode 100755
+index 639aecd..0000000
+--- a/locales/en/cat.tr.php
++++ /dev/null
+@@ -1,15 +0,0 @@
+-<?php
+-
+-$tr = [
+-  '_' => 'cat',
+-  '_todo_level' => 1,
+-  '_last_author' => 'Pascal',
+-  '_last_modif' => 1546349570,
+-  'hits' => '{{hits}} visits',
+-  'date' => 'updated on {{date}}',
+-  'sort_label' => 'Sort the articles by&nbsp;:',
+-  'sort_alpha_order' => 'Alphabetical order',
+-  'sort_date' => 'Date',
+-  'sort_hits' => 'Number of visits',
+-  'js_to_sort' => 'Enable JavaScript to sort the articles',
+-];
+diff --git a/locales/en/confirm.tr.php b/locales/en/confirm.tr.php
+deleted file mode 100644
+index 586f33c..0000000
+--- a/locales/en/confirm.tr.php
++++ /dev/null
+@@ -1,28 +0,0 @@
+-<?php
+-
+-$tr = [
+-  '_' => 'confirm',
+-  '_todo_level' => 0,
+-  '_last_author' => 'Nael Sayegh',
+-  '_last_modif' => 1750836773,
+-  'mail_info_subject' => 'Your member information',
+-  'mail_info_body_html' => <<<HTML
+-      <h2>Hello {{username}} and welcome to the {{site}} community</h2>
+-      Your information is as follows:</p>
+-      <ul>
+-      <li>Username: {{username}}</li>
+-      <li>Email address: {{email}}</li>
+-      <li>Membership number: M{{id}}</li>
+-      <li>Signup date: {{signup_date}}</li>
+-      </ul>
+-    HTML,
+-  'mail_info_body_text' => <<<TEXT
+-      Hello {{username}} and welcome to the {{site}} community
+-
+-      Your information is as follows:
+-      - Username: {{username}}
+-      - Email address: {{email}}
+-      - Membership number: M{{id}}
+-      - Signup date: {{signup_date}}
+-    TEXT,
+-];
+diff --git a/locales/en/contact.tr.php b/locales/en/contact.tr.php
+deleted file mode 100755
+index ea8798d..0000000
+--- a/locales/en/contact.tr.php
++++ /dev/null
+@@ -1,13 +0,0 @@
+-<?php
+-
+-$tr = [
+-  '_' => 'contact',
+-  '_todo_level' => 2,
+-  '_last_author' => 'Corentin',
+-  '_last_modif' => 1747856433,
+-  'title' => 'About {{site}}',
+-  'maintext' => <<<ENDSTR
+-    <p>For any questions, information and suggestions, write me at the following email address:</p>
+-    ENDSTR
+-  ,
+-];
+diff --git a/locales/en/default.tr.php b/locales/en/default.tr.php
+deleted file mode 100755
+index afd35d0..0000000
+--- a/locales/en/default.tr.php
++++ /dev/null
+@@ -1,107 +0,0 @@
+-<?php
+-
+-$tr = [
+-  '_' => 'default',
+-  '_todo_level' => 2,
+-  '_last_author' => 'Corentin',
+-  '_last_modif' => 1747146244,
+-  'slogan' => 'Find your solution!',
+-  'banner_homelink' => 'Back to homepage',
+-  'fndate'      => 'dd/MM/yyyy',
+-  'ftdate'      => 'EEEE, MMMM d, y',
+-  'ftime'       => 'HH:mm',
+-  'fstime'      => 'HH:mm',
+-  'fndatetime'  => 'dd/MM/yyyy HH:mm',
+-  'ftdatetime'  => 'EEEE, MMMM d, y HH:mm',
+-  'decimal_separator' => '.',
+-  'timezone'    => 'Europe/Paris',
+-  'lc_code'     => 'en_GB.UTF8',
+-  'byte_letter' => 'B',
+-  'loginbox_profilelink' => 'Profile & Settings',
+-  'loginbox_alistlink' => 'Members list',
+-  'loginbox_adminlink' => 'Administration',
+-  'loginbox_logoutlink' => 'Logout',
+-  'loginbox_memberarea' => 'Log in/Register',
+-  'loginbox_loginlabel' => 'Login',
+-  'loginbox_username' => 'User name or email address',
+-  'loginbox_password' => 'Password',
+-  'loginbox_forgotpsw' => 'Forgot password',
+-  'loginbox_signup' => 'Sign up',
+-  'loginbox_arialab_menu' => 'User menu',
+-  'searchtool_label' => 'Search',
+-  'searchtool_text' => 'Search for a software/tuto',
+-  'searchtool_cat' => 'Category',
+-  'searchtool_all' => 'All',
+-  'urank_0' => 'Newbie',
+-  'urank_1' => 'Member',
+-  'urank_a' => 'Team member',
+-  'urank_m' => 'Moderator',
+-  'urank_i' => 'Anonymous',
+-  'urank_b' => 'Banished',
+-  'footer_share' => 'Share this page on:',
+-  'footer_fb' => 'Facebook',
+-  'footer_x' => 'X',
+-  'footer_g+' => 'Google+',
+-  'footer_lastmodif' => 'Last modification',
+-  'footer_d-1' => 'yesterday',
+-  'footer_d-2' => 'day before yesterday',
+-  'footer_today' => 'today',
+-  'footer_ontime' => 'on',
+-  'footer_devver' => 'Dev version',
+-  'footer_changelog' => 'See the changes of this beta',
+-  'footer_copyright' => '{{site}}',
+-  'footer_license' => 'The <a href="/opensource.php">code of {{site}}</a> is distributed under {{license}} license.<br>
+-The text is under {{trlicense}} license.',
+-  'footer_opensource' => 'about source code',
+-  'footer_stablelink' => 'Site\'s stable zone',
+-  'footer_devlink' => 'Site\'s dev zone',
+-  'footer_date' => 'When the page loaded, it was {{date}}, {{time}}.',
+-  'footer_toplink' => 'Page top',
+-  'footer_menulink' => 'Menu',
+-  'footer_ctnlink' => 'Main content',
+-  'menu_changelang' => 'Change language',
+-  'menu_articles' => 'Categories',
+-  'menu_news' => 'Follow the news',
+-  'menu_nl' => 'Newsletter',
+-  'menu_rss' => 'RSS Flow',
+-  'menu_journal' => 'Change log',
+-  'menu_update' => 'Versions history of Website',
+-  'menu_support' => 'Support us',
+-  'menu_usefull' => 'Useful',
+-  'menu_contest' => 'Contest',
+-  'menu_sets' => 'Settings',
+-  'menu_gadgets' => 'Gadgets and services',
+-  'menu_infos' => 'About {{site}}',
+-  'menu_contact' => 'Contact us',
+-  'menu_privacy' => 'Privacy policy',
+-  'menu_menutitle' => 'Menu',
+-  'menu_ctnlink' => 'Main content',
+-  'menu_bottomlink' => 'Page bottom',
+-  'menu_searchlink' => 'Search',
+-  'menu_linklistlabel' => 'Go to:',
+-  'menu_homepage' => 'Home page',
+-  'menu_switchmenu' => 'Hide/show menu',
+-  'menu_toplink' => 'Page top',
+-  'menu_ai' => 'Need help with computers? Ask me your questions',
+-  'loginbox_notifs' => 'Notifications',
+-  'loginbox_notifs_readall' => 'Mark everything as read',
+-  'loginbox_notifs_read' => 'Mark as read',
+-  'footer_link_g1' => '{{site}} and libre currency Ğ1',
+-  'footer_sociallinks' => 'Social medias',
+-  'footer_youtube' => 'youtube channel',
+-  'footer_mail' => 'Share by email',
+-  'footer_mention' => 'Legal mention',
+-  'footer_contact' => 'Contact me',
+-  'footer_lastcommit' => 'Version {{commit_url}}',
+-  'footer_charged_page' => 'Page loaded {{xpage}} times over the past year, of which {{xpagetoday}} were today',
+-  'footer_total_chaged_pages' => '{{xvisits}} pages loaded over the past year, of which {{xvisitstoday}} were today',
+-  'footer_visitors' => '{{xvisitors}} visitors over the past week, of which {{xtoday}} were today',
+-  'footer_connected' => '{{xconn}} connected.',
+-  'lasttranslate' => 'Last translation of this page in {{lang}} on {{date}} at {{time}}',
+-  'no_lasttranslate' => 'The date of the last translation of this page is unknown',
+-  'no_translate' => 'This page is not part of the translation system',
+-  'masto_share_title' => 'Sharing ',
+-  'masto_share_desc' => 'Please enter your Mastodon instance (e.g. mastodon.social) for sharing',
+-  'masto_share_instance_error' => 'Please enter your instance without https:// or other paths!',
+-  'masto_share_btn' => 'Mastodon',
+-];
+diff --git a/locales/en/fg_passwd.tr.php b/locales/en/fg_passwd.tr.php
+deleted file mode 100644
+index 9c3fee5..0000000
+--- a/locales/en/fg_passwd.tr.php
++++ /dev/null
+@@ -1,34 +0,0 @@
+-<?php
+-
+-$tr = [
+-  '_' => 'fg_passwd',
+-  '_todo_level' => 0,
+-  '_last_author' => 'Nael Sayegh',
+-  '_last_modif' => 1750833523,
+-  'title' => 'Forgot password',
+-  'mail_sent' => 'Check your emails, a reset link has been sent to you',
+-  'invalid_or_expired' => 'This token is invalid or has expired. Please try again.',
+-  'pwd_mismatch' => 'The two entered passwords do not match',
+-  'pwd_too_short' => 'Your password must contain at least 8 characters',
+-  'pwd_no_reuse' => 'The new password must be different from the last one used',
+-  'intro_text' => 'Please fill out the form below to request a password reset for {{site}}',
+-  'choose_new_pwd' => 'Please fill out the form below to choose your new password',
+-  'login_field' => 'Username or email address',
+-  'request_btn' => 'Reset',
+-  'new_password' => 'New password&nbsp;:',
+-  'confirm_password' => 'New password (Verification)&nbsp;:',
+-  'gen-psw' => 'Generate a password',
+-  'reset_btn' => 'Confirm',
+-  'js-to-gen' => 'Enable JavaScript if you wish to generate a password via the site',
+-  'mail_reset_subject' => 'Password Reset',
+-  'mail_reset_body_html' => <<<HTML
+-      <p>Hello {{username}},<br>
+-      Click on this link, valid for 1 hour, to choose your new password:&nbsp;<br>
+-      <a href="{{link}}">Choose my password</a>.</p>
+-      HTML,
+-  'mail_reset_body_text' => <<<TEXT
+-      Hello {{username}},
+-      Click on this link, valid for 1 hour, to choose your new password:
+-      {{link}}
+-    TEXT,
+-];
+diff --git a/locales/en/home.tr.php b/locales/en/home.tr.php
+deleted file mode 100644
+index d2231aa..0000000
+--- a/locales/en/home.tr.php
++++ /dev/null
+@@ -1,73 +0,0 @@
+-<?php
+-
+-$tr = [
+-  '_' => 'home',
+-  '_todo_level' => 0,
+-  '_last_author' => 'Nael Sayegh',
+-  '_last_modif' => 1750595022,
+-  'title' => 'Profil',
+-  'err_name_length' => 'Your username must be between 3 and 32 characters long.',
+-  'err_mail_length' => 'Your email address must not exceed 255 characters.',
+-  'err_name_used' => 'This username is already taken!',
+-  'err_mail_used' => 'This email address is already in use!',
+-  'err_psw_same' => 'Please enter the new password twice, ensuring they match.',
+-  'err_psw_length' => 'Your new password must be between 8 and 64 characters long.',
+-  'err_psw_old' => 'You must enter your old password without any mistakes.',
+-  'err_rmmsg_length' => 'Your message must not exceed 8192 characters.',
+-  'err_psw_bad' => 'You must enter your password without any mistakes.',
+-  'log_settings_ok' => 'Your personal information has been successfully updated.',
+-  'log_psw_ok' => 'Your password has been successfully changed.',
+-  'log_mail_sent' => 'A confirmation link has been sent to you by email. It will expire in 24 hours.',
+-  'confirm_mail' => '<b>Your email address has not been confirmed.</b> You cannot access certain features yet.',
+-  'send_mail' => 'Resend confirmation email',
+-  'profile_rank' => 'Rank: {{rank}}',
+-  'profile_id' => 'Member number: {{id}}',
+-  'profile_signup_date' => 'Registered since {{date}}',
+-  'profile_birthday' => 'Birthday: {{date}}',
+-  'profile_happy_birthday' => 'Today: happy birthday',
+-  'notifs_read_all' => 'Mark all as read',
+-  'notifs_new_comment' => 'New comment on {{link}}',
+-  'notifs_read' => 'Mark as read',
+-  'notifs_unread' => 'Mark as unread',
+-  'settings' => 'Settings',
+-  'settings_account' => 'Account settings',
+-  'settings_name' => 'Username:',
+-  'settings_mail' => 'Email address:',
+-  'settings_notifcom' => 'Notify me of a new comment by email:',
+-  'settings_birthday' => 'Birthday:',
+-  'settings_birthday_month' => 'Month:',
+-  'settings_birthday_day' => 'Day:',
+-  'settings_comments_sub' => 'Be notified of new comments on articles:',
+-  'settings_notif_mail' => 'Receive notifications by email:',
+-  'settings_submit' => 'Submit',
+-  'chpsw' => 'Change password',
+-  'chpsw_old' => 'Current password:',
+-  'chpsw_new' => 'New password:',
+-  'chpsw_new_re' => 'New password (verification):',
+-  'remove_account' => 'Delete account',
+-  'remove_account_warn' => '<b>Warning</b>: Deleting your account will result in the loss of all personal data associated with it. However, your comments and other contributions will remain visible.<br>Please write below the reason for your departure to help us improve the site.',
+-  'remove_account_msg' => 'Reason for leaving:',
+-  'remove_account_psw' => 'Password:',
+-  'remove_account_submit' => 'Confirm',
+-  'chpsw_submit' => 'Confirm',
+-  'notifs' => 'Notifications',
+-  'notifs_show_read' => 'Show read notifications',
+-  'sessions' => 'Sessions',
+-  'session_item' => 'Created on {{created}}, expires on {{expires}}',
+-  'session_item_current' => 'current',
+-  'session_item_remove' => 'Lock',
+-  'wrong_2fa' => 'Invalid 2FA code. Please try again.',
+-  'enable_2fa_title' => 'Enable two-factor authentication',
+-  'enable_2fa_text' => 'Scan this QR code with your 2FA app (Google/Microsoft Authenticator, Twilio Authy, etc.) and then enter the generated one-time code.',
+-  'manual_code' => 'Key to enter manually',
+-  'manual_code_hint' => 'If you cannot scan the QR code, you can enter this key manually into your 2FA app.',
+-  'disable_2fa_title' => 'Disable two-factor authentication',
+-  'disable_2fa_text' => 'To disable two-factor authentication (2FA), confirm your password.',
+-  'disable_2fa_psw' => 'Password',
+-  'disable_2fa_confirm' => 'Disable 2FA',
+-  'err_2fa_code_invalid' => 'The entered 2FA code is invalid.',
+-  'enter_2fa_code' => 'Verification code',
+-  'confirm' => 'Validate',
+-  'log_2fa_enabled' => 'Two-factor authentication has been successfully enabled',
+-  'log_2fa_disabled' => 'Two-factor authentication has been successfully disabled',
+-];
+diff --git a/locales/en/index.tr.php b/locales/en/index.tr.php
+deleted file mode 100755
+index 2fb87e5..0000000
+--- a/locales/en/index.tr.php
++++ /dev/null
+@@ -1,19 +0,0 @@
+-<?php
+-
+-$tr = [
+-  '_' => 'index',
+-  '_todo_level' => 4,
+-  '_last_author' => 'Pascal',
+-  '_last_modif' => 1621417452,
+-  'title' => '{{site}}&nbsp;: {{slogan}}',
+-  'happynewyear' => 'The hole team {{site}} wishes you an happy new year {{year}}!',
+-  'texttitle' => '{{slogan}}',
+-  'maintext' => '<h1>Accessibility information</h1><br aria-hidden="true">
+-<p>If you want to open an article in a new window, press shift plus enter.<br>
+-This will allow you to close the article window by alt F4.</p><br aria-hidden="true">
+-<h1>Presentation</h1><br aria-hidden="true">
+-<p>Welcome to nael-accessvision.com,<br>
+-You will find audio tutorials introducing you to phone and computer applications and device demonstrations.<br>
+-You can also find software to download, computer tips and reviews.</p><br aria-hidden="true">',
+-'mailconfirmtext' => 'Thanks for your message. You should receive an answer e-mail soon.',
+-];
+diff --git a/locales/en/legal.tr.php b/locales/en/legal.tr.php
+deleted file mode 100755
+index 86ff063..0000000
+--- a/locales/en/legal.tr.php
++++ /dev/null
+@@ -1,16 +0,0 @@
+-<?php
+-
+-$tr = [
+-  '_' => 'legal',
+-  '_todo_level' => 2,
+-  '_last_author' => 'Nael',
+-  '_last_modif' => 1747856433,
+-  'title' => 'Legal mention',
+-  'maintext' => <<<ENDSTR
+-    <h2>Information</h2>
+-    <p>Surname name: Sayegh Nael</p>
+-    <h2>host</h2>
+-    <p>host: <a href="https://ionos.fr">Ionos.fr</a></p>
+-    ENDSTR
+-  ,
+-];
+diff --git a/locales/en/login.tr.php b/locales/en/login.tr.php
+deleted file mode 100755
+index d09d1be..0000000
+--- a/locales/en/login.tr.php
++++ /dev/null
+@@ -1,20 +0,0 @@
+-<?php
+-
+-$tr = [
+-  '_' => 'login',
+-  '_todo_level' => 1,
+-  '_last_author' => 'Pascal',
+-  '_last_modif' => 1546342570,
+-  'title' => 'Login',
+-  'wrong' => 'Wrong username or password.',
+-  'confirmed' => 'Your e-mail address has been successfully confirmed.',
+-  'confirm_err' => 'The link you followed is invalid or has expired. Please try again.',
+-  'logonly' => 'You must be logged in to access this content.',
+-  'account_created' => 'Your account has been created! You should receive a confirmation e-mail at <i>{{mail}}</i>.',
+-  'username' => 'Username or email address',
+-  'password' => 'Password',
+-  'bt_login' => 'Login',
+-  'forgot_psw' => 'Forgot password? Click here!',
+-  'signup' => 'Not a member yet? Sign up and take advantage!',
+-  'cookies' => 'By using this form, you must accept to receive cookies from {{site}} (needed to use member zone).',
+-];
+diff --git a/locales/en/redirlogin.tr.php b/locales/en/redirlogin.tr.php
+deleted file mode 100644
+index 0c8824e..0000000
+--- a/locales/en/redirlogin.tr.php
++++ /dev/null
+@@ -1,16 +0,0 @@
+-<?php
+-
+-$tr = [
+-  '_' => 'redirlogin',
+-  '_todo_level' => 0,
+-  '_last_author' => 'Nael Sayegh',
+-  '_last_modif' => 1750595022,
+-  'title' => 'Login successful!',
+-  'maintext' => '<p>Hello {{membername}}, your login was successful!<br> What would you like to do next?</p>',
+-  'homelink' => 'Go to homepage',
+-  'memberlink' => 'View my profile',
+-  'adminlink' => 'Go to administration',
+-  'memberlistlink' => 'View the list of all members',
+-  'logoutlink' => 'Log out',
+-  'previous_page' => 'Return to where I came from',
+-];
+diff --git a/locales/en/search.tr.php b/locales/en/search.tr.php
+deleted file mode 100755
+index f5c6add..0000000
+--- a/locales/en/search.tr.php
++++ /dev/null
+@@ -1,13 +0,0 @@
+-<?php
+-
+-$tr = [
+-  '_' => 'search',
+-  '_todo_level' => 1,
+-  '_last_author' => 'Pascal',
+-  '_last_modif' => 1546343094,
+-  'title' => 'Search',
+-  'title2' => 'Search for {{terms}}',
+-  'noresult' => 'Sorry, nothing found for "{{terms}}".',
+-  'found' => 'Found {{count}} results in {{time}} ms.',
+-  'result_hits' => '{{hits}} visits, {{dl}} downloads',
+-];
+diff --git a/locales/en/sendconfirm.tr.php b/locales/en/sendconfirm.tr.php
+deleted file mode 100755
+index a83f2bd..0000000
+--- a/locales/en/sendconfirm.tr.php
++++ /dev/null
+@@ -1,17 +0,0 @@
+-<?php
+-
+-$tr = [
+-  '_' => 'sendconfirm',
+-  '_todo_level' => 4,
+-  '_last_author' => 'Pascal',
+-  '_last_modif' => 1546349472,
+-  'title' => 'Confirm your member account.',
+-  'logo' => 'Logo',
+-  'subject' => '{{site}} account confirmation',
+-  'hello' => 'Hello {{name}},',
+-  'confirm' => 'Confirm your {{site}} account by clicking on this link (expires after 24h):',
+-  'click' => 'Click here',
+-  'signature' => 'Best regards,<br>Team {{site}}',
+-  'admin' => 'administrators {{site}}',
+-  'team' => 'team {{site}}',
+-];
+diff --git a/locales/en/settings.tr.php b/locales/en/settings.tr.php
+deleted file mode 100644
+index 3b08053..0000000
+--- a/locales/en/settings.tr.php
++++ /dev/null
+@@ -1,20 +0,0 @@
+-<?php
+-
+-$tr = [
+-  '_' => 'settings',
+-  '_todo_level' => 0,
+-  '_last_author' => 'Nael Sayegh',
+-  '_last_modif' => 1750595022,
+-  'title' => 'Settings',
+-  'maintext' => '<p>This page gives you access to some settings to customize the site as you wish.<br>If you are not logged in as a member, the settings will be saved using cookies; otherwise, they will be stored in our database and will be available whenever you log in to the site (regardless of the device used).</p>',
+-  'gui' => 'Interface',
+-  'combomenu' => 'Dropdown menu (default=no)',
+-  'textsize' => 'Text size:',
+-  11 => '11 (Small)',
+-  16 => '16 (Normal/default)',
+-  20 => '20 (Large)',
+-  24 => '24 (Very large)',
+-  'slider' => 'Enable scrolling information on the homepage (default=yes)',
+-  'savebtn' => 'Save',
+-  'resetbtn' => 'Reset to default settings',
+-];
+diff --git a/locales/en/slider.tr.php b/locales/en/slider.tr.php
+deleted file mode 100755
+index f0f14b4..0000000
+--- a/locales/en/slider.tr.php
++++ /dev/null
+@@ -1,18 +0,0 @@
+-<?php
+-
+-$tr = [
+-  '_' => 'slider',
+-  '_todo_level' => 2,
+-  '_last_author' => 'Pascal',
+-  '_last_modif' => 1550844978,
+-  'label' => 'Infos',
+-  'most_visited' => 'Most visited',
+-  'last_site_update' => 'Last site version',
+-  'last_site_update_text' => 'Site version {{version}} (V{{id}}) has been released on {{date}}: {{link1}}read changes{{link2}}.',
+-  'last_updates' => 'Last updates',
+-  'last_updates_text' => 'by {{author}} on {{date}}',
+-  'most_downloaded' => 'Most downloaded',
+-  'previous' => 'Previous',
+-  'next' => 'Next',
+-  'stop' => 'Stop',
+-];
+diff --git a/locales/fr/confirm.tr.php b/locales/fr/confirm.tr.php
+deleted file mode 100644
+index 1bbdf74..0000000
+--- a/locales/fr/confirm.tr.php
++++ /dev/null
+@@ -1,28 +0,0 @@
+-<?php
+-
+-$tr = [
+-  '_' => 'confirm',
+-  '_todo_level' => 0,
+-  '_last_author' => 'Nael Sayegh',
+-  '_last_modif' => 1750836574,
+-  'mail_info_subject' => 'Vos informations de membre',
+-  'mail_info_body_html' => <<<HTML
+-      <h2>Bonjour {{username}} et bienvenue dans la communauté {{site}}</h2>
+-      Vos informations sont les suivantes :</p>
+-      <ul>
+-      <li>Nom d'utilisateur : {{username}}</li>
+-      <li>Adresse mail : {{email}}</li>
+-      <li>Numéro de membre : M{{id}}</li>
+-      <li>Date d'inscription : {{signup_date}}</li>
+-      </ul>
+-    HTML,
+-  'mail_info_body_text' => <<<TEXT
+-      Bonjour {{username}} et bienvenue dans la communauté {{site}}
+-
+-      Vos informations sont les suivantes :
+-      - Nom d'utilisateur : {{username}}
+-      - Adresse mail : {{email}}
+-      - Numéro de membre : M{{id}}
+-      - Date d'inscription : {{signup_date}}
+-    TEXT,
+-];
+diff --git a/locales/fr/default.tr.php b/locales/fr/default.tr.php
+index 9d7a626..147dc4f 100755
+--- a/locales/fr/default.tr.php
++++ b/locales/fr/default.tr.php
+@@ -4,7 +4,7 @@ $tr = [
+   '_' => 'default',
+   '_todo_level' => 0,
+   '_last_author' => 'Nael Sayegh',
+-  '_last_modif' => 1750595022,
++  '_last_modif' => 1750748591,
+   'slogan' => 'Trouvez votre solution!',
+   'banner_homelink' => 'Retour à l\'accueil',
+   'fndate' => 'dd/MM/yyyy',
+@@ -34,7 +34,7 @@ $tr = [
+   'loginbox_notifs_read' => 'Marquer comme lu',
+   'loginbox_arialab_menu' => 'Menu utilisateur',
+   'searchtool_label' => 'Rechercher',
+-  'searchtool_text' => 'Rechercher un logiciel/tuto',
++  'searchtool_text' => 'Rechercher un article',
+   'searchtool_cat' => 'Catégorie',
+   'searchtool_all' => 'Tout',
+   'urank_0' => 'Nouveau',
+@@ -45,8 +45,6 @@ $tr = [
+   'footer_fb' => 'Facebook',
+   'footer_x' => 'X',
+   'footer_copyright' => '{{site}}',
+-  'footer_license' => 'Le <a href="/opensource.php">code de {{site}}</a> est mis à disposition sous licence {{license}}.<br>
+-Le texte est sous licence {{trlicense}}.',
+   'footer_toplink' => 'Haut de page',
+   'footer_menulink' => 'Menu',
+   'footer_ctnlink' => 'Contenu principal',
+@@ -89,6 +87,7 @@ Le texte est sous licence {{trlicense}}.',
+   'footer_newstext' => '<p>Pour être au courant des dernières nouvelles de nael-accessvision, inscrivez-vous à notre newsletter et vous recevrez les actualités par mail.</p>',
+   'footer_news' => 'Newsletter {{site}}',
+   'footer_contact' => 'Me contacter',
++  'menu_agenda' => 'Agenda scolaire accessible',
+   'footer_charged_page' => 'Page chargée {{xpage}} fois depuis un an dont {{xpagetoday}} ce jour',
+   'footer_total_chaged_pages' => '{{xvisits}} pages chargées depuis un an dont {{xvisitstoday}} aujourd\'hui',
+   'footer_visitors' => '{{xvisitors}} visiteurs depuis une semaine dont {{xtoday}} aujourd\'hui',
+diff --git a/locales/fr/fg_passwd.tr.php b/locales/fr/fg_passwd.tr.php
+index b607d30..4dd5403 100755
+--- a/locales/fr/fg_passwd.tr.php
++++ b/locales/fr/fg_passwd.tr.php
+@@ -4,7 +4,7 @@ $tr = [
+   '_' => 'fg_passwd',
+   '_todo_level' => 0,
+   '_last_author' => 'Corentin',
+-  '_last_modif' => 1750833301,
++  '_last_modif' => 1609230733,
+   'title' => 'Mot de passe oublié',
+   'mail_sent' => 'Consultez vos mails, un lien de réinitialisation vous y a été envoyé',
+   'invalid_or_expired' => 'Ce token est invalide ou a expiré. Veuillez recommencer',
+@@ -20,15 +20,4 @@ $tr = [
+   'gen-psw' => 'Générer un mot de passe',
+   'reset_btn' => 'Confirmer',
+   'js-to-gen' => 'Activez JavaScript si vous souhaitez générer un mot de passe via le site',
+-  'mail_reset_subject' => 'Réinitialisation de mot de passe',
+-  'mail_reset_body_html' => <<<HTML
+-      <p>Bonjour {{username}},<br>
+-      Cliquez sur ce lien valable 1h pour choisir votre nouveau mot de passe&nbsp;:<br>
+-      <a href="{{link}}">Choisir mon mot de passe</a>.</p>
+-    HTML,
+-  'mail_reset_body_text' => <<<TEXT
+-      <p>Bonjour {{username}},
+-      Cliquez sur ce lien valable 1h pour choisir votre nouveau mot de passe:
+-    {{link}}
+-  TEXT,
+ ];
+diff --git a/locales/fr/members_list.tr.php b/locales/fr/members_list.tr.php
+index d5909a0..90bb55f 100644
+--- a/locales/fr/members_list.tr.php
++++ b/locales/fr/members_list.tr.php
+@@ -4,7 +4,7 @@ $tr = [
+   '_' => 'members_list',
+   '_todo_level' => 0,
+   '_last_author' => 'Nael Sayegh',
+-  '_last_modif' => 1750776404,
++  '_last_modif' => 1750703389,
+   'title' => 'Liste des membres {{site}}',
+   'sort_by' => 'Trier par&nbsp;:',
+   'sort_by_signup_date' => 'Date d\'inscription',
+diff --git a/locales/fr/privacy.tr.php b/locales/fr/privacy.tr.php
+index f43b4a4..f9ef5c7 100644
+--- a/locales/fr/privacy.tr.php
++++ b/locales/fr/privacy.tr.php
+@@ -4,7 +4,7 @@ $tr = [
+   '_' => 'privacy',
+   '_todo_level' => 0,
+   '_last_author' => 'Nael Sayegh',
+-  '_last_modif' => 1750776404,
++  '_last_modif' => 1750692493,
+   'title' => 'politique de confidentialité {{site}}',
+   'maintext' => <<<ENDSTR
+     <h2>{{site}} respecte votre vie privée</h2>
+diff --git a/locales/fr/settings.tr.php b/locales/fr/settings.tr.php
+index 7691cbb..155a758 100755
+--- a/locales/fr/settings.tr.php
++++ b/locales/fr/settings.tr.php
+@@ -3,8 +3,8 @@
+ $tr = [
+   '_' => 'settings',
+   '_todo_level' => 0,
+-  '_last_author' => 'Corentin',
+-  '_last_modif' => 1750595022,
++  '_last_author' => 'Nael Sayegh',
++  '_last_modif' => 1750595318,
+   'title' => 'Paramètres',
+   'maintext' => '<p>Cette page vous donne accès à quelques paramètres pour personnaliser le site à votre guise.<br>
+ Si vous n\'êtes pas identifié en tant que membre, les paramètres seront sauvegardés grâce à des cookies, sinon, ils seront enregistrés dans notre base de données et vous les retrouverez dès lors que vous vous identifierez sur le site (peu importe l\'appareil utilisé).</p>',
+diff --git a/locales/fr/signup.tr.php b/locales/fr/signup.tr.php
+index 331c293..c506d75 100644
+--- a/locales/fr/signup.tr.php
++++ b/locales/fr/signup.tr.php
+@@ -4,7 +4,7 @@ $tr = [
+   '_' => 'signup',
+   '_todo_level' => 0,
+   '_last_author' => 'Nael Sayegh',
+-  '_last_modif' => 1750776404,
++  '_last_modif' => 1750707589,
+   'title' => 'Se créer un compte {{site}}',
+   'log_lenght_username' => 'Votre nom d\'utilisateur doit comporter entre 3 et 32 caractères.',
+   'log_lenght_mail' => 'Votre adresse e-mail ne doit pas dépasser 255 caractères.',
+diff --git a/login.php b/login.php
+index 4347e56..6d9ade9 100755
+--- a/login.php
++++ b/login.php
+@@ -21,7 +21,7 @@ if (isset($_POST['username']) && isset($_POST['psw']))
+     $SQL = <<<SQL
+         SELECT * FROM accounts WHERE username=:username OR email=:mail LIMIT 2
+         SQL;
+-    $req = $bdd->prepare($SQL);
++    $req = $bdd2->prepare($SQL);
+     $req->execute([':username' => $_POST['username'], ':mail' => $_POST['username']]);
+ 
+     while ($data = $req->fetch())
+@@ -45,7 +45,7 @@ if (isset($_POST['username']) && isset($_POST['psw']))
+             $SQL2 = <<<SQL
+                 INSERT INTO sessions (account, session, connectid, expire, created, token) VALUES (:acc,:session,:connectid,:exp,:create,:token)
+                 SQL;
+-            $req2 = $bdd->prepare($SQL2);
++            $req2 = $bdd2->prepare($SQL2);
+             $req2->execute([':acc' => $data['id'], ':session' => password_hash($session, PASSWORD_DEFAULT), ':connectid' => $connectid, ':exp' => $expire, ':create' => $created, ':token' => $token]);
+             $to = $_POST['redirect'] ?? ($_SESSION['intended_after_login'] ?? '/');
+             unset($_SESSION['intended_after_login']);
+@@ -64,7 +64,7 @@ if (isset($_GET['signed']) && isset($_GET['mail']))
+     $SQL = <<<SQL
+         SELECT email FROM accounts WHERE id=:id AND confirmed=false LIMIT 1
+         SQL;
+-    $req = $bdd->prepare($SQL);
++    $req = $bdd2->prepare($SQL);
+     $req->execute([':id' => $_GET['signed']]);
+     if ($data = $req->fetch())
+     {
+diff --git a/logout.php b/logout.php
+index 45c0616..8d46a35 100755
+--- a/logout.php
++++ b/logout.php
+@@ -11,7 +11,7 @@ if (isset($_GET['token']) && $_GET['token'] === $login['token'])
+     $SQL = <<<SQL
+         UPDATE sessions SET expire=:exp WHERE id=:id
+         SQL;
+-    $req = $bdd->prepare($SQL);
++    $req = $bdd2->prepare($SQL);
+     $req->execute([':exp' => time() - 1, ':id' => $login['session_id']]);
+     header('Location: /');
+     exit();
+diff --git a/members_list.php b/members_list.php
+index 75bae5c..5758f0d 100755
+--- a/members_list.php
++++ b/members_list.php
+@@ -39,7 +39,7 @@ $SQL = <<<SQL
+     ORDER BY accounts.signup_date DESC
+     SQL;
+ $n = 0;
+-foreach ($bdd->query($SQL) as $data)
++foreach ($bdd2->query($SQL) as $data)
+ {
+     $sets = json_decode((string) $data['settings'], true);
+     printf(
+diff --git a/renovate.json b/renovate.json
+new file mode 100755
+index 0000000..4cff8cf
+--- /dev/null
++++ b/renovate.json
+@@ -0,0 +1,24 @@
++{
++  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
++  "extends": [
++    "config:recommended",
++    ":dependencyDashboard",
++    ":enableVulnerabilityAlertsWithLabel('security')",
++    ":rebaseStalePrs",
++    "group:recommended"
++  ],
++  "configMigration": true,
++  "prHourlyLimit": 0,
++  "prConcurrentLimit": 0,
++  "lockFileMaintenance": {
++    "enabled": true
++  },
++  "git-submodules": {
++    "enabled": true
++  },
++  "ignorePaths": [
++    "**/vendor/**",
++    "include/lib/facebook/composer.json"
++  ],
++  "timezone": "Europe/Paris"
++}
+diff --git a/settings.php b/settings.php
+index 16f5257..98c7478 100755
+--- a/settings.php
++++ b/settings.php
+@@ -36,7 +36,7 @@ if (isset($_GET['act']) && $_GET['act'] === 'form')
+         $SQL = <<<SQL
+             UPDATE accounts SET settings=:set WHERE id=:id
+             SQL;
+-        $req = $bdd->prepare($SQL);
++        $req = $bdd2->prepare($SQL);
+         $req->execute([':set' => json_encode($settings), ':id' => $login['id']]);
+     }
+ 
+@@ -54,7 +54,7 @@ elseif (isset($_GET['act']) && $_GET['act'] === '0')
+         $SQL = <<<SQL
+             UPDATE accounts SET settings=:set WHERE id=:id
+             SQL;
+-        $req = $bdd->prepare($SQL);
++        $req = $bdd2->prepare($SQL);
+         $req->execute([':set' => json_encode($settings), ':id' => $login['id']]);
+     }
+     else
+diff --git a/signup.php b/signup.php
+index 483c84b..33b9ac2 100755
+--- a/signup.php
++++ b/signup.php
+@@ -40,7 +40,7 @@ if (isset($_GET['a']) && $_GET['a'] === 'form' && isset($_POST['username']) && i
+         $SQL = <<<SQL
+             SELECT username,email FROM accounts WHERE username=:username OR email=:mail LIMIT 1
+             SQL;
+-        $req = $bdd->prepare($SQL);
++        $req = $bdd2->prepare($SQL);
+         $req->execute([':username' => $username, ':mail' => $_POST['mail']]);
+         if ($data = $req->fetch())
+         {
+@@ -65,7 +65,7 @@ if (isset($_GET['a']) && $_GET['a'] === 'form' && isset($_POST['username']) && i
+                 $SQL = <<<SQL
+                     SELECT id FROM accounts WHERE id64=:id
+                     SQL;
+-                $req = $bdd->prepare($SQL);
++                $req = $bdd2->prepare($SQL);
+                 $req->execute([':id' => $id64]);
+                 if ($req->fetch())
+                 {
+@@ -105,7 +105,7 @@ if (isset($_GET['a']) && $_GET['a'] === 'form' && isset($_POST['username']) && i
+             $SQL = <<<SQL
+                 INSERT INTO accounts (username, email, id64, password, signup_date, settings, rights) VALUES(:username,:mail,:id,:psw,:date,:set,:rights)
+                 SQL;
+-            $req = $bdd->prepare($SQL);
++            $req = $bdd2->prepare($SQL);
+             $req->execute([':username' => $username, ':mail' => $email, ':id' => $id64, ':psw' => $password, ':date' => time(), ':set' => json_encode($settings), ':rights' => json_encode($right)]);
+             $id = $bdd->lastInsertId();
+ 
+diff --git a/tasks/TicketsBot.php b/tasks/TicketsBot.php
+index a6fe644..f179b9c 100755
+--- a/tasks/TicketsBot.php
++++ b/tasks/TicketsBot.php
+@@ -191,7 +191,7 @@ foreach ($mails as $mail)
+     }
+     elseif (in_array($from, $admins, true))
+     {
+-        $q = $bdd->prepare(
++        $q = $bdd2->prepare(
+             'SELECT a.id, t.short_name
+              FROM accounts a
+              LEFT JOIN team t ON t.account_id = a.id
+diff --git a/tasks/accounts_manager.php b/tasks/accounts_manager.php
+index b4faf61..24da5a8 100755
+--- a/tasks/accounts_manager.php
++++ b/tasks/accounts_manager.php
+@@ -9,7 +9,7 @@ $SESSION_EXPIRE = 8640000; // time after expiration to delete session (100 days)
+ $SQL = <<<SQL
+     SELECT * FROM accounts
+     SQL;
+-foreach ($bdd->query($SQL) as $data)
++foreach ($bdd2->query($SQL) as $data)
+ {
+     $change = false;
+     $rank = $data['rank'];
+@@ -25,7 +25,7 @@ foreach ($bdd->query($SQL) as $data)
+         $SQL2 = <<<SQL
+             UPDATE accounts SET rank=:rk WHERE id=:id
+             SQL;
+-        $req2 = $bdd->prepare($SQL2);
++        $req2 = $bdd2->prepare($SQL2);
+         $req2->execute([':rk' => $rank, ':id' => $data['id']]);
+     }
+ }
+@@ -34,5 +34,5 @@ foreach ($bdd->query($SQL) as $data)
+ $SQL = <<<SQL
+     DELETE FROM sessions WHERE expire<:exp
+     SQL;
+-$req = $bdd->prepare($SQL);
++$req = $bdd2->prepare($SQL);
+ $req->execute([':exp' => time() - $SESSION_EXPIRE]);
+diff --git a/tasks/birthday.php b/tasks/birthday.php
+index 40c8975..7d52027 100755
+--- a/tasks/birthday.php
++++ b/tasks/birthday.php
+@@ -10,7 +10,7 @@ require_once($document_root.'/include/lib/discord_publisher.php');
+ $SQL = <<<SQL
+     SELECT * FROM team ORDER BY age DESC
+     SQL;
+-foreach ($bdd->query($SQL) as $data)
++foreach ($bdd2->query($SQL) as $data)
+ {
+     if (date('d/m') === date('d/m', $data['age']))
+     {
+@@ -33,7 +33,7 @@ if (date('d/m') === '24/12')
+     $SQL = <<<SQL
+         SELECT * FROM team ORDER BY age DESC
+         SQL;
+-    foreach ($bdd->query($SQL) as $data)
++    foreach ($bdd2->query($SQL) as $data)
+     {
+         if ($data['works'] === '1' || $data['works'] === '2')
+         {
+@@ -50,7 +50,7 @@ elseif (date('d/m') === '01/01')
+     $SQL = <<<SQL
+         SELECT * FROM team ORDER BY age DESC
+         SQL;
+-    foreach ($bdd->query($SQL) as $data)
++    foreach ($bdd2->query($SQL) as $data)
+     {
+         if ($data['works'] === '1' || $data['works'] === '2')
+         {
+diff --git a/tasks/history_cache.php b/tasks/history_cache.php
+index bce5d7c..403610c 100755
+--- a/tasks/history_cache.php
++++ b/tasks/history_cache.php
+@@ -5,61 +5,41 @@ require_once($document_root.'/include/consts.php');
+ $cachedir = $document_root.'/cache/';
+ 
+ $time = time();
+-$ltime = $time - 2678400;# 31 days ago
++$ltime = $time - 2678400; # 31 jours
+ 
+-# Get categories
++# Get catégories
+ $cat = [];
+ $SQL = <<<SQL
+     SELECT * FROM softwares_categories
+-    SQL;
+-foreach ($bdd->query($SQL) as $data)
+-{
++SQL;
++foreach ($bdd->query($SQL) as $data) {
+     $cat[$data['id']] = $data['name'];
+ }
+ 
+-# Get softwares
++# Get logiciels
+ $sft = [];
+ $SQL = <<<SQL
+     SELECT * FROM softwares WHERE date>=:date
+-    SQL;
++SQL;
+ $req = $bdd->prepare($SQL);
+ $req->execute([':date' => $ltime]);
+-while ($data = $req->fetch())
+-{
+-    $sft[$data['id']] = $data;
++while ($data = $req->fetch()) {
++    $sft[date('Y-m-d', $data['date'])][] = $data;
+ }
+ 
+-# Get files
+-$files = [];
+-$SQL = <<<SQL
+-    SELECT * FROM softwares_files WHERE date>=:date ORDER BY date DESC
+-    SQL;
+-$req = $bdd->prepare($SQL);
+-$req->execute([':date' => $ltime]);
+-while ($data = $req->fetch())
+-{
+-    $files[date('Y-m-d', $data['date'])][] = $data;
+-}
+-
+-# Get last site update
++# Get mise à jour site
+ $maj_date = '';
+ $SQL = <<<SQL
+     SELECT * FROM site_updates WHERE date>=:date ORDER BY date DESC LIMIT 1
+-    SQL;
++SQL;
+ $req = $bdd->prepare($SQL);
+ $req->execute([':date' => $ltime]);
+-if ($data = $req->fetch())
+-{
+-    if ($data['id'] < 10)
+-    {
++if ($data = $req->fetch()) {
++    if ($data['id'] < 10) {
+         $maj_id = 'V00'.$data['id'];
+-    }
+-    elseif ($data['id'] < 100)
+-    {
++    } elseif ($data['id'] < 100) {
+         $maj_id = 'V0'.$data['id'];
+-    }
+-    else
+-    {
++    } else {
+         $maj_id = $data['id'];
+     }
+     $maj_name = substr((string) $data['name'], 1);
+@@ -68,82 +48,54 @@ if ($data = $req->fetch())
+     $maj_time = $data['date'];
+ }
+ 
+-# Get days
++# Jours à parcourir
+ $days = [];
+ $curtime = $time;
+-while ($curtime >= $ltime)
+-{
++while ($curtime >= $ltime) {
+     $days[] = [date('Y-m-d', $curtime), getFormattedDate($curtime, 'EEEE d MMMM')];
+     $curtime -= 86400;
+ }
+ 
+-# Open files
++# Ouverture fichiers
+ $file_html = fopen($cachedir.'journal.html', 'w');
+ $file_rss = fopen($document_root.'/rss_feed.xml', 'w');
+ fwrite($file_rss, '<?xml version="1.0" encoding="utf-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel><title>'.$site_name.'.net</title><link>'.SITE_URL.'</link><atom:link href="'.SITE_URL.'/rss_feed.xml" rel="self" type="application/rss+xml" /><description>Journal des modifications sur '.$site_name.'.</description><copyright>2016-'.date('Y').$site_name.'</copyright><language>fr</language>');
+ 
+-foreach ($days as &$day)
+-{
++foreach ($days as &$day) {
+     $html = '';
+     $rss = '';
+     $title = false;
+     $space = false;
+ 
+-    # Check & write site update
+-    if ($maj_date === $day[0])
+-    {
++    # Maj du site ce jour
++    if ($maj_date === $day[0]) {
+         $title = true;
+         $space = true;
+-        $html = '<li><a class="jrnl_sft" href="'.$maj_link.'">Mise à jour du site&#160;: '.$site_name.' '.$maj_name.' ('.$maj_id.')</a></li>';
+-        $rss = '<item><title>Mise à jour du site : '.$site_name.' '.$maj_name.' ('.$maj_id.')</title><link>'.$maj_link.'</link><pubDate>'.date('r', $maj_time).'</pubDate></item>';
++        $html .= '<li><a class="jrnl_sft" href="'.$maj_link.'">Mise à jour du site&#160;: '.$site_name.' '.$maj_name.' ('.$maj_id.')</a></li>';
++        $rss .= '<item><title>Mise à jour du site : '.$site_name.' '.$maj_name.' ('.$maj_id.')</title><link>'.$maj_link.'</link><pubDate>'.date('r', $maj_time).'</pubDate></item>';
+     }
+ 
+-    # Check & write softwares
+-    if (isset($files[$day[0]]))
+-    {
++    # Logiciels mis à jour ce jour
++    if (isset($sft[$day[0]])) {
+         $title = true;
+-        $cursfts = [];
+-        foreach ($files[$day[0]] as &$curfile)
+-        {
+-            $cursfts[$curfile['sw_id']][] = $curfile;
+-        }
+-        unset($curfile);
+-        foreach ($cursfts as &$cursft)
+-        {
+-            $c = $sft[$cursft[0]['sw_id']];
++        foreach ($sft[$day[0]] as &$c) {
+             $html .= '<li';
+-            if ($space)
+-            {
++            if ($space) {
+                 $html .= ' class="jrnl_space"';
+             }
+-            $html .= '>Mis à jour par '.$c['author'].' : <a class="jrnl_sft" href="/a'.$c['id'].'">'.$c['name'].'</a> <span class="jrnl_cat">(<a href="/c'.$c['category'].'">'.$cat[$c['category']].'</a>)</span><p class="jrnl_p">'.$c['description'].'</p><ul>';
+-            foreach ($cursft as &$curfile)
+-            {
+-                if ($curfile['label'] !== '')
+-                {
+-                    $html .= '<li><a class="jrnl_r" href="/dl/'.$curfile['label'].'">'.$curfile['title'].'</a></li>';
+-                    $rss .= '<item><title>'.$curfile['title'].'</title><link>'.SITE_URL.'/dl/'.$curfile['label'].'</link><dc:creator>'.$c['author'].'</dc:creator><description>'.$c['description'].'</description><pubDate>'.date('r', $curfile['date']).'</pubDate></item>';
+-                }
+-                else
+-                {
+-                    $html .= '<li><a class="jrnl_r" href="/dl/'.$curfile['id'].'">'.$curfile['title'].'</a></li>';
+-                    $rss .= '<item><title>'.$curfile['title'].'</title><link>'.SITE_URL.'/dl/'.$curfile['id'].'</link><description>'.$c['description'].'</description><pubDate>'.date('r', $curfile['date']).'</pubDate></item>';
+-                }
+-            }
+-            unset($curfile);
+-            $html .= '</ul>';
++            $html .= '>Mis à jour par '.$c['author'].' : <a class="jrnl_sft" href="/a'.$c['id'].'">'.$c['name'].'</a> <span class="jrnl_cat">(<a href="/c'.$c['category'].'">'.$cat[$c['category']].'</a>)</span><p class="jrnl_p">'.$c['description'].'</p></li>';
++            $rss .= '<item><title>'.$c['name'].'</title><link>'.SITE_URL.'/a'.$c['id'].'</link><dc:creator>'.$c['author'].'</dc:creator><description>'.$c['description'].'</description><pubDate>'.date('r', $c['date']).'</pubDate></item>';
+             $space = true;
+         }
+-        unset($cursft);
++        unset($c);
+     }
+ 
+-    # Write
+-    if ($title)
+-    {
++    if ($title) {
+         fwrite($file_html, '<span class="jrnl_date" id="'.$day[0].'" role="heading" aria-level="2">'.$day[1].'</span><ul>'.str_replace('{{site}}', $site_name, $html).'</ul>');
+         fwrite($file_rss, str_replace('{{site}}', $site_name, $rss));
+     }
+ }
++
+ $req->closeCursor();
+ fclose($file_html);
+ fwrite($file_rss, '</channel></rss>');

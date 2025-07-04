@@ -12,7 +12,6 @@ function sendMail($recipients, string $subject, string $contentHtml, string $con
     $css = $options['css'] ?? '';
     $includeNotice = $options['includeAutoReplyNotice'] ?? true;
     $logoUrl = SITE_URL.'/images/logo128-170.png';
-    $contactFormUrl = SITE_URL.'/contact_form.php';
     $styleBlock = $css
         ? <<<HTML
             <style>
@@ -30,7 +29,7 @@ function sendMail($recipients, string $subject, string $contentHtml, string $con
     $noticeHtml = $includeNotice
         ? <<<HTML
             <p style="font-size:.9em; color:#666;">Ne répondez pas à ce mail qui a été envoyé automatiquement.<br>
-            Pour nous contacter, utilisez le <a href="{$contactFormUrl}">formulaire de contact</a>.</p>
+            Pour nous contacter, écrivez nous à l'adresse <a href="mailto:infos@nael-accessvision.com">infos@nael-accessvision.com</a>.</p>
             HTML
         : '';
 
@@ -70,7 +69,7 @@ function sendMail($recipients, string $subject, string $contentHtml, string $con
     $noticeText = $includeNotice
         ? <<<TEXT
             Ne répondez pas à ce mail qui a été envoyé automatiquement.
-            Pour nous contacter, utilisez le formulaire de contact : {$contactFormUrl}
+            Pour nous contacter, écrivez nos à : infos@nael-accessvision.com
 
             TEXT
         : '';

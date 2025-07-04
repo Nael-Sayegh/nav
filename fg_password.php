@@ -35,17 +35,9 @@ if ($step === 'request' && $_SERVER['REQUEST_METHOD'] === 'POST')
         $reqTok = $bdd2->prepare($SQLTok);
         $reqTok->execute([':uid' => $user['id'], ':tok' => $token, ':exp' => $expires]);
         $link = SITE_URL."/fg_password.php?step=reset&token={$token}";
-        $subject = 'Réinitialisation de mot de passe';
-        $body = <<<HTML
-            <p>Bonjour {$user['username']},<br>
-            Cliquez sur ce lien valable 1h pour choisir votre nouveau mot de passe&nbsp;:<br>
-            <a href="{$link}">Choisir mon mot de passe</a>.</p>
-            HTML;
-        $altBody = <<<TEXT
-            <p>Bonjour {$user['username']},
-            Cliquez sur ce lien valable 1h pour choisir votre nouveau mot de passe:
-            {$link}
-            TEXT;
+        $subject = tr($tr,'mail_reset_subject');
+        $body = tr($tr,'mail_reset_body_html', ['username' => $user['username'], 'link' => $link]);
+        $altBody = tr($tr,'mail_reset_body_text', ['username' => $user['username'], 'link' => $link]);
         sendMail($user['email'], $subject, $body, $altBody);
     }
 

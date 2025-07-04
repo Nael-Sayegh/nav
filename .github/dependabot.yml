@@ -1,0 +1,35 @@
+version: 2
+updates:
+  # Composer dependencies for main project
+  - package-ecosystem: "composer"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    rebase-strategy: "auto"
+    open-pull-requests-limit: 10
+    assignees:
+      - "Nael-Sayegh"
+    labels:
+      - "dependencies"
+    # Group all Composer dependencies into a single PR
+    groups:
+      composer-dependencies:
+        patterns:
+          - "*"
+    # Note: Dependabot automatically ignores vendor/ directories
+    # is handled by only monitoring the root directory
+
+  - package-ecosystem: "gitsubmodule"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    assignees:
+      - "Nael-Sayegh"
+    labels:
+      - "dependencies"
+    # Group all submodule updates into a single PR
+    groups:
+      submodule-updates:
+        patterns:
+          - "*"

@@ -11,6 +11,7 @@ updates:
       - "Nael-Sayegh"
     labels:
       - "dependencies"
+    target-branch: "dev"
     # Group all Composer dependencies into a single PR
     groups:
       composer-dependencies:
@@ -22,12 +23,13 @@ updates:
   - package-ecosystem: "gitsubmodule"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     open-pull-requests-limit: 5
     assignees:
       - "Nael-Sayegh"
     labels:
       - "dependencies"
+    target-branch: "dev"
     # Group all submodule updates into a single PR
     groups:
       submodule-updates:

@@ -40,7 +40,7 @@ function check_login($session, $connectid)
             $req->execute([':expire' => time() + 31557600, ':id' => $login['session_id']]);
             # check settings cookies
             $settings = json_decode((string) $login['settings'], true);
-            $sets = ['menu', 'fontsize', 'audio', 'date', 'infosdef'];
+            $sets = ['menu', 'fontsize', 'date', 'infosdef'];
             foreach ($sets as &$setting)
             {
                 if (isset($settings[$setting]) && (!isset($_COOKIE[$setting]) || (isset($_COOKIE[$setting]) && $_COOKIE[$setting] !== $settings[$setting])))

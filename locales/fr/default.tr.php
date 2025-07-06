@@ -4,7 +4,7 @@ $tr = [
   '_' => 'default',
   '_todo_level' => 0,
   '_last_author' => 'Nael Sayegh',
-  '_last_modif' => 1751818174,
+  '_last_modif' => 1751819556,
   'slogan' => 'L'informatique à portée de tous&nbsp;!',
   'banner_homelink' => 'Retour à l\'accueil',
   'fndate' => 'dd/MM/yyyy',
@@ -91,4 +91,9 @@ $tr = [
   'footer_total_chaged_pages' => '{{xvisits}} pages chargées depuis un an dont {{xvisitstoday}} aujourd\'hui',
   'footer_visitors' => '{{xvisitors}} visiteurs depuis une semaine dont {{xtoday}} aujourd\'hui',
   'footer_connected' => '{{xconn}} connectés.',
+  'footer_blog' => <<<ENDSTR
+    <h2>Pensez aussi à consulter notre blog</h2>
+    <p>{{site}} possède un blog où vous trouverez des tutoriels, des astuces, des loisirs et lieux accessibles  et bien plus encore gratuitement. Pour le consulter c'est par ici&nbsp;:</p>
+    <a href="https://blog.nael-accessvision.com">blog.nael-accessvision.com</a>
+  ENDSTR,
 ];

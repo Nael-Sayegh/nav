@@ -70,7 +70,7 @@ if ((isset($_GET['token']) && $_GET['token'] === $login['token']) || (isset($_PO
             SQL;
         $reqFiles = $bdd->prepare($SQLFiles);
         $reqFiles->execute(['sw_id' => $_POST['rsw']]);
-        while ($file = $stmtFiles->fetch())
+        while ($file = $reqFiles->fetch())
         {
             $path = $_SERVER['DOCUMENT_ROOT'].'/files/'.$file['hash'];
             if (is_file($path))

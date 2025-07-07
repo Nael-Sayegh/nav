@@ -15,7 +15,8 @@ $titlemodifie = str_replace(' ', ' ', $title);
 </details>
 </div>
 <a href="contact.php"><?php echo tr($tr0,'footer_contact'); ?></a><br>
-<h1><?php echo tr($tr0,'footer_youtube'); ?></h1><br aria-hidden="true">
+<?= tr($tr0,'footer_blog'); ?><br>
+<h2><?php echo tr($tr0,'footer_youtube'); ?></h2><br aria-hidden="true">
 <span class="youtube"><a href=https://www.youtube.com/channel/UC1Ot4mhqH0LtRJj0C4ctzPw>Nael accessvision</a><br><br class="smartphone"></span>
 <?php
 include('include/stats.php');

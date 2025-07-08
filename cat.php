@@ -89,8 +89,10 @@ foreach ($entries as $sw_id => $entry)
     }
 
     printf(
-        '<div class="software" role="heading" aria-level="2" data-date="%d" data-hits="%d" data-name="%s">
-    <a class="software_title" href="a%d">%s</a>
+        '<div class="software" data-date="%d" data-hits="%d" data-name="%s">
+        <span role="heading" aria-level="2">
+        <a class="software_title" href="a%d">%s</a>
+    </span>
     <p>%s<br>
     <span class="software_hits">%s</span>
     <span class="software_date">(%s)</span>

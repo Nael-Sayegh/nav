@@ -41,7 +41,7 @@ if (defined('CESIUM_URL') && ($cesiumUrl = constant('CESIUM_URL')))
 <?php } ?>
 </details>
 <?php endif; ?>
-<a href="docs/cgs-offline-b2c.pdp"><?= tr($tr0,'footer_cgv'); ?></a><br>
+<a href="docs/cgs-offline-b2c.pdf"><?= tr($tr0,'footer_cgv'); ?></a><br>
 <a href="legal.php"><?php echo tr($tr0,'footer_mention'); ?></a><br>
 Copyright &copy 2020-<?php print date('Y'); ?> <?= tr($tr0, 'footer_copyright', ['site' => $site_name]) ?><br>
 <p><?php getContentLastModif(); ?><br>

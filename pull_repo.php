@@ -12,6 +12,6 @@ elseif(GIT_TYPE == 'GH')
         $hash = hash_hmac('sha256', $payload, GIT_WEBHOOK_TOKEN);
         $expectedSignature = 'sha256=' . $hash;
         if (hash_equals($expectedSignature, $githubSignature))
-                shell_exec('git --git-dir="'.GIT_DIR.'" pull');
+                shell_exec('git --git-dir="'.GIT_DIR.'" pull--no-rebase');
 }
 ?>

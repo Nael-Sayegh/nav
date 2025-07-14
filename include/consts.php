@@ -280,12 +280,11 @@ if (isset($modemaintenance) && $modemaintenance && !(isset($logged) && $logged &
     http_response_code(503);
     echo <<<HTML
         <!DOCTYPE html>
-        <html lang="{$lang}">
+        <html lang="fr">
         <head>
         <meta charset="utf-8">
         <meta name="robots" content="noindex, nofollow">
         <title>Site en maintenance</title>
-        <audio src="/audio/forbidden.mp3" autoplay></audio>
         </head>
         <body>
         <h1>Maintenance en cours</h1>

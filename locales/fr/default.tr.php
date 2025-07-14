@@ -4,7 +4,7 @@ $tr = [
   '_' => 'default',
   '_todo_level' => 0,
   '_last_author' => 'Nael Sayegh',
-  '_last_modif' => 1752078718,
+  '_last_modif' => 1752498777,
   'slogan' => 'L\'informatique à portée de tous&nbsp;!',
   'banner_homelink' => 'Retour à l\'accueil',
   'fndate' => 'dd/MM/yyyy',
@@ -96,5 +96,5 @@ $tr = [
     <p>{{site}} possède un blog où vous trouverez des tutoriels, des astuces, des loisirs et lieux accessibles  et bien plus encore, gratuitement. Pour le consulter, c'est par ici&nbsp;:</p>
     <a href="https://blog.nael-accessvision.com">blog.nael-accessvision.com</a>
   ENDSTR,
-  'footer_cgv' => 'Conditions générales de vente (S\'ouvrent dans un nouvel onglet)',
+  'footer_cgv' => 'Conditions générales de vente (S\'ouvre dans un nouvel onglet)',
 ];

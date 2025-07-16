@@ -24,15 +24,35 @@ if (isset($_GET['act']) && $_GET['act'] === 'form')
 }
 if (isset($_GET['act']) && $_GET['act'] === 'sendnl')
 {
+    $site = $_POST['site'] ?? 'site1';
     $SQL = <<<SQL
         SELECT * FROM newsletter_mails WHERE confirm=true
-        SQL;
-    $req = $bdd->prepare($SQL);
-    $req->execute();
-    while ($data = $req->fetch())
+    SQL;
+
+    $stmt_and_send = function($db) use ($SQL)
     {
-        sendMail($data['mail'], $_POST['obj'], $_POST['text'], "Ce mail est uniquement disponible au format HTML");
+        $req = $db->prepare($SQL);
+        $req->execute();
+        while ($data = $req->fetch())
+        {
+            sendMail($data['mail'], $_POST['obj'], $_POST['text'], "Ce mail est uniquement disponible au format HTML");
+        }
+    };
+
+    if ($site === 'site1')
+    {
+        $stmt_and_send($bdd);
     }
+    elseif ($site === 'site2')
+    {
+        $stmt_and_send($bdd2);
+    }
+    elseif ($site === 'both')
+    {
+        $stmt_and_send($bdd);
+        $stmt_and_send($bdd2);
+    }
+
     exit();
 }
 ?>
@@ -46,13 +66,19 @@ if (isset($_GET['act']) && $_GET['act'] === 'sendnl')
 </head>
 <body>
 <?php require_once('include/banner.php'); ?>
-<h2>Envoyer une newsletter aux abonnés de <?php echo $site_name; ?></h2>
-<p>Remplir le formulaire ci-dessous pour envoyer une newsletter à tous les abonnés de <?php echo $site_name; ?></p>
+<h2>Envoyer une newsletter aux abonnés</h2>
+<p>Remplir le formulaire ci-dessous pour envoyer une newsletter à tous les abonnés</p>
 <form action="?act=sendnl" method="post">
 <label for="f_obj">Sujet&nbsp;:</label>
 <input type="text" name="obj" id="f_obj" required><br>
 <label for="f_text">Texte (HTML)&nbsp;:</label>
 <textarea name="text" id="f_text" maxlength="20000"></textarea><br>
+<label for="f_site">Envoyer aux abonnés de&nbsp;:</label>
+<select name="site" id="f_site">
+<option value="site1"><?php echo $site_name; ?></option>
+<option value="site2">Blog</option>
+<option value="both">Les deux sites</option>
+</select><br>
 <input type="submit" value="Envoyer">
 </form>
 <hr>

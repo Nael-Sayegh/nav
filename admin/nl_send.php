@@ -4,6 +4,7 @@ $justna = true;
 $titlePAdm = 'Envoyer la lettre d\'informations';
 require_once($_SERVER['DOCUMENT_ROOT'].'/include/log.php');
 require_once($_SERVER['DOCUMENT_ROOT'].'/include/consts.php');
+require_once($_SERVER['DOCUMENT_ROOT'].'/include/sendMail.php');
 requireAdminRight('manage_newsletter');
 
 if (isset($_GET['act']) && $_GET['act'] === 'form')

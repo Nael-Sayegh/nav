@@ -90,6 +90,7 @@ foreach ($days as &$day) {
         unset($c);
     }
 
+    # Write
     if ($title) {
         fwrite($file_html, '<span class="jrnl_date" id="'.$day[0].'" role="heading" aria-level="2">'.$day[1].'</span><ul>'.str_replace('{{site}}', $site_name, $html).'</ul>');
         fwrite($file_rss, str_replace('{{site}}', $site_name, $rss));

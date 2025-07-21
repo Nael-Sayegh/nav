@@ -33,17 +33,6 @@ $stats_page = 'cat'; ?>
 <main id="container">
 <h1 id="contenu"><?php print $title; ?></h1>
 <?= str_replace('{{site}}', $site_name, $cat_text) ?>
-<div id="js-sort-container" hidden style="margin:1em 0;">
-  <label for="js_sort"><?= tr($tr, 'sort_label') ?></label>
-  <select id="js_sort">
-    <option value="date"><?= tr($tr, 'sort_date') ?></option>
-    <option value="hits"><?= tr($tr, 'sort_hits') ?></option>
-    <option value="name"><?= tr($tr, 'sort_alpha_order') ?></option>
-  </select>
-</div>
-<noscript>
-  <p><?= tr($tr, 'js_to_sort') ?></p>
-</noscript>
 <div id="software-list">
 <?php
 $entries = [];
@@ -111,43 +100,5 @@ foreach ($entries as $sw_id => $entry)
 </div>
 </main>
 <?php require_once('include/footer.php'); ?>
-<script>
-    document.addEventListener('DOMContentLoaded', function()
-    {
-        const sortContainer = document.getElementById('js-sort-container');
-        if (sortContainer) sortContainer.hidden = false;
-        const select = document.getElementById('js_sort');
-        const list   = document.getElementById('software-list');
-        const items  = Array.from(list.children);
-        function sortSoftware(by)
-        {
-            const key = by;
-            const sorted = items.slice().sort((a, b) =>
-            {
-                let va = a.dataset[key], vb = b.dataset[key];
-                if (['date','hits'].includes(key))
-                {
-                    va = parseInt(va,10) || 0;
-                    vb = parseInt(vb,10) || 0;
-                }
-                else
-                {
-                    va = va.toLowerCase();
-                    vb = vb.toLowerCase();
-                }
-                if (va < vb) return (['date','hits'].includes(key) ? 1 : -1);
-                if (va > vb) return (['date','hits'].includes(key) ? -1 : 1);
-                return 0;
-            });
-            list.innerHTML = '';
-            sorted.forEach(el => list.appendChild(el));
-        }
-        if (select)
-        {
-            sortSoftware(select.value);
-            select.addEventListener('change', () => sortSoftware(select.value));
-        }
-    });
-</script>
 </body>
 </html>

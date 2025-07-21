@@ -327,19 +327,6 @@ foreach ($files as $data)
     {
         ?>
 <span class="sr_only" role="heading" aria-level="2" aria-labelledby="filestitle"></span>
-<div id="js-sort-container" hidden style="margin:1em 0;">
-<label for="js_sort"><?= tr($tr, 'sort_label') ?></label>
-<select id="js_sort">
-<option value="date"><?= tr($tr, 'sort_date') ?></option>
-<option value="hits"><?= tr($tr, 'sort_dl') ?></option>
-<option value="name"><?= tr($tr, 'sort_filename') ?></option>
-<option value="title"><?= tr($tr, 'sort_title') ?></option>
-<option value="filesize"><?= tr($tr, 'sort_size') ?></option>
-</select>
-</div>
-<noscript>
-  <p><?= tr($tr, 'js_to_sort') ?></p>
-</noscript>
 <table id="sw_files">
 <caption><strong id="filestitle"><?= tr($tr, 'files_title', ['title' => $title]) ?></strong></caption>
 <thead>
@@ -666,42 +653,5 @@ function subscribe_comments(e, mod)
 }
 </script>
 <?php } ?>
-<script>
-    document.addEventListener('DOMContentLoaded', function()
-    {
-        const sortContainer = document.getElementById('js-sort-container');
-        if (sortContainer) sortContainer.hidden = false;
-        const select  = document.getElementById('js_sort');
-        const tbody   = document.querySelector('#sw_files tbody');
-        const rows    = Array.from(tbody.querySelectorAll('tr'));
-        function sortRows(criteria)
-        {
-            const sorted = rows.slice().sort((a, b) =>
-            {
-                let va = a.dataset[criteria], vb = b.dataset[criteria];
-                if (['date','hits','filesize'].includes(criteria))
-                {
-                    va = parseInt(va, 10);
-                    vb = parseInt(vb, 10);
-                }
-                else
-                {
-                    va = va.toLowerCase();
-                    vb = vb.toLowerCase();
-                }
-                if (va < vb) return (['date','hits','filesize'].includes(criteria) ? 1 : -1);
-                if (va > vb) return (['date','hits','filesize'].includes(criteria) ? -1 : 1);
-                return 0;
-            });
-            tbody.innerHTML = '';
-            sorted.forEach(tr => tbody.appendChild(tr));
-        };
-        sortRows(select.value);
-        select.addEventListener('change', () =>
-        {
-            sortRows(select.value);
-        });
-    });
-</script>
 </body>
 </html>

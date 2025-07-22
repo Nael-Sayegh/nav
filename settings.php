@@ -12,7 +12,7 @@ if (isset($_GET['act']) && $_GET['act'] === 'form')
     }
     setcookie('menu', $menu, ['expires' => time() + 31536000, 'path' => '/', 'secure' => true, 'httponly' => true, 'samesite' => 'strict']);
 
-    $fontsize = '16';
+    $fontsize = '20';
     if (isset($_POST['fontsize']) && in_array($_POST['fontsize'], ['11','16','20','24']))
     {
         $fontsize = $_POST['fontsize'];
@@ -49,7 +49,7 @@ elseif (isset($_GET['act']) && $_GET['act'] === '0')
     {
         $settings = json_decode((string) $login['settings'], true);
         $settings['menu'] = '0';
-        $settings['fontsize'] = '16';
+        $settings['fontsize'] = '20';
         $settings['infosdef'] = '1';
         $SQL = <<<SQL
             UPDATE accounts SET settings=:set WHERE id=:id
@@ -83,7 +83,7 @@ if ($logged)
     echo '<input type="hidden" name="token" value="'.$login['token'].'">';
 }
 $menu = $_COOKIE['menu'] ?? '0';
-$fontsize = $_COOKIE['font_size'] ?? '16';
+$fontsize = $_COOKIE['font_size'] ?? '20';
 $infosdef = $_COOKIE['infosdef'] ?? '1';
 ?>
 <h3><?= tr($tr, 'gui') ?></h3>

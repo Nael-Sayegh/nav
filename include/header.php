@@ -11,7 +11,7 @@
 }
 else
 {
-    echo '16';
+    echo '20';
 } ?>px;}</style>
 <script src="/scripts/default.js"></script>
 <meta property="og:title" content="<?php print $title; ?>">

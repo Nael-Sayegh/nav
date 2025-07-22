@@ -479,14 +479,6 @@ if (!$first)
 <td>'.$sw['downloads'].'</td></tr>';
 } ?>
 <tr>
-<td><?= tr($tr, 'visits') ?></td>
-<td><?= $sw['hits'] ?></td>
-</tr>
-<tr>
-<td><?= tr($tr, 'lastmodif') ?></td>
-<td><?= tr($tr, 'lastmodif_val', ['author' => $sw['author'],'date' => getFormattedDate($sw['date'], tr($tr0, 'fndatetime'))]) ?></td>
-</tr>
-<tr>
 <td><?= tr($tr, 'id') ?></td>
 <td>A<?= $sw['id'] ?> (<?= '<a href="/c'.$sw['category'].'">'.$catMap[$sw['category']].'</a>' ?>)</td>
 </tr>

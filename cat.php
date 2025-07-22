@@ -83,17 +83,13 @@ foreach ($entries as $sw_id => $entry)
         <a class="software_title" href="a%d">%s</a>
     </span>
     <p>%s<br>
-    <span class="software_hits">%s</span>
-    <span class="software_date">(%s)</span>
     </p></div>',
         $entry['date'],
         $entry['hits'],
         htmlspecialchars(strtolower(str_replace('{{site}}', $site_name, $entry['trs'][$entry_tr]['title']))),
         $sw_id,
         str_replace('{{site}}', $site_name, $entry['trs'][$entry_tr]['title']),
-        str_replace('{{site}}', $site_name, $entry['trs'][$entry_tr]['desc']),
-        tr($tr, 'hits', ['hits' => $entry['hits']]),
-        tr($tr, 'date', ['date' => getFormattedDate($entry['date'], tr($tr0, 'fndatetime'))])
+        str_replace('{{site}}', $site_name, $entry['trs'][$entry_tr]['desc'])
     );
 }
 ?>

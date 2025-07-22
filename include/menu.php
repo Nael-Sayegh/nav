@@ -120,7 +120,7 @@ function render_menu(string $mode, array $items)
                         '<li role="link"%s><a role="menuitem" href="%s" title="%s">%s</a></li>',
                         $cur,
                         $it['url'],
-                        $title,
+                        str_replace('{{site}}', $site_name, $title),
                         $label
                     );
                     break;

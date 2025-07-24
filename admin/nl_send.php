@@ -25,34 +25,33 @@ if (isset($_GET['act']) && $_GET['act'] === 'form')
 if (isset($_GET['act']) && $_GET['act'] === 'sendnl')
 {
     $site = $_POST['site'] ?? 'site1';
-    $SQL = <<<SQL
-        SELECT * FROM newsletter_mails WHERE confirm=true
-    SQL;
-
-    $stmt_and_send = function($db) use ($SQL)
+    $allMails = [];
+    $buildSQL = function(string $column): string
     {
-        $req = $db->prepare($SQL);
+        return "SELECT mail FROM newsletter_mails WHERE confirm = true AND {$column} = true";
+    };
+    if ($site === 'site1' || $site === 'both')
+    {
+        $req = $bdd->prepare($buildSQL('notif_upd'));
         $req->execute();
         while ($data = $req->fetch())
         {
-            sendMail($data['mail'], $_POST['obj'], $_POST['text'], "Ce mail est uniquement disponible au format HTML");
+            $allMails[$data['mail']] = true;
         }
-    };
-
-    if ($site === 'site1')
-    {
-        $stmt_and_send($bdd);
     }
-    elseif ($site === 'site2')
+    if ($site === 'site2' || $site === 'both')
     {
-        $stmt_and_send($bdd2);
+        $req = $bdd->prepare($buildSQL('notif_upd_n'));
+        $req->execute();
+        while ($data = $req->fetch())
+        {
+            $allMails[$data['mail']] = true;
+        }
     }
-    elseif ($site === 'both')
+    foreach (array_keys($allMails) as $email)
     {
-        $stmt_and_send($bdd);
-        $stmt_and_send($bdd2);
+        sendMail($email, $_POST['obj'], $_POST['text'], "Ce mail est uniquement disponible au format HTML");
     }
-
     exit();
 }
 ?>

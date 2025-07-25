@@ -3,7 +3,6 @@
 <title><?= $title.' – '.$site_name ?></title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-<link title="<?= $site_name ?>" type="application/opensearchdescription+xml" rel="search" href="/opensearch.xml.php">
 <?php print $css_path; ?>
 <style>body {font-size: <?php if (isset($_COOKIE['fontsize']) && preg_match('#[0-9]{1,2}#', (string) $_COOKIE['fontsize']))
 {

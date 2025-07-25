@@ -4,7 +4,7 @@ $tr = [
   '_' => 'index',
   '_todo_level' => 0,
   '_last_author' => 'Pascal',
-  '_last_modif' => 1753278060,
+  '_last_modif' => 1753435006,
   'title' => '{{site}}&nbsp;: {{slogan}}',
   'happynewyear' => '<p role="alert">Toute l\'équipe {{site}} vous souhaite une excellente année {{year}}, vous envoie ses voeux de bonheur, de santé et de sérénité.<br>
 

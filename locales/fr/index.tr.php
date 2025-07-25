@@ -4,7 +4,7 @@ $tr = [
   '_' => 'index',
   '_todo_level' => 0,
   '_last_author' => 'Pascal',
-  '_last_modif' => 1751896287,
+  '_last_modif' => 1753435006,
   'title' => '{{site}}&nbsp;: {{slogan}}',
   'happynewyear' => '<p role="alert">Toute l\'équipe {{site}} vous souhaite une excellente année {{year}}, vous envoie ses voeux de bonheur, de santé et de sérénité.<br>
 
@@ -20,7 +20,7 @@ Nous espérons vous apporter satisfaction et répondre à tous vos besoins futur
     Notre approche humaine et personnalisée place vos besoins au centre de nos priorités.<br>
     N’hésitez pas à parcourir nos services pour découvrir tout ce que nous proposons. Pour toute demande spécifique ou projet particulier, contactez-nous, nous serons ravis d’échanger avec vous et de vous accompagner.</p>
     <p>Nous possédons également un blog où vous trouverez des tutoriels, des astuces, des loisirs et lieux accessibles et bien plus encore gratuitement. Pour le consulter c'est par ici&nbsp;:
-    <a href="https://blog.nael-accessvision.com">https://blog.nael-accessvision.com</a></p><br aria-hidden="true">
+    <a href="https://blog.nael-accessvision.com">blog.nael-accessvision.com</a></p><br aria-hidden="true">
   ENDSTR,
   'sliderinactext' => '<p>Vous avez choisis de ne pas utiliser notre système d\'informations défilantes, retrouvez donc ci-dessous nos dernières actualités.</p>',
   'sliderinactitle' => 'Actualités',

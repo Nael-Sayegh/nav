@@ -22,8 +22,6 @@ Nous espérons vous apporter satisfaction et répondre à tous vos besoins futur
     <p>Nous possédons également un blog où vous trouverez des tutoriels, des astuces, des loisirs et lieux accessibles et bien plus encore gratuitement. Pour le consulter c'est par ici&nbsp;:
     <a href="https://blog.nael-accessvision.com">blog.nael-accessvision.com</a></p><br aria-hidden="true">
   ENDSTR,
-  'sliderinactext' => '<p>Vous avez choisis de ne pas utiliser notre système d\'informations défilantes, retrouvez donc ci-dessous nos dernières actualités.</p>',
-  'sliderinactitle' => 'Actualités',
   'mailconfirmtext' => 'Nous vous remercions pour votre message. Nous y répondrons très bientôt.',
   'certif_nvda' => 'Certifié expert NVDA 2025',
 ];

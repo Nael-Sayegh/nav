@@ -81,9 +81,6 @@ margin-bottom: 20px;
 }
 
 @media (max-width: 600px) {
-	#slider {
-	display: none;
-	}
 	#loginbox_form {
 	display: none;
 	}

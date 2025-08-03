@@ -83,7 +83,7 @@ if (isset($_GET['a']) && $_GET['a'] === 'form' && isset($_POST['username']) && i
             }
             $password = password_hash($_POST['psw'], PASSWORD_DEFAULT);
             $mhash = hash('sha512', strval(time() + random_int(1000000, 99999999)).$password.strval(random_int(100000, 99999999)));
-            $settings = ['mhash' => $mhash,'menu' => '0','fontsize' => '16','date' => '0','infosdef' => '1'];
+            $settings = ['mhash' => $mhash,'menu' => '0','fontsize' => '16','date' => '0'];
             if (isset($_COOKIE['menu']) && $_COOKIE['menu'] === '1')
             {
                 $settings['menu'] = '1';
@@ -95,10 +95,6 @@ if (isset($_GET['a']) && $_GET['a'] === 'form' && isset($_POST['username']) && i
             if (isset($_COOKIE['date']) && $_COOKIE['date'] === '1')
             {
                 $settings['date'] = '1';
-            }
-            if (isset($_COOKIE['infosdef']) && $_COOKIE['infosdef'] === '0')
-            {
-                $settings['infosdef'] = '0';
             }
             $right = ['view_members' => 0];
             $email = $_POST['mail'];

@@ -8,7 +8,6 @@ const ALL_ADMIN_RIGHTS = [
     'manage_comments'        => 'Gérer les commentaires des articles',
     'manage_tickets'         => 'Gérer les tickets',
     'manage_publications'    => 'Gérer les publications sociales',
-    'manage_slider'          => 'Gérer le slider',
     'manage_newsletter'      => 'Gérer la lettre d\'informations',
     'publish_versions'       => 'Publier des versions',
     'view_stats'             => 'Voir les statistiques',

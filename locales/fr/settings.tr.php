@@ -15,7 +15,6 @@ Si vous n\'êtes pas identifié en tant que membre, les paramètres seront sauve
   16 => '16 (Moyen)',
   20 => '20 (Normal/par défaut)',
   24 => '24 (grand)',
-  'slider' => 'Activer les infos défilantes de l\'accueil (défaut=oui)',
   'savebtn' => 'Enregistrer',
   'resetbtn' => 'Réinitialiser les paramètres par défaut',
 ];

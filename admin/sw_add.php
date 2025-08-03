@@ -132,7 +132,6 @@ if (isset($_GET['form']) && isset($_POST['sname']) && isset($_POST['category']))
                 send_discord($somsg);
             }
             require_once($_SERVER['DOCUMENT_ROOT'].'/tasks/history_cache.php');
-            require_once($_SERVER['DOCUMENT_ROOT'].'/tasks/slider_cache.php');
         }
 
         header('Location: sw_mod.php?listfiles='.$lastid);

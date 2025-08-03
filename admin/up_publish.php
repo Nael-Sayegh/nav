@@ -32,7 +32,6 @@ if (isset($_GET['add']) && isset($_POST['name']) && isset($_POST['text']))
         send_mastodon($site_name.' version '.substr((string) $data['name'], 1).' publié, changements sur '.SITE_URL.'/u'.$data['id'].' '.$admin_name);
         require_once($_SERVER['DOCUMENT_ROOT'].'/include/lib/discord_publisher.php');
         send_discord($admin_name.' vient de publier '.$site_name.' version '.substr((string) $data['name'], 1).'. Retrouvez tous les détails sur : '.SITE_URL.'/u'.$data['id']);
-        require_once($_SERVER['DOCUMENT_ROOT'].'/tasks/slider_cache.php');
     }
 }
 if (isset($_GET['delete']))

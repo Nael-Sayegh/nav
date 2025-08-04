@@ -29,7 +29,7 @@ if (isset($_GET['act']) && $_GET['act'] === 'form')
         $SQL = <<<SQL
             UPDATE accounts SET settings=:set WHERE id=:id
             SQL;
-        $req = $bdd2->prepare($SQL);
+        $req = $bdd->prepare($SQL);
         $req->execute([':set' => json_encode($settings), ':id' => $login['id']]);
     }
 
@@ -46,7 +46,7 @@ elseif (isset($_GET['act']) && $_GET['act'] === '0')
         $SQL = <<<SQL
             UPDATE accounts SET settings=:set WHERE id=:id
             SQL;
-        $req = $bdd2->prepare($SQL);
+        $req = $bdd->prepare($SQL);
         $req->execute([':set' => json_encode($settings), ':id' => $login['id']]);
     }
     else

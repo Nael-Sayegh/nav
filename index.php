@@ -25,7 +25,6 @@ $title = tr($tr, 'title'); ?>
 </main>
 </div>
 <script src="/scripts/jquery.js"></script>
-<?php } ?>
 <?php require_once('include/footer.php'); ?>
 </body>
 </html>

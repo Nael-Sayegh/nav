@@ -17,7 +17,7 @@ requireAdminRight('manage_newsletter');?>
 <?php require_once('include/banner.php'); ?>
 <table>
 <thead>
-<tr><th>Adresse e-mail</th><th>Hash</th><th>Fréquence</th><th>Dernier mail</th><th>Expiration</th></tr>
+<tr><th>Adresse e-mail</th><th>Hash</th><th>Fréquence</th><th>Dernier mail</th></tr>
 </thead>
 <tbody>
 <?php
@@ -45,7 +45,7 @@ function getFrequency($numFreq)
 }
 foreach ($bdd->query($SQL) as $data)
 {
-    echo '<tr><td>'.$data['mail'].'</td><td><details><summary>'.substr((string) $data['hash'], 0, 7).'</summary>'.$data['hash'].'</details></td><td>'.getFrequency($data['freq']).'</td><td>'.date('d/m/Y H:i', $data['lastmail']).'</td><td>'.date('d/m/Y H:i', $data['expire']).'</td></tr>';
+    echo '<tr><td>'.$data['mail'].'</td><td><details><summary>'.substr((string) $data['hash'], 0, 7).'</summary>'.$data['hash'].'</details></td><td>'.getFrequency($data['freq']).'</td><td>'.date('d/m/Y H:i', $data['lastmail']).'</td></tr>';
 }
 
 ?>

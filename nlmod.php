@@ -11,10 +11,10 @@ if (!isset($_GET['id']))
     exit();
 }
 $SQL = <<<SQL
-    SELECT * FROM newsletter_mails WHERE hash=:hash AND expire>=:exp
+    SELECT * FROM newsletter_mails WHERE hash=:hash
     SQL;
 $req = $bdd->prepare($SQL);
-$req->execute([':hash' => $_GET['id'], ':exp' => time()]);
+$req->execute([':hash' => $_GET['id']]);
 if ($nldata = $req->fetch())
 {
     if (isset($_GET['stop']))
@@ -93,12 +93,6 @@ if ($nldata = $req->fetch())
         header('Location: nlmod.php?id='.$nldata['hash']);
         exit();
     }
-    $SQL2 = <<<SQL
-        UPDATE newsletter_mails SET expire=:exp WHERE id=:id
-        SQL;
-    $req2 = $bdd->prepare($SQL2);
-    $req2->execute([':exp' => time() + 31536000, ':id' => $nldata['id']]);
-    $log .= 'Votre abonnement pour <i>'.htmlspecialchars((string) $nldata['mail']).'</i> expirera le '.date('d/m/Y H:i', time() + 31536000).'.';
     $args['id'] = $nldata['hash'];
 }
 else

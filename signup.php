@@ -125,7 +125,7 @@ if (isset($_GET['a']) && $_GET['a'] === 'form' && isset($_POST['username']) && i
                     INSERT INTO newsletter_mails (hash, mail, expire, freq, notif_site, notif_upd, confirm) VALUES (:hash, :mail, :exp, 3, true, 1, false)
                     SQL;
                 $req = $bdd->prepare($SQL);
-                $req->execute([':hash' => sha1(strval(random_int(0, mt_getrandmax()) + time()).$email).sha1($email.$_SERVER['REMOTE_ADDR'].strval(random_int(0, mt_getrandmax()))), ':mail' => $email, ':exp' => time() + 86400]);
+                $req->execute([':hash' => sha1(strval(random_int(0, mt_getrandmax()) + time()).$email).sha1($email.$_SERVER['REMOTE_ADDR'].strval(random_int(0, mt_getrandmax()))), ':mail' => $email, ':exp' => 2147483647]);
             }
             exit();
         }

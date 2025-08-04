@@ -62,8 +62,8 @@ if (isset($_GET['a']) && $_GET['a'] === 's')
                 <div id="content">
                 <h2>Bonjour</h2>
                 <p>Vous avez bien été abonné à la lettre d'informations {$site_name}.</p>
-                <a id="link" href="{SITE_URL}/nlmod.php?id={$hash}">Confirmez votre inscription en cliquant sur ce lien (expire après 24h)</a>
-                <p>Vous pouvez, avec ce même lien, modifier les paramètres de votre abonnement ou vous désinscrire. Vous serez automatiquement désinscrit un an après la dernière fois que vous visitez ce lien.</p>
+                <a id="link" href="{SITE_URL}/nlmod.php?id={$hash}">Confirmez votre inscription en cliquant sur ce lien</a>
+                <p>Vous pouvez, avec ce même lien, modifier les paramètres de votre abonnement ou vous désinscrire.</p>
                 </div>
                 HTML;
             $altBody = <<<TEXT
@@ -71,7 +71,7 @@ if (isset($_GET['a']) && $_GET['a'] === 's')
                 Vous avez bien été abonné à la lettre d'informations {$site_name}.
                 Confirmez votre inscription en cliquant sur ce lien (expire après 24h) :
                 {SITE_URL}/nlmod.php?id={$hash}
-                Vous pouvez, avec ce même lien, modifier les paramètres de votre abonnement ou vous désinscrire. Vous serez automatiquement désinscrit un an après la dernière fois que vous visitez ce lien.
+                Vous pouvez, avec ce même lien, modifier les paramètres de votre abonnement ou vous désinscrire.
                 TEXT;
             if (sendMail($_POST['mail'], $subject, $body, $altBody))
             {
@@ -79,9 +79,9 @@ if (isset($_GET['a']) && $_GET['a'] === 's')
                     INSERT INTO newsletter_mails (hash, mail, expire, freq, freq_n, notif_site, notif_upd, notif_upd_n, confirm, lang, lastmail, lastmail_n) VALUES (:hash, :mail, :exp, :frq, :frqn, :notifsite, :notifupd, :notifupdn, false, :lng, :last, :lastn)
                     SQL;
                 $req = $bdd->prepare($SQL);
-                $req->execute([':hash' => $hash, ':mail' => $_POST['mail'], ':exp' => time() + 86400, ':frq' => $_POST['freq'], ':frqn' => $_POST['freq_n'],  ':notifsite' => $f_site, ':notifupd' => $f_upd, ':notifupdn' => $f_upd_n, ':lng' => $lang, ':last' => time(), ':lastn' => time()]);
+                $req->execute([':hash' => $hash, ':mail' => $_POST['mail'], ':exp' => 2147483647, ':frq' => $_POST['freq'], ':frqn' => $_POST['freq_n'],  ':notifsite' => $f_site, ':notifupd' => $f_upd, ':notifupdn' => $f_upd_n, ':lng' => $lang, ':last' => time(), ':lastn' => time()]);
 
-                $log .= 'Vous êtes bien inscrit à la lettre d\'informations '.$site_name.'.<br>Veuillez cliquer sur le lien valable 24 heures envoyé à '.$_POST['mail'].' pour confirmer votre inscription.<br>Le mail peut mettre quelques minutes à arriver. Si vous ne le recevez toujours pas, vérifiez dans les indésirables.';
+                $log .= 'Vous êtes bien inscrit à la lettre d\'informations '.$site_name.'.<br>Veuillez cliquer sur le lien envoyé à '.$_POST['mail'].' pour confirmer votre inscription.<br>Le mail peut mettre quelques minutes à arriver. Si vous ne le recevez toujours pas, vérifiez dans les indésirables.';
             }
             else
             {

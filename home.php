@@ -44,7 +44,7 @@ if ((isset($_GET['token']) && $_GET['token'] === $login['token']) || (isset($_PO
         $SQL = <<<SQL
             SELECT username,email FROM accounts WHERE (username=:username OR email=:email) AND id!=:id LIMIT 1
             SQL;
-        $req = $bdd2->prepare($SQL);
+        $req = $bdd->prepare($SQL);
         $req->execute([':username' => $username, ':email' => $_POST['mail'], ':id' => $login['id']]);
         if ($data = $req->fetch())
         {
@@ -80,7 +80,7 @@ if ((isset($_GET['token']) && $_GET['token'] === $login['token']) || (isset($_PO
                 $SQL = <<<SQL
                     UPDATE accounts SET username=:username, email=:email, confirmed=false, settings=:set, subscribed_comments=:sub WHERE id=:id
                     SQL;
-                $req = $bdd2->prepare($SQL);
+                $req = $bdd->prepare($SQL);
                 $req->execute([':username' => $username, ':email' => $_POST['mail'], ':set' => json_encode($settings), ':sub' => $comments_sub, ':id' => $login['id']]);
                 header('Location: /home.php?settings_ok&mail_sent');
                 require_once('include/sendconfirm.php');
@@ -92,7 +92,7 @@ if ((isset($_GET['token']) && $_GET['token'] === $login['token']) || (isset($_PO
                 $SQL = <<<SQL
                     UPDATE accounts SET username=:username, email=:email, settings=:set, subscribed_comments=:sub WHERE id=:id
                     SQL;
-                $req = $bdd2->prepare($SQL);
+                $req = $bdd->prepare($SQL);
                 $req->execute([':username' => $username, ':email' => $_POST['mail'], ':set' => json_encode($settings), ':sub' => $comments_sub, ':id' => $login['id']]);
                 header('Location: /home.php?settings_ok');
                 exit();
@@ -124,7 +124,7 @@ if ((isset($_GET['token']) && $_GET['token'] === $login['token']) || (isset($_PO
             $SQL = <<<SQL
                 UPDATE accounts SET password=:psw WHERE id=:id
                 SQL;
-            $req = $bdd2->prepare($SQL);
+            $req = $bdd->prepare($SQL);
             $req->execute([':psw' => password_hash($_POST['newpsw'], PASSWORD_DEFAULT), ':id' => $login['id']]);
             header('Location: /home.php?psw_ok');
             exit();
@@ -149,7 +149,7 @@ if ((isset($_GET['token']) && $_GET['token'] === $login['token']) || (isset($_PO
             $SQL = <<<SQL
                 DELETE FROM accounts WHERE id=:id
                 SQL;
-            $req = $bdd2->prepare($SQL);
+            $req = $bdd->prepare($SQL);
             $req->execute([':id' => $login['id']]);
             $subject = 'Suppression de compte';
             $msgH = strip_tags((string) $_POST['msgrm']);

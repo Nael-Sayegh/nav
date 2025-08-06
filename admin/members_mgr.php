@@ -12,7 +12,7 @@ if (isset($_GET['delete']))
     $SQL = <<<SQL
         DELETE FROM accounts WHERE id=:id
         SQL;
-    $req = $bdd2->prepare($SQL);
+    $req = $bdd->prepare($SQL);
     $req->execute([':id' => $_GET['delete']]);
 }
 if (isset($_GET['mod2']) && isset($_POST['username'], $_POST['email'], $_POST['rank']))
@@ -20,7 +20,7 @@ if (isset($_GET['mod2']) && isset($_POST['username'], $_POST['email'], $_POST['r
     $SQLOld = <<<SQL
         SELECT rights, twofa_enabled FROM accounts WHERE id = :id
         SQL;
-    $reqOld = $bdd2->prepare($SQLOld);
+    $reqOld = $bdd->prepare($SQLOld);
     $reqOld->execute([':id' => $_GET['mod2']]);
     if ($oldData = $reqOld->fetch())
     {
@@ -63,7 +63,7 @@ if (isset($_GET['mod2']) && isset($_POST['username'], $_POST['email'], $_POST['r
         $SQL = <<<SQL
             UPDATE accounts SET username=:username, email=:email, password=:psw, rank=:rank, rights=:rights WHERE id=:id
             SQL;
-        $req = $bdd2->prepare($SQL);
+        $req = $bdd->prepare($SQL);
         $req->execute([':username' => htmlentities((string) $_POST['username']), ':email' => $_POST['email'], ':psw' => $password, ':rank' => $_POST['rank'], ':rights' => $json, ':id' => $_GET['mod2']]);
     }
     else
@@ -71,7 +71,7 @@ if (isset($_GET['mod2']) && isset($_POST['username'], $_POST['email'], $_POST['r
         $SQL = <<<SQL
             UPDATE accounts SET username=:username, email=:email, rank=:rank, rights=:rights WHERE id=:id
             SQL;
-        $req = $bdd2->prepare($SQL);
+        $req = $bdd->prepare($SQL);
         $req->execute([':username' => htmlentities((string) $_POST['username']), ':email' => $_POST['email'], ':rank' => $_POST['rank'], ':rights' => $json, ':id' => $_GET['mod2']]);
     }
     $subject = 'Modification de votre compte membre';
@@ -99,7 +99,7 @@ if (isset($_GET['mod2']) && isset($_POST['username'], $_POST['email'], $_POST['r
         $SQL = <<<SQL
             UPDATE accounts SET twofa_enabled=false, twofa_secret=NULL WHERE id=:id
             SQL;
-        $req = $bdd2->prepare($SQL);
+        $req = $bdd->prepare($SQL);
         $req->execute([':id' => $_GET['mod2']]);
         $body .= <<<HTML
                         <p><strong>L'authentification à 2 facteurs sur votre compte a été désactivée.</strong></p>
@@ -175,7 +175,7 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/include/user_rank.php';
 $SQL = <<<SQL
     SELECT * FROM accounts
     SQL;
-foreach ($bdd2->query($SQL) as $data)
+foreach ($bdd->query($SQL) as $data)
 {
     echo '<tr><td>'.$data['username'].'</td><td><a href="mailto:'.$data['email'].'" title="Envoyer un mail">'.$data['email'].'</a></td><td>'.urank($data['rank']).'</td><td><details><summary>Droits</summary><ul>';
     $rightsMap = json_decode((string) $data['rights'], true) ?: [];
@@ -195,7 +195,7 @@ if (isset($_GET['mod']))
     $SQL = <<<SQL
         SELECT * FROM accounts WHERE id=:id LIMIT 1
         SQL;
-    $req = $bdd2->prepare($SQL);
+    $req = $bdd->prepare($SQL);
     $req->execute([':id' => $_GET['mod']]);
     if ($data = $req->fetch())
     {

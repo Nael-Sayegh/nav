@@ -11,13 +11,13 @@ if (isset($_GET['id']) && isset($_GET['h']))
     $SQL = <<<SQL
         SELECT id, username, email, signup_date, settings FROM accounts WHERE id=:id AND signup_date<:date AND confirmed=false
         SQL;
-    $req = $bdd2->prepare($SQL);
+    $req = $bdd->prepare($SQL);
     $req->execute([':id' => $_GET['id'], ':date' => time() + 86400]);
     while ($data = $req->fetch())
     {
         if (json_decode((string) $data['settings'], true)['mhash'] === $_GET['h'])
         {
-            $countReq = $bdd2->query('SELECT COUNT(*) FROM accounts');
+            $countReq = $bdd->query('SELECT COUNT(*) FROM accounts');
             $totalAccounts = (int) $countReq->fetchColumn();
             $SQL = "UPDATE accounts SET confirmed = true";
             if ($totalAccounts === 1)
@@ -25,7 +25,7 @@ if (isset($_GET['id']) && isset($_GET['h']))
                 $SQL .= ", rank = :adminRank";
             }
             $SQL .= " WHERE id = :id";
-            $req = $bdd2->prepare($SQL);
+            $req = $bdd->prepare($SQL);
             $params = [':id' => $data['id']];
             if ($totalAccounts === 1)
             {

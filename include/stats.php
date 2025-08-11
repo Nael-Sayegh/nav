@@ -122,10 +122,10 @@ if (!isset($stats_no))
     }
 
     echo '<ul id="compteur">
-	<li>'.tr($tr0,'footer_charged_page',['xpage'=>$xpage,'xpagetoday'=>$xpagetoday]).'</li>
-	<li>'.tr($tr0,'footer_total_chaged_pages',['xvisits'=>$xvisits,'xvisitstoday'=>$xvisitstoday]).'</li>
-	<li>'.tr($tr0,'footer_visitors',['xvisitors'=>$xvisitors,'xtoday'=>$xtoday]).'</li>
-	<li>'.tr($tr0,'footer_connected',['xconn'=>$xconn]).'</li></ul>';
+	<li>'.tr($tr0, 'footer_charged_page', ['xpage' => $xpage,'xpagetoday' => $xpagetoday]).'</li>
+	<li>'.tr($tr0, 'footer_total_chaged_pages', ['xvisits' => $xvisits,'xvisitstoday' => $xvisitstoday]).'</li>
+	<li>'.tr($tr0, 'footer_visitors', ['xvisitors' => $xvisitors,'xtoday' => $xtoday]).'</li>
+	<li>'.tr($tr0, 'footer_connected', ['xconn' => $xconn]).'</li></ul>';
 }
 
 $req->closeCursor();

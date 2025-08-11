@@ -16,19 +16,14 @@ if (!isDev() || isset($debug))
 
     $daydate = getFormattedDate(time(), tr($tr0, 'fndate'));
     $dayhour = getFormattedDate(time(), tr($tr0, 'ftime'));
-    $SQL = <<<SQL
-        DELETE FROM newsletter_mails WHERE expire<:exp
-        SQL;
-    $req = $bdd->prepare($SQL);
-    $req->execute([':exp' => time()]);
 
     if (isset($debug))
     {
         $SQL = <<<SQL
-            SELECT * FROM newsletter_mails WHERE confirm=true AND expire<=:exp AND mail=:mail
+            SELECT * FROM newsletter_mails WHERE mail=:mail
             SQL;
         $req = $bdd->prepare($SQL);
-        $req->execute([':exp' => time() + 172800, ':mail' => $debug]);
+        $req->execute([':mail' => $debug]);
         echo "--debug--\n";
     }
     else
@@ -40,7 +35,8 @@ if (!isDev() || isset($debug))
         $req->execute([':exp' => time() + 172800]);
         echo "--prod--\n";
     }
-    while ($data = $req->fetch())
+    // Boucle d'expiration désactivée car les abonnements n'expirent plus
+    while (false)
     {
         if (!isset($simulate))
         {
@@ -168,10 +164,10 @@ if (!isDev() || isset($debug))
         <h2>Bonjour {{mail_user}},</h2>
         HTML;
     $body2 = <<<HTML
-        <hr><div role="complementary" aria-label="Informations sur l'abonnement"><p>Vous recevez la lettre d'informations {$site_name} car vous vous y êtes inscrit jusqu'au
+        <hr><div role="complementary" aria-label="Informations sur l'abonnement"><p>Vous recevez la lettre d'informations {$site_name}
         HTML;
     $body3 = <<<HTML
-        , <a id="link" href="{SITE_URL}/nlmod.php?id=
+        . <a id="link" href="{SITE_URL}/nlmod.php?id=
         HTML;
     $body4 = <<<HTML
         ">cliquez ici pour modifier vos préférences ou vous désinscrire</a>.</p></div>
@@ -182,7 +178,7 @@ if (!isDev() || isset($debug))
 
         TEXT;
     $altBody2 = <<<TEXT
-        Vous recevez la lettre d'informations {$site_name} car vous vous y êtes inscrit jusqu'au
+        Vous recevez la lettre d'informations {$site_name}
         TEXT;
     $altBody3 = <<<TEXT
 
@@ -196,7 +192,7 @@ if (!isDev() || isset($debug))
     if (isset($debug))
     {
         $SQL = <<<SQL
-            SELECT * FROM newsletter_mails WHERE confirm=true AND mail=:mail
+            SELECT * FROM newsletter_mails WHERE mail=:mail
             SQL;
         $req = $bdd->prepare($SQL);
         $req->execute([':mail' => $debug]);
@@ -205,7 +201,7 @@ if (!isDev() || isset($debug))
     else
     {
         $SQL = <<<SQL
-            SELECT * FROM newsletter_mails WHERE confirm=true AND {$r}
+            SELECT * FROM newsletter_mails WHERE {$r}
             SQL;
         $req = $bdd->prepare($SQL);
         $req->execute();
@@ -308,12 +304,11 @@ if (!isDev() || isset($debug))
                     {$updateTextT}
                     TEXT;
             }
-            $subExpDate = date('d/m/Y, H:i', $data['expire']);
             $body .= <<<HTML
-                {$body2}{$subExpDate}{$body3}{$data['hash']}{$body4}
+                {$body2}{$body3}{$data['hash']}{$body4}
                 HTML;
             $altBody .= <<<TEXT
-                {$altBody2}{$subExpDate}{$altBody3}{$data['hash']}{$altBody4}
+                {$altBody2}{$altBody3}{$data['hash']}{$altBody4}
                 TEXT;
 
             $body = str_replace(['{{lang}}', '{{mail}}', '{{mail_user}}', '{{site}}'], [$data['lang'], $data['mail'], ucfirst(explode('@', (string) $data['mail'])[0]), $site_name], $body);

@@ -26,9 +26,8 @@ if (isset($_GET['act']) && $_GET['act'] === 'sendnl')
 {
     $site = $_POST['site'] ?? 'site1';
     $allMails = [];
-    $buildSQL = function(string $column): string
-    {
-        return "SELECT mail FROM newsletter_mails WHERE confirm = true AND {$column} = true";
+    $buildSQL = function (string $column): string {
+        return "SELECT mail FROM newsletter_mails WHERE {$column} = true";
     };
     if ($site === 'site1' || $site === 'both')
     {
@@ -50,7 +49,7 @@ if (isset($_GET['act']) && $_GET['act'] === 'sendnl')
     }
     foreach ($allMails as $email => $hash)
     {
-        sendMail($email, $_POST['obj'], str_replace('{userid}', $hash, $_POST['text']), "Ce mail est uniquement disponible au format HTML");
+        sendMail($email, $_POST['obj'], str_replace('{userid}', $hash, $_POST['text']), 'Ce mail est uniquement disponible au format HTML');
     }
     exit();
 }

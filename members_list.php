@@ -8,7 +8,7 @@ require_once('include/consts.php');
 $css_path .= '<style>#member-list tr:nth-child(odd){background-color:#E0E0E0;}</style>';
 
 $tr = load_tr($lang, 'members_list');
-$title = tr($tr,'title');
+$title = tr($tr, 'title');
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -18,17 +18,17 @@ $title = tr($tr,'title');
 <main id="container">
 <h1 id="contenu"><?php print $title; ?></h1>
 <div id="js-sort-container" hidden style="margin:1em 0;">
-  <label for="js_sort"><?= tr($tr,'sort_by'); ?></label>
+  <label for="js_sort"><?= tr($tr, 'sort_by'); ?></label>
   <select id="js_sort">
-    <option value="signup_date"><?= tr($tr,'sort_by_signup_date'); ?></option>
-    <option value="username"><?= tr($tr,'sort_by_alpha'); ?></option>
+    <option value="signup_date"><?= tr($tr, 'sort_by_signup_date'); ?></option>
+    <option value="username"><?= tr($tr, 'sort_by_alpha'); ?></option>
   </select>
 </div>
 <noscript>
-  <?= tr($tr,'enable_js'); ?>
+  <?= tr($tr, 'enable_js'); ?>
 </noscript>
 <table style="width:100%;">
-<thead><tr><th><?= tr($tr,'table_id_member'); ?></th><th><?= tr($tr,'table_name'); ?></th><th><?= tr($tr,'table_signup'); ?></th><th><?= tr($tr,'table_rank'); ?></th><?php /*<th>Actions</th>*/ ?></tr></thead>
+<thead><tr><th><?= tr($tr, 'table_id_member'); ?></th><th><?= tr($tr, 'table_name'); ?></th><th><?= tr($tr, 'table_signup'); ?></th><th><?= tr($tr, 'table_rank'); ?></th><?php /*<th>Actions</th>*/ ?></tr></thead>
 <tbody id="member-list">
 <?php
 include_once('include/user_rank.php');
@@ -67,7 +67,7 @@ foreach ($bdd->query($SQL) as $data)
 ?>
 </tbody>
 </table>
-<?= tr($tr,'table_count_members',['count'=>$n]); ?>
+<?= tr($tr, 'table_count_members', ['count' => $n]); ?>
 </main>
 <?php require_once('include/footer.php'); ?>
 <script>

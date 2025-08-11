@@ -14,7 +14,7 @@ body {
 }
 
 #hautpage {
-background: #045FB4 no-repeat left top;
+background: #045FB4 url("/images/logo128-170.png") no-repeat left top;
 min-height: 128px;
 color: white;
 }

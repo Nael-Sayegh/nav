@@ -42,15 +42,6 @@ if ($nldata = $req->fetch())
         header('Location: /newsletter.php?stop');
         exit();
     }
-    if (!$nldata['confirm'])
-    {
-        $SQL2 = <<<SQL
-            UPDATE newsletter_mails SET confirm=true, lastmail=:last, lastmail_n=:lastn WHERE id=:id
-            SQL;
-        $req2 = $bdd->prepare($SQL2);
-        $req2->execute([':last' => time(), ':lastn' => time(), ':id' => $nldata['id']]);
-        $log .= 'Votre inscription à la lettre d\'informations '.$site_name.' a bien été confirmée.<br>';
-    }
     if (isset($_GET['mod']))
     {
         $freq = $nldata['freq'];

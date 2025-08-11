@@ -57,42 +57,44 @@ if (isset($_GET['a']) && $_GET['a'] === 's')
             {
                 $f_upd_n = 1;
             }
-            $subject = 'Confirmation de l\'inscription à la lettre d\'informations';
+
+            $subject = 'Inscription à la lettre d\'informations';
             $body = <<<HTML
                 <div id="content">
                 <h2>Bonjour</h2>
                 <p>Vous avez bien été abonné à la lettre d'informations {$site_name}.</p>
-                <a id="link" href="{SITE_URL}/nlmod.php?id={$hash}">Confirmez votre inscription en cliquant sur ce lien</a>
-                <p>Vous pouvez, avec ce même lien, modifier les paramètres de votre abonnement ou vous désinscrire.</p>
+                <p>Votre inscription est maintenant active et vous recevrez les prochaines newsletters selon vos préférences.</p>
+                <p>Vous pouvez modifier les paramètres de votre abonnement ou vous désinscrire à l'adresse suivante : <a href="{SITE_URL}/nlmod.php?id={$hash}">{SITE_URL}/nlmod.php?id={$hash}</a></p>
                 </div>
                 HTML;
             $altBody = <<<TEXT
                 Bonjour,
                 Vous avez bien été abonné à la lettre d'informations {$site_name}.
-                Confirmez votre inscription en cliquant sur ce lien (expire après 24h) :
+                Votre inscription est maintenant active et vous recevrez les prochaines newsletters selon vos préférences.
+                Vous pouvez modifier les paramètres de votre abonnement ou vous désinscrire à l'adresse suivante :
                 {SITE_URL}/nlmod.php?id={$hash}
-                Vous pouvez, avec ce même lien, modifier les paramètres de votre abonnement ou vous désinscrire.
                 TEXT;
+
+            $SQL = <<<SQL
+                INSERT INTO newsletter_mails (hash, mail, freq, freq_n, notif_site, notif_upd, notif_upd_n, lang, lastmail, lastmail_n) VALUES (:hash, :mail, :frq, :frqn, :notifsite, :notifupd, :notifupdn, :lng, :last, :lastn)
+                SQL;
+            $req = $bdd->prepare($SQL);
+            $req->execute([':hash' => $hash, ':mail' => $_POST['mail'], ':frq' => $_POST['freq'], ':frqn' => $_POST['freq_n'],  ':notifsite' => $f_site, ':notifupd' => $f_upd, ':notifupdn' => $f_upd_n, ':lng' => $lang, ':last' => time(), ':lastn' => time()]);
+
             if (sendMail($_POST['mail'], $subject, $body, $altBody))
             {
-                $SQL = <<<SQL
-                    INSERT INTO newsletter_mails (hash, mail, expire, freq, freq_n, notif_site, notif_upd, notif_upd_n, confirm, lang, lastmail, lastmail_n) VALUES (:hash, :mail, :exp, :frq, :frqn, :notifsite, :notifupd, :notifupdn, false, :lng, :last, :lastn)
-                    SQL;
-                $req = $bdd->prepare($SQL);
-                $req->execute([':hash' => $hash, ':mail' => $_POST['mail'], ':exp' => 2147483647, ':frq' => $_POST['freq'], ':frqn' => $_POST['freq_n'],  ':notifsite' => $f_site, ':notifupd' => $f_upd, ':notifupdn' => $f_upd_n, ':lng' => $lang, ':last' => time(), ':lastn' => time()]);
-
-                $log .= 'Vous êtes bien inscrit à la lettre d\'informations '.$site_name.'.<br>Veuillez cliquer sur le lien envoyé à '.$_POST['mail'].' pour confirmer votre inscription.<br>Le mail peut mettre quelques minutes à arriver. Si vous ne le recevez toujours pas, vérifiez dans les indésirables.';
+                $log .= 'Vous êtes bien inscrit à la lettre d\'informations '.$site_name.'.<br>Un email de confirmation vous a été envoyé à '.$_POST['mail'].'.';
             }
             else
             {
-                $log .= 'Erreur pendant l\'envoi du mail.';
+                $log .= 'Vous êtes bien inscrit à la lettre d\'informations '.$site_name.', mais l\'envoi de l\'email de confirmation a échoué.';
             }
         }
     }
 }
 if (isset($_GET['stop']))
 {
-    $log .= 'Vous avez bien été désinscrit de la lettre d\'informations '.$site_name.'. Un mail vous a été envoyé pour confirmer. Vous ne recevrez plus aucun mail de notre part.';
+    $log .= 'Vous avez bien été désinscrit de la lettre d\'informations '.$site_name.'. Un mail de désinscription vous a été envoyé. Vous ne recevrez plus aucun mail de notre part.';
 }
 
 $title = 'Lettre d\'informations'; ?>
@@ -135,7 +137,7 @@ Veuillez noter que la lettre d'informations <?php print $site_name; ?> est envoy
 <label for="f_notif_up_n">Me notifier de la mise à jour d'un article&nbsp;:</label>
 <input type="checkbox" name="notif_up_n" id="f_notif_up_n" checked><br>
 </fieldset>
-<p>Votre adresse e-mail ainsi que toutes vos informations personnelles ne seront pas partagées avec des tiers. Cet abonnement peut être annulé à tout moment. Il sera automatiquement annulé au bout d'un an si vous ne le renouvelez pas (la date d'expiration est affichée en bas de chaque mail).</p>
+<p><p>Votre adresse e-mail ainsi que toutes vos informations personnelles ne seront pas partagées avec des tiers. Cet abonnement peut être annulé à tout moment.</p></p>
 <input type="submit" value="S'abonner">
 </form>
 </main>

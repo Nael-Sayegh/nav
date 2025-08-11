@@ -28,7 +28,7 @@ if (isset($_GET['act']) && $_GET['act'] === 'sendnl')
     $allMails = [];
     $buildSQL = function(string $column): string
     {
-        return "SELECT mail FROM newsletter_mails WHERE confirm = true AND {$column} = true";
+        return "SELECT mail FROM newsletter_mails WHERE {$column} = true";
     };
     if ($site === 'site1' || $site === 'both')
     {

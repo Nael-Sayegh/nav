@@ -16,20 +16,14 @@ if (!isDev() || isset($debug))
 
     $daydate = getFormattedDate(time(), tr($tr0, 'fndate'));
     $dayhour = getFormattedDate(time(), tr($tr0, 'ftime'));
-    // Suppression automatique des abonnements expirés désactivée
-    // $SQL = <<<SQL
-    //     DELETE FROM newsletter_mails WHERE expire<:exp
-    //     SQL;
-    // $req = $bdd->prepare($SQL);
-    // $req->execute([':exp' => time()]);
 
     if (isset($debug))
     {
         $SQL = <<<SQL
-            SELECT * FROM newsletter_mails WHERE confirm=true AND expire<=:exp AND mail=:mail
+            SELECT * FROM newsletter_mails WHERE mail=:mail
             SQL;
         $req = $bdd->prepare($SQL);
-        $req->execute([':exp' => time() + 172800, ':mail' => $debug]);
+        $req->execute([':mail' => $debug]);
         echo "--debug--\n";
     }
     else
@@ -198,7 +192,7 @@ if (!isDev() || isset($debug))
     if (isset($debug))
     {
         $SQL = <<<SQL
-            SELECT * FROM newsletter_mails WHERE confirm=true AND mail=:mail
+            SELECT * FROM newsletter_mails WHERE mail=:mail
             SQL;
         $req = $bdd->prepare($SQL);
         $req->execute([':mail' => $debug]);
@@ -207,7 +201,7 @@ if (!isDev() || isset($debug))
     else
     {
         $SQL = <<<SQL
-            SELECT * FROM newsletter_mails WHERE confirm=true AND {$r}
+            SELECT * FROM newsletter_mails WHERE {$r}
             SQL;
         $req = $bdd->prepare($SQL);
         $req->execute();

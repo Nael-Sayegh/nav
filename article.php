@@ -491,7 +491,7 @@ if (!$first)
 ?>
 <!--<tr>
 <td><?= tr($tr, 'rating_average') ?></td>
-<td><?php //if ($rating_count === 0): ?>
+<td><?php //if ($rating_count === 0):?>
 <em><?= tr($tr, 'rating_no_votes') ?></em>
 <?php /*else:
     echo tr($tr, 'rating_details', ['avg' => numberlocale($avg), 'count' => $rating_count]);
@@ -517,8 +517,8 @@ endif;*/ ?>
 <div class="rating-radios">
 <?php /*for ($i = 1; $i <= 5; $i++):*/ ?>
 <input type="radio" name="rating" id="rating<?= $i ?>" value="<?= $i ?>"<?= $user_rating === $i ? 'checked' : '' ?>>
-<label for="rating<?= $i ?>"><?= $i == 1 ? $i . " (".tr($tr,'rating_1_explanation').")" : ($i == 5 ? $i ." (".tr($tr,'rating_5_explanation').")" : $i) ?></label>
-<?php //endfor; ?>
+<label for="rating<?= $i ?>"><?= $i == 1 ? $i . ' ('.tr($tr, 'rating_1_explanation').')' : ($i == 5 ? $i .' ('.tr($tr, 'rating_5_explanation').')' : $i) ?></label>
+<?php //endfor;?>
 </div>
 </fieldset>
 <button type="submit"><?= tr($tr, ($user_rating === null) ? 'rating_submit' : 'rating_update') ?></button><?php /* if ($user_rating !== null)
@@ -526,9 +526,9 @@ endif;*/ ?>
     echo ' | <a href="?deleterating">'.tr($tr, 'delete_rating').'</a>';
 } */ ?>
 </form>
-<?php //else: ?>
+<?php //else:?>
 <p><em><?= tr($tr, 'rating_login_required') ?></em></p>
-<?php //endif; ?>
+<?php //endif;?>
 <div id="comments">
 <?php
 /*$SQL = <<<SQL
@@ -561,7 +561,7 @@ if (isset($_GET['cedit']))
     {
         if (canManageComment($data))
         {*/
-            ?>
+?>
 <form action="?id=<?php echo $sw['id'].'&cedit2='.$data['id'] ?>" method="post" id="cedit">
 <fieldset><legend><?= tr($tr, 'comments_mod') ?></legend>
 <label for="fc_text"><?= tr($tr, 'comments_text') ?></label><br>

@@ -7,32 +7,32 @@ require_once('include/consts.php');
 require_once('include/lib/mtcaptcha/lib/class.mtcaptchalib.php');
 
 $tr = load_tr($lang, 'signup');
-$title = tr($tr,'title');
+$title = tr($tr, 'title');
 
 $log = '';
 if (isset($_GET['a']) && $_GET['a'] === 'form' && isset($_POST['username']) && isset($_POST['mail']) && isset($_POST['psw']) && isset($_POST['rpsw']))
 {
     if (strlen((string) $_POST['username']) > 32 || strlen((string) $_POST['username']) < 3)
     {
-        $log .= '<li>'. tr($tr,'log_lenght_username').'</li>';
+        $log .= '<li>'. tr($tr, 'log_lenght_username').'</li>';
     }
     if (strlen($_POST['mail']) > 255 || empty($_POST['mail']))
     {
-        $log .= '<li>'.tr($tr,'log_lenght_mail').'</li>';
+        $log .= '<li>'.tr($tr, 'log_lenght_mail').'</li>';
     }
     if ($_POST['psw'] !== $_POST['rpsw'])
     {
-        $log .= '<li>'.tr($tr,'log_diff_psw').'</li>';
+        $log .= '<li>'.tr($tr, 'log_diff_psw').'</li>';
     }
     if (strlen($_POST['psw']) > 128 || strlen($_POST['psw']) < 8)
     {
-        $log .= '<li>'.tr($tr,'log_lenght_psw').'</li>';
+        $log .= '<li>'.tr($tr, 'log_lenght_psw').'</li>';
     }
     $MTCaptchaSDK = new MTCaptchaLib(MTCAPTCHA_PRIVATE);
     $result = $MTCaptchaSDK->validate_token($_POST['mtcaptcha-verifiedtoken']);
     if (!$result)
     {
-        $log .= '<li>'.tr($tr,'log_captcha').'</li>';
+        $log .= '<li>'.tr($tr, 'log_captcha').'</li>';
     }
     if (empty($log))
     {
@@ -46,11 +46,11 @@ if (isset($_GET['a']) && $_GET['a'] === 'form' && isset($_POST['username']) && i
         {
             if ($data['username'] === $username)
             {
-                $log .= '<li>'.tr($tr,'log_use_username').'</li>';
+                $log .= '<li>'.tr($tr, 'log_use_username').'</li>';
             }
             if ($data['email'] === $_POST['mail'])
             {
-                $log .= '<li>'.tr($tr,'log_use_mail').'</li>';
+                $log .= '<li>'.tr($tr, 'log_use_mail').'</li>';
             }
         }
         else
@@ -77,7 +77,7 @@ if (isset($_GET['a']) && $_GET['a'] === 'form' && isset($_POST['username']) && i
                 }
                 if ($ok === 1)
                 {
-                    print tr($tr,'err_message');
+                    print tr($tr, 'err_message');
                     exit();
                 }
             }
@@ -155,26 +155,26 @@ if (isset($_GET['a']) && $_GET['a'] === 'form' && isset($_POST['username']) && i
 <?php endif; ?>
 <form action="?a=form" method="post">
 <table>
-<tr><td class="formlabel"><label for="f_username"><?= tr($tr,'form_username'); ?></label></td>
+<tr><td class="formlabel"><label for="f_username"><?= tr($tr, 'form_username'); ?></label></td>
 <td><input type="text" id="f_username" name="username" maxlength="32" autocomplete="username" required></td></tr>
-<tr><td class="formlabel"><label for="f_mail"><?= tr($tr,'form_mail'); ?></label></td>
+<tr><td class="formlabel"><label for="f_mail"><?= tr($tr, 'form_mail'); ?></label></td>
 <td><input type="email" id="f_mail" name="mail" maxlength="255" required></td></tr>
-<tr><td class="formlabel"><label for="f_psw"><?= tr($tr,'form_psw1'); ?></label></td>
+<tr><td class="formlabel"><label for="f_psw"><?= tr($tr, 'form_psw1'); ?></label></td>
 <td><input type="password" id="f_psw" name="psw" maxlength="64" autocomplete="new-password" required></td></tr>
 <tr hidden id="js-gen-psw">
-<td colspan="2"><button type="button" id="btn-generate-psw"><?= tr($tr,'form_generate_psw'); ?></button><br></td>
+<td colspan="2"><button type="button" id="btn-generate-psw"><?= tr($tr, 'form_generate_psw'); ?></button><br></td>
 </tr>
-<tr><td class="formlabel"><label for="f_rpsw"><?= tr($tr,'form_psw2'); ?></label></td>
+<tr><td class="formlabel"><label for="f_rpsw"><?= tr($tr, 'form_psw2'); ?></label></td>
 <td><input type="password" id="f_rpsw" name="rpsw" maxlength="64" autocomplete="new-password" required></td></tr>
-<tr><td class="formlabel"><label for="f_nl"><?= tr($tr,'form_subscribe_nl'); ?></label></td>
-<td><input type="checkbox" id="f_nl" name="nl"> <span><?= tr($tr,'form_nl_freq_weekly'); ?></span></td></tr>
+<tr><td class="formlabel"><label for="f_nl"><?= tr($tr, 'form_subscribe_nl'); ?></label></td>
+<td><input type="checkbox" id="f_nl" name="nl"> <span><?= tr($tr, 'form_nl_freq_weekly'); ?></span></td></tr>
 </table>
 <div class="mtcaptcha"></div>
 <noscript>
 <p><em><`= tr($tr,'enable_js'); ?></em></p>
 </noscript>
-<?= tr($tr,'form_use_cookies'); ?>
-<input type="submit" value="<?= tr($tr,'form_submit'); ?>">
+<?= tr($tr, 'form_use_cookies'); ?>
+<input type="submit" value="<?= tr($tr, 'form_submit'); ?>">
 </form>
 </main>
 <?php require_once('include/footer.php'); ?>

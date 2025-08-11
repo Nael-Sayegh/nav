@@ -4,7 +4,7 @@ set_include_path($_SERVER['DOCUMENT_ROOT']);
 $require_once('include/log.php');
 require_once('include/consts.php');
 require_once('include/sendMail.php');
-$tr = load_tr($lang,'confirm');
+$tr = load_tr($lang, 'confirm');
 
 if (isset($_GET['id']) && isset($_GET['h']))
 {
@@ -19,12 +19,12 @@ if (isset($_GET['id']) && isset($_GET['h']))
         {
             $countReq = $bdd2->query('SELECT COUNT(*) FROM accounts');
             $totalAccounts = (int) $countReq->fetchColumn();
-            $SQL = "UPDATE accounts SET confirmed = true";
+            $SQL = 'UPDATE accounts SET confirmed = true';
             if ($totalAccounts === 1)
             {
-                $SQL .= ", rank = :adminRank";
+                $SQL .= ', rank = :adminRank';
             }
-            $SQL .= " WHERE id = :id";
+            $SQL .= ' WHERE id = :id';
             $req = $bdd2->prepare($SQL);
             $params = [':id' => $data['id']];
             if ($totalAccounts === 1)
@@ -32,15 +32,21 @@ if (isset($_GET['id']) && isset($_GET['h']))
                 $params[':adminRank'] = 'a';
             }
             $req->execute($params);
-            $subject = tr($tr,'mail_info_subject');
+            $subject = tr($tr, 'mail_info_subject');
             $username = htmlentities((string) $data['username']);
             $memberSignupDate = date('d/m/Y à H:i', $data['signup_date']);
-            $body = tr($tr,'mail_info_body_html', ['username' => $username,
+            $body = tr(
+                $tr,
+                'mail_info_body_html',
+                ['username' => $username,
                 'email' => $data['email'],
                 'id' => $data['id'],
                 'signup_date' => $memberSignupDate]
             );
-            $altBody = tr($tr,'mail_info_body_text', ['username' => $username,
+            $altBody = tr(
+                $tr,
+                'mail_info_body_text',
+                ['username' => $username,
                 'email' => $data['email'],
                 'id' => $data['id'],
                 'signup_date' => $memberSignupDate]

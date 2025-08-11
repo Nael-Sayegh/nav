@@ -14,9 +14,9 @@ $titlemodifie = str_replace(' ', ' ', $title);
 </ul>
 </details>
 </div>
-<a href="contact.php"><?php echo tr($tr0,'footer_contact'); ?></a><br>
-<?= tr($tr0,'footer_blog'); ?><br>
-<h2><?php echo tr($tr0,'footer_youtube'); ?></h2><br aria-hidden="true">
+<a href="contact.php"><?php echo tr($tr0, 'footer_contact'); ?></a><br>
+<?= tr($tr0, 'footer_blog'); ?><br>
+<h2><?php echo tr($tr0, 'footer_youtube'); ?></h2><br aria-hidden="true">
 <span class="youtube"><a href=https://www.youtube.com/channel/UC1Ot4mhqH0LtRJj0C4ctzPw>Nael accessvision</a><br><br aria-hidden="true"></span>
 <?php
 include('include/stats.php');
@@ -41,8 +41,8 @@ if (defined('CESIUM_URL') && ($cesiumUrl = constant('CESIUM_URL')))
 <?php } ?>
 </details>
 <?php endif; ?>
-<a href="docs/cgs-offline-b2c.pdf" target="_blank"><?= tr($tr0,'footer_cgv'); ?></a><br>
-<a href="legal.php"><?php echo tr($tr0,'footer_mention'); ?></a><br>
+<a href="docs/cgs-offline-b2c.pdf" target="_blank"><?= tr($tr0, 'footer_cgv'); ?></a><br>
+<a href="legal.php"><?php echo tr($tr0, 'footer_mention'); ?></a><br>
 Copyright &copy 2020-<?php print date('Y'); ?> <?= tr($tr0, 'footer_copyright', ['site' => $site_name]) ?><br>
 <p><?php getContentLastModif(); ?><br>
 <?php getVersionFromGit(); ?></p>

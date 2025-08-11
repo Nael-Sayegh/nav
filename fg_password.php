@@ -35,9 +35,9 @@ if ($step === 'request' && $_SERVER['REQUEST_METHOD'] === 'POST')
         $reqTok = $bdd2->prepare($SQLTok);
         $reqTok->execute([':uid' => $user['id'], ':tok' => $token, ':exp' => $expires]);
         $link = SITE_URL."/fg_password.php?step=reset&token={$token}";
-        $subject = tr($tr,'mail_reset_subject');
-        $body = tr($tr,'mail_reset_body_html', ['username' => $user['username'], 'link' => $link]);
-        $altBody = tr($tr,'mail_reset_body_text', ['username' => $user['username'], 'link' => $link]);
+        $subject = tr($tr, 'mail_reset_subject');
+        $body = tr($tr, 'mail_reset_body_html', ['username' => $user['username'], 'link' => $link]);
+        $altBody = tr($tr, 'mail_reset_body_text', ['username' => $user['username'], 'link' => $link]);
         sendMail($user['email'], $subject, $body, $altBody);
     }
 

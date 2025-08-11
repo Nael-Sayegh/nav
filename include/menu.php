@@ -161,7 +161,7 @@ foreach ([
     '/privacy.php'      => 'menu_privacy',
 ] as $url => $key)
 {
-    $items[] = ['type' => 'link', 'url' => $url, 'label' => $key, 'params' => isset($params)?$params:[]];
+    $items[] = ['type' => 'link', 'url' => $url, 'label' => $key, 'params' => isset($params) ? $params : []];
 }
 ?>
 <nav id="nav">

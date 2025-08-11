@@ -23,4 +23,3 @@ catch (PDOException $e)
     print 'Erreur de connexion à la base de données 2';
     error_log('DB connect error: '.$e->getMessage());
 }
-

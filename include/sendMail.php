@@ -23,7 +23,7 @@ function sendMail($recipients, string $subject, string $contentHtml, string $con
     $headerHtml = <<<HTML
         <header style="text-align:center; padding:1em 0;">
         <h1 style="margin:0;">{$site_name}</h1>
-        <img src="{$logoUrl}" alt="Logo" style="max-height:60px;">
+        <img src="{$logoUrl}" alt="Logo" style="max-height:150px;">
         </header>
         HTML;
     $noticeHtml = $includeNotice

@@ -130,19 +130,17 @@ Veuillez noter que la lettre d'informations <?php print $site_name; ?> est envoy
 <form action="?a=s&noredir=true" method="post">
 <label for="f_mail">Adresse e-mail&nbsp;:</label>
 <input type="email" name="mail" id="f_mail" maxlength="255" required><br>
-<!-- Formulaire simplifié - valeurs par défaut définies dans le code PHP
 <fieldset><legend><?php print $site_name; ?></legend>
-<label for="f_freq">Recevoir un mail&nbsp;:</label>
+<!-- <label for="f_freq">Recevoir un mail&nbsp;:</label>
 <select name="freq" id="f_freq"><option value="1">Quotidiennement</option><option value="2">Tous les 2 jours</option><option value="3" selected>Hebdomadairement</option><option value="4">Quinzomadairement</option><option value="5">Mensuellement</option></select><br>
 <label for="f_notif_site">Me notifier d'une mise à jour du site&nbsp;:</label>
 <input type="checkbox" name="notif_site" id="f_notif_site" checked><br>
+-->
 <label for="f_notif_up">Me notifier de la mise à jour d'un article&nbsp;:</label>
 <input type="checkbox" name="notif_up" id="f_notif_up" checked><br>
 </fieldset>
--->
 <fieldset><legend>NVDA.FR</legend>
-<!-- Fréquence définie par défaut à hebdomadaire dans le code PHP
-<label for="f_freq_n">Recevoir un mail&nbsp;:</label>
+<!-- <label for="f_freq_n">Recevoir un mail&nbsp;:</label>
 <select name="freq_n" id="f_freq_n"><option value="1">Quotidiennement</option><option value="2">Tous les 2 jours</option><option value="3" selected>Hebdomadairement</option><option value="4">Quinzomadairement</option><option value="5">Mensuellement</option></select><br>
 -->
 <label for="f_notif_up_n">Me notifier de la mise à jour d'un article NVDA.FR&nbsp;:</label>

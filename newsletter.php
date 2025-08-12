@@ -24,7 +24,6 @@ if (isset($_GET['a']) && $_GET['a'] === 's')
     {
         $log .= 'L\'adresse e-mail ne doit pas être vide et ne doit pas excéder les 255 caractères&#8239;!<br>';
     }
-    // Fréquence par défaut : hebdomadaire (3)
     // if (!isset($_POST['freq']) || !($_POST['freq'] === '1' || $_POST['freq'] === '2' || $_POST['freq'] === '3' || $_POST['freq'] === '4' || $_POST['freq'] === '5'))
     // {
     //     $log .= 'Veuillez renseigner une fréquence d\'envoi valide.<br>';
@@ -43,11 +42,9 @@ if (isset($_GET['a']) && $_GET['a'] === 's')
         else
         {
             $hash = sha1(strval(random_int(0, mt_getrandmax()) + time()).$_POST['mail']).sha1($_POST['mail'].$_SERVER['REMOTE_ADDR'].strval(random_int(0, mt_getrandmax())));
-
-            // Valeurs par défaut définies
-            $freq = 3; // Hebdomadaire par défaut
-            $freq_n = 3; // Hebdomadaire par défaut pour NVDA.FR
-            $f_site = 1; // Notifications site activées par défaut
+            $freq = 3;
+            $freq_n = 3;
+            $f_site = 1;
 
             // $f_site = 0;
             // if (isset($_POST['notif_site']) && $_POST['notif_site'] === 'on')

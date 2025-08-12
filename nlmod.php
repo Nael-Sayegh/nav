@@ -44,7 +44,6 @@ if ($nldata = $req->fetch())
     }
     if (isset($_GET['mod']))
     {
-        // Gestion des fréquences - commenté car valeurs par défaut définies
         // $freq = $nldata['freq'];
         // if (isset($_POST['freq']) && ($_POST['freq'] === '1' || $_POST['freq'] === '2' || $_POST['freq'] === '3' || $_POST['freq'] === '4' || $_POST['freq'] === '5'))
         // {
@@ -57,19 +56,17 @@ if ($nldata = $req->fetch())
         //     $freq_n = $_POST['freq_n'];
         // }
 
-        // Notifications site automatiquement activées
         // $f_site = 0;
         // if (isset($_POST['notif_site']) && $_POST['notif_site'] === 'on')
         // {
         //     $f_site = 1;
         // }
 
-        // Notifications articles - commenté car automatiquement activées
-        // $f_upd = 0;
-        // if (isset($_POST['notif_up']) && $_POST['notif_up'] === 'on')
-        // {
-        //     $f_upd = 1;
-        // }
+        $f_upd = 0;
+        if (isset($_POST['notif_up']) && $_POST['notif_up'] === 'on')
+        {
+            $f_upd = 1;
+        }
 
         $f_upd_n = 0;
         if (isset($_POST['notif_up_n']) && $_POST['notif_up_n'] === 'on')
@@ -82,12 +79,11 @@ if ($nldata = $req->fetch())
             $f_lang = $_POST['lang'];
         }
 
-        // Mise à jour avec valeurs par défaut
         $SQL = <<<SQL
-            UPDATE newsletter_mails SET notif_upd_n=:notifupdn, lang=:lng WHERE id=:id
+            UPDATE newsletter_mails SET notif_upd=:notifupd, notif_upd_n=:notifupdn, lang=:lng WHERE id=:id
             SQL;
         $req = $bdd->prepare($SQL);
-        $req->execute([':notifupdn' => $f_upd_n, ':lng' => $f_lang, ':id' => $nldata['id']]);
+        $req->execute([':notifupd' => $f_upd, ':notifupdn' => $f_upd_n, ':lng' => $f_lang, ':id' => $nldata['id']]);
 
         // $SQL = <<<SQL
         //     UPDATE newsletter_mails SET freq=:frq, freq_n=:frqn, notif_site=:notifsite, notif_upd=:notifupd, notif_upd_n=:notifupdn, lang=:lng WHERE id=:id
@@ -134,11 +130,10 @@ if (isset($_GET['redir']) && $_GET['redir'])
 <?php endif; ?>
 <p>Sur cette page vous pouvez modifier les paramètres de votre abonnement aux lettres d'informations de <?php print $site_name; ?>.</p>
 <form action="?mod&id=<?= $nldata['hash'] ?>" method="post">
-<!-- Paramètres simplifiés - fréquences et notifications principales définies par défaut
 <fieldset><legend><?php print $site_name; ?></legend>
 <label for="f_lang">Langue préférée&nbsp;:</label>
 <select id="f_lang" name="lang" autocomplete="off"><?= langs_html_opts($nldata['lang']) ?></select><br>
-<label for="f_freq">Recevoir un mail&nbsp;:</label>
+<!-- <label for="f_freq">Recevoir un mail&nbsp;:</label>
 <select name="freq" id="f_freq" autocomplete="off"><option value="1"<?php if ($nldata['freq'] === 1)
 {
     echo ' selected';
@@ -160,16 +155,12 @@ if (isset($_GET['redir']) && $_GET['redir'])
 {
     echo ' checked="checked"';
 } ?>><br>
-<label for="f_notif_up">Me notifier de la mise à jour d'un article&nbsp;:</label>
+-->
+<label for="f_notif_up">Me notifier de la mise à jour d'un article <?php print $site_name; ?>&nbsp;:</label>
 <input type="checkbox" name="notif_up" id="f_notif_up"<?php if ($nldata['notif_upd'])
 {
     echo ' checked="checked"';
 } ?>><br>
-</fieldset>
--->
-<fieldset><legend>Paramètres personnalisables</legend>
-<label for="f_lang">Langue préférée&nbsp;:</label>
-<select id="f_lang" name="lang" autocomplete="off"><?= langs_html_opts($nldata['lang']) ?></select><br>
 </fieldset>
 <fieldset><legend>NVDA.FR</legend>
 <!-- Fréquence définie par défaut

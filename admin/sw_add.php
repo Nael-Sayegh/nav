@@ -102,6 +102,7 @@ if (isset($_GET['form']) && isset($_POST['sname']) && isset($_POST['category']))
 
         $social = isset($_POST['social']) && $_POST['social'] === 'on';
         $published = !empty($_POST['published']);
+        echo 'publié:' . $published;
     }
 
     if (empty($log))

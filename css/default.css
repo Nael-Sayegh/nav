@@ -117,6 +117,7 @@ margin-bottom: 20px;
 	}
 
 	/* Logo dans le footer - version bas droite */
+	/*
 	#footer::after {
 	content: "";
 	position: absolute;
@@ -128,9 +129,9 @@ margin-bottom: 20px;
 	background-size: contain;
 	opacity: 0.7;
 	}
+	*/
 
 	/* Alternative: Logo dans le footer - version bas gauche */
-	/*
 	#footer::before {
 	content: "";
 	position: absolute;
@@ -142,7 +143,6 @@ margin-bottom: 20px;
 	background-size: contain;
 	opacity: 0.7;
 	}
-	*/
 
 	#nav {
 	position: absolute;

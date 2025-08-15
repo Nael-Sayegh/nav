@@ -116,22 +116,6 @@ margin-bottom: 20px;
 	position: relative;
 	}
 
-	/* Logo dans le footer - version bas droite */
-	/*
-	#footer::after {
-	content: "";
-	position: absolute;
-	bottom: 10px;
-	right: 10px;
-	width: 128px;
-	height: 170px;
-	background: url("/images/logo128-170.png") no-repeat center center;
-	background-size: contain;
-	opacity: 0.7;
-	}
-	*/
-
-	/* Alternative: Logo dans le footer - version bas gauche */
 	#footer::before {
 	content: "";
 	position: absolute;

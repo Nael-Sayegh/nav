@@ -113,7 +113,36 @@ margin-bottom: 20px;
 	#footer {
 	padding: 10px;
 	margin-left: 250px;
+	position: relative;
 	}
+
+	/* Logo dans le footer - version bas droite */
+	#footer::after {
+	content: "";
+	position: absolute;
+	bottom: 10px;
+	right: 10px;
+	width: 64px;
+	height: 64px;
+	background: url("/images/logo128-170.png") no-repeat center center;
+	background-size: contain;
+	opacity: 0.7;
+	}
+
+	/* Alternative: Logo dans le footer - version bas gauche */
+	/*
+	#footer::before {
+	content: "";
+	position: absolute;
+	bottom: 10px;
+	left: 10px;
+	width: 64px;
+	height: 64px;
+	background: url("/images/logo128-170.png") no-repeat center center;
+	background-size: contain;
+	opacity: 0.7;
+	}
+	*/
 
 	#nav {
 	position: absolute;

@@ -3,7 +3,6 @@ $permalink = 'https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
 $titlemodifie = str_replace(' ', ' ', $title);
 ?>
 <footer id="footer">
-<a class="sr_only" href="" accesskey="H"><?= tr($tr0, 'footer_toplink') ?></a>
 <div id="social_share" role="complementary">
 <details>
 <summary><?= tr($tr0, 'footer_share') ?></summary>

@@ -44,28 +44,36 @@ if ($nldata = $req->fetch())
     }
     if (isset($_GET['mod']))
     {
-        $freq = $nldata['freq'];
-        if (isset($_POST['freq']) && ($_POST['freq'] === '1' || $_POST['freq'] === '2' || $_POST['freq'] === '3' || $_POST['freq'] === '4' || $_POST['freq'] === '5'))
-        {
-            $freq = $_POST['freq'];
-        }
+        // $freq = $nldata['freq'];
+        // if (isset($_POST['freq']) && ($_POST['freq'] === '1' || $_POST['freq'] === '2' || $_POST['freq'] === '3' || $_POST['freq'] === '4' || $_POST['freq'] === '5'))
+        // {
+        //     $freq = $_POST['freq'];
+        // }
 
-        $freq_n = $nldata['freq_n'];
-        if (isset($_POST['freq_n']) && ($_POST['freq_n'] === '1' || $_POST['freq_n'] === '2' || $_POST['freq_n'] === '3' || $_POST['freq_n'] === '4' || $_POST['freq_n'] === '5'))
-        {
-            $freq_n = $_POST['freq_n'];
-        }
+        // $freq_n = $nldata['freq_n'];
+        // if (isset($_POST['freq_n']) && ($_POST['freq_n'] === '1' || $_POST['freq_n'] === '2' || $_POST['freq_n'] === '3' || $_POST['freq_n'] === '4' || $_POST['freq_n'] === '5'))
+        // {
+        //     $freq_n = $_POST['freq_n'];
+        // }
 
-        $f_site = 0;
-        if (isset($_POST['notif_site']) && $_POST['notif_site'] === 'on')
-        {
-            $f_site = 1;
-        }
+        // $f_site = 0;
+        // if (isset($_POST['notif_site']) && $_POST['notif_site'] === 'on')
+        // {
+        //     $f_site = 1;
+        // }
+
+        // $f_site = 0;
+        // if (isset($_POST['notif_site']) && $_POST['notif_site'] === 'on')
+        // {
+            // $f_site = 1;
+        // }
+
         $f_upd = 0;
         if (isset($_POST['notif_up']) && $_POST['notif_up'] === 'on')
         {
             $f_upd = 1;
         }
+
         $f_upd_n = 0;
         if (isset($_POST['notif_up_n']) && $_POST['notif_up_n'] === 'on')
         {
@@ -76,11 +84,18 @@ if ($nldata = $req->fetch())
         {
             $f_lang = $_POST['lang'];
         }
+
         $SQL = <<<SQL
-            UPDATE newsletter_mails SET freq=:frq, freq_n=:frqn, notif_site=:notifsite, notif_upd=:notifupd, notif_upd_n=:notifupdn, lang=:lng WHERE id=:id
+            UPDATE newsletter_mails SET notif_upd=:notifupd, notif_upd_n=:notifupdn, lang=:lng WHERE id=:id
             SQL;
         $req = $bdd->prepare($SQL);
-        $req->execute([':frq' => $freq, ':frqn' => $freq_n, ':notifsite' => $f_site, ':notifupd' => $f_upd, ':notifupdn' => $f_upd_n, ':lng' => $f_lang, ':id' => $nldata['id']]);
+        $req->execute([':notifupd' => $f_upd, ':notifupdn' => $f_upd_n, ':lng' => $f_lang, ':id' => $nldata['id']]);
+
+        // $SQL = <<<SQL
+        //     UPDATE newsletter_mails SET freq=:frq, freq_n=:frqn, notif_site=:notifsite, notif_upd=:notifupd, notif_upd_n=:notifupdn, lang=:lng WHERE id=:id
+        //     SQL;
+        // $req = $bdd->prepare($SQL);
+        // $req->execute([':frq' => $freq, ':frqn' => $freq_n, ':notifsite' => $f_site, ':notifupd' => $f_upd, ':notifupdn' => $f_upd_n, ':lng' => $f_lang, ':id' => $nldata['id']]);
         header('Location: nlmod.php?id='.$nldata['hash']);
         exit();
     }
@@ -124,7 +139,7 @@ if (isset($_GET['redir']) && $_GET['redir'])
 <fieldset><legend><?php print $site_name; ?></legend>
 <label for="f_lang">Langue préférée&nbsp;:</label>
 <select id="f_lang" name="lang" autocomplete="off"><?= langs_html_opts($nldata['lang']) ?></select><br>
-<label for="f_freq">Recevoir un mail&nbsp;:</label>
+<!-- <label for="f_freq">Recevoir un mail&nbsp;:</label>
 <select name="freq" id="f_freq" autocomplete="off"><option value="1"<?php if ($nldata['freq'] === 1)
 {
     echo ' selected';
@@ -146,6 +161,7 @@ if (isset($_GET['redir']) && $_GET['redir'])
 {
     echo ' checked="checked"';
 } ?>><br>
+-->
 <label for="f_notif_up">Me notifier de la mise à jour d'un article&nbsp;:</label>
 <input type="checkbox" name="notif_up" id="f_notif_up"<?php if ($nldata['notif_upd'])
 {
@@ -153,7 +169,7 @@ if (isset($_GET['redir']) && $_GET['redir'])
 } ?>><br>
 </fieldset>
 <fieldset><legend>NVDA.FR</legend>
-<label for="f_freq_n">Recevoir un mail&nbsp;:</label>
+<!-- <label for="f_freq_n">Recevoir un mail&nbsp;:</label>
 <select name="freq_n" id="f_freq_n" autocomplete="off"><option value="1"<?php if ($nldata['freq_n'] === 1)
 {
     echo ' selected';
@@ -170,6 +186,7 @@ if (isset($_GET['redir']) && $_GET['redir'])
 {
     echo ' selected';
 } ?>>Mensuellement</option></select><br>
+-->
 <label for="f_notif_up_n">Me notifier de la mise à jour d'un article&nbsp;:</label>
 <input type="checkbox" name="notif_up_n" id="f_notif_up_n"<?php if ($nldata['notif_upd_n'])
 {

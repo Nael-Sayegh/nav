@@ -24,10 +24,10 @@ if (isset($_GET['a']) && $_GET['a'] === 's')
     {
         $log .= 'L\'adresse e-mail ne doit pas être vide et ne doit pas excéder les 255 caractères&#8239;!<br>';
     }
-    if (!isset($_POST['freq']) || !($_POST['freq'] === '1' || $_POST['freq'] === '2' || $_POST['freq'] === '3' || $_POST['freq'] === '4' || $_POST['freq'] === '5'))
-    {
-        $log .= 'Veuillez renseigner une fréquence d\'envoi valide.<br>';
-    }
+    // if (!isset($_POST['freq']) || !($_POST['freq'] === '1' || $_POST['freq'] === '2' || $_POST['freq'] === '3' || $_POST['freq'] === '4' || $_POST['freq'] === '5'))
+    // {
+    //     $log .= 'Veuillez renseigner une fréquence d\'envoi valide.<br>';
+    // }
     if (empty($log))
     {
         $SQL = <<<SQL
@@ -42,11 +42,15 @@ if (isset($_GET['a']) && $_GET['a'] === 's')
         else
         {
             $hash = sha1(strval(random_int(0, mt_getrandmax()) + time()).$_POST['mail']).sha1($_POST['mail'].$_SERVER['REMOTE_ADDR'].strval(random_int(0, mt_getrandmax())));
-            $f_site = 0;
-            if (isset($_POST['notif_site']) && $_POST['notif_site'] === 'on')
-            {
-                $f_site = 1;
-            }
+            $freq = 3;
+            $freq_n = 3;
+            $f_site = 1;
+
+            // $f_site = 0;
+            // if (isset($_POST['notif_site']) && $_POST['notif_site'] === 'on')
+            // {
+            //     $f_site = 1;
+            // }
             $f_upd = 0;
             if (isset($_POST['notif_up']) && $_POST['notif_up'] === 'on')
             {
@@ -75,6 +79,12 @@ if (isset($_GET['a']) && $_GET['a'] === 's')
                 Vous pouvez modifier les paramètres de votre abonnement ou vous désinscrire à l'adresse suivante :
                 https://{SITE_URL}/nlmod.php?id={$hash}
                 TEXT;
+
+            $SQL = <<<SQL
+                INSERT INTO newsletter_mails (hash, mail, freq, freq_n, notif_site, notif_upd, notif_upd_n, lang, lastmail, lastmail_n) VALUES (:hash, :mail, :frq, :frqn, :notifsite, :notifupd, :notifupdn, :lng, :last, :lastn)
+                SQL;
+            $req = $bdd->prepare($SQL);
+            $req->execute([':hash' => $hash, ':mail' => $_POST['mail'], ':frq' => $freq, ':frqn' => $freq_n,  ':notifsite' => $f_site, ':notifupd' => $f_upd, ':notifupdn' => $f_upd_n, ':lng' => $lang, ':last' => time(), ':lastn' => time()]);
 
             if (sendMail($_POST['mail'], $subject, $body, $altBody))
             {
@@ -124,16 +134,18 @@ Veuillez noter que la lettre d'informations <?php print $site_name; ?> est envoy
 <label for="f_mail">Adresse e-mail&nbsp;:</label>
 <input type="email" name="mail" id="f_mail" maxlength="255" required><br>
 <fieldset><legend><?php print $site_name; ?></legend>
-<label for="f_freq">Recevoir un mail&nbsp;:</label>
+<!-- <label for="f_freq">Recevoir un mail&nbsp;:</label>
 <select name="freq" id="f_freq"><option value="1">Quotidiennement</option><option value="2">Tous les 2 jours</option><option value="3" selected>Hebdomadairement</option><option value="4">Quinzomadairement</option><option value="5">Mensuellement</option></select><br>
 <label for="f_notif_site">Me notifier d'une mise à jour du site&nbsp;:</label>
 <input type="checkbox" name="notif_site" id="f_notif_site" checked><br>
+-->
 <label for="f_notif_up">Me notifier de la mise à jour d'un article&nbsp;:</label>
 <input type="checkbox" name="notif_up" id="f_notif_up" checked><br>
 </fieldset>
 <fieldset><legend>NVDA.FR</legend>
-<label for="f_freq_n">Recevoir un mail&nbsp;:</label>
+<!-- <label for="f_freq_n">Recevoir un mail&nbsp;:</label>
 <select name="freq_n" id="f_freq_n"><option value="1">Quotidiennement</option><option value="2">Tous les 2 jours</option><option value="3" selected>Hebdomadairement</option><option value="4">Quinzomadairement</option><option value="5">Mensuellement</option></select><br>
+-->
 <label for="f_notif_up_n">Me notifier de la mise à jour d'un article&nbsp;:</label>
 <input type="checkbox" name="notif_up_n" id="f_notif_up_n" checked><br>
 </fieldset>

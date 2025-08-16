@@ -58,36 +58,36 @@ if (isset($_GET['a']) && $_GET['a'] === 's')
                 $f_upd_n = 1;
             }
 
-            $subject = 'Inscription à la lettre d\'informations';
+            $subject = 'Confirmation d\'inscription à la lettre d\'informations';
             $body = <<<HTML
                 <div id="content">
                 <h2>Bonjour</h2>
-                <p>Vous avez bien été abonné à la lettre d'informations {$site_name}.</p>
+                <p>Vous avez bien été inscrit à la lettre d'informations {$site_name}.</p>
                 <p>Votre inscription est maintenant active et vous recevrez les prochaines newsletters selon vos préférences.</p>
-                <p>Vous pouvez modifier les paramètres de votre abonnement ou vous désinscrire à l'adresse suivante : <a href="{SITE_URL}/nlmod.php?id={$hash}">{SITE_URL}/nlmod.php?id={$hash}</a></p>
+                <p>Vous pouvez modifier les paramètres de votre abonnement ou vous désinscrire à l'adresse suivante :<br>
+                 <a href="{SITE_URL}/nlmod.php?id={$hash}">{SITE_URL}/nlmod.php?id={$hash}</a></p>
                 </div>
                 HTML;
             $altBody = <<<TEXT
                 Bonjour,
-                Vous avez bien été abonné à la lettre d'informations {$site_name}.
+                Vous avez bien été inscrit à la lettre d'informations {$site_name}.
                 Votre inscription est maintenant active et vous recevrez les prochaines newsletters selon vos préférences.
                 Vous pouvez modifier les paramètres de votre abonnement ou vous désinscrire à l'adresse suivante :
-                {SITE_URL}/nlmod.php?id={$hash}
+                https://{SITE_URL}/nlmod.php?id={$hash}
                 TEXT;
-
-            $SQL = <<<SQL
-                INSERT INTO newsletter_mails (hash, mail, freq, freq_n, notif_site, notif_upd, notif_upd_n, lang, lastmail, lastmail_n) VALUES (:hash, :mail, :frq, :frqn, :notifsite, :notifupd, :notifupdn, :lng, :last, :lastn)
-                SQL;
-            $req = $bdd->prepare($SQL);
-            $req->execute([':hash' => $hash, ':mail' => $_POST['mail'], ':frq' => $_POST['freq'], ':frqn' => $_POST['freq_n'],  ':notifsite' => $f_site, ':notifupd' => $f_upd, ':notifupdn' => $f_upd_n, ':lng' => $lang, ':last' => time(), ':lastn' => time()]);
 
             if (sendMail($_POST['mail'], $subject, $body, $altBody))
             {
+                $SQL = <<<SQL
+                    INSERT INTO newsletter_mails (hash, mail, freq, freq_n, notif_site, notif_upd, notif_upd_n, lang, lastmail, lastmail_n) VALUES (:hash, :mail, :frq, :frqn, :notifsite, :notifupd, :notifupdn, :lng, :last, :lastn)
+                SQL;
+                $req = $bdd->prepare($SQL);
+                $req->execute([':hash' => $hash, ':mail' => $_POST['mail'], ':frq' => $_POST['freq'], ':frqn' => $_POST['freq_n'],  ':notifsite' => $f_site, ':notifupd' => $f_upd, ':notifupdn' => $f_upd_n, ':lng' => $lang, ':last' => time(), ':lastn' => time()]);
                 $log .= 'Vous êtes bien inscrit à la lettre d\'informations '.$site_name.'.<br>Un email de confirmation vous a été envoyé à '.$_POST['mail'].'.';
             }
             else
             {
-                $log .= 'Vous êtes bien inscrit à la lettre d\'informations '.$site_name.', mais l\'envoi de l\'email de confirmation a échoué.';
+                $log .= 'Erreur pendant l\'envoi du mail.';
             }
         }
     }

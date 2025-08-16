@@ -80,19 +80,13 @@ if (isset($_GET['a']) && $_GET['a'] === 's')
                 https://{SITE_URL}/nlmod.php?id={$hash}
                 TEXT;
 
-            $SQL = <<<SQL
-                INSERT INTO newsletter_mails (hash, mail, freq, freq_n, notif_site, notif_upd, notif_upd_n, lang, lastmail, lastmail_n) VALUES (:hash, :mail, :frq, :frqn, :notifsite, :notifupd, :notifupdn, :lng, :last, :lastn)
-                SQL;
-            $req = $bdd->prepare($SQL);
-            $req->execute([':hash' => $hash, ':mail' => $_POST['mail'], ':frq' => $freq, ':frqn' => $freq_n,  ':notifsite' => $f_site, ':notifupd' => $f_upd, ':notifupdn' => $f_upd_n, ':lng' => $lang, ':last' => time(), ':lastn' => time()]);
-
             if (sendMail($_POST['mail'], $subject, $body, $altBody))
             {
                 $SQL = <<<SQL
-                    INSERT INTO newsletter_mails (hash, mail, freq, freq_n, notif_site, notif_upd, notif_upd_n, lang, lastmail, lastmail_n) VALUES (:hash, :mail, :frq, :frqn, :notifsite, :notifupd, :notifupdn, :lng, :last, :lastn)
+                INSERT INTO newsletter_mails (hash, mail, freq, freq_n, notif_site, notif_upd, notif_upd_n, lang, lastmail, lastmail_n) VALUES (:hash, :mail, :frq, :frqn, :notifsite, :notifupd, :notifupdn, :lng, :last, :lastn)
                 SQL;
                 $req = $bdd->prepare($SQL);
-                $req->execute([':hash' => $hash, ':mail' => $_POST['mail'], ':frq' => $_POST['freq'], ':frqn' => $_POST['freq_n'],  ':notifsite' => $f_site, ':notifupd' => $f_upd, ':notifupdn' => $f_upd_n, ':lng' => $lang, ':last' => time(), ':lastn' => time()]);
+                $req->execute([':hash' => $hash, ':mail' => $_POST['mail'], ':frq' => $freq, ':frqn' => $freq_n,  ':notifsite' => $f_site, ':notifupd' => $f_upd, ':notifupdn' => $f_upd_n, ':lng' => $lang, ':last' => time(), ':lastn' => time()]);
                 $log .= 'Vous êtes bien inscrit à la lettre d\'informations '.$site_name.'.<br>Un email de confirmation vous a été envoyé à '.$_POST['mail'].'.';
             }
             else

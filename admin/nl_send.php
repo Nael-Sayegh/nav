@@ -35,6 +35,10 @@ if (isset($_GET['act']) && $_GET['act'] === 'sendnl')
         $req->execute();
         while ($data = $req->fetch())
         {
+            if (isset($allMails[$data['mail']]))
+            {
+                continue;
+            }
             $allMails[$data['mail']] = $data['hash'];
         }
     }
@@ -44,6 +48,10 @@ if (isset($_GET['act']) && $_GET['act'] === 'sendnl')
         $req->execute();
         while ($data = $req->fetch())
         {
+            if (isset($allMails[$data['mail']]))
+            {
+                continue;
+            }
             $allMails[$data['mail']] = $data['hash'];
         }
     }

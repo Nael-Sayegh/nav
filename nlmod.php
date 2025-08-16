@@ -62,6 +62,12 @@ if ($nldata = $req->fetch())
         //     $f_site = 1;
         // }
 
+        // $f_site = 0;
+        // if (isset($_POST['notif_site']) && $_POST['notif_site'] === 'on')
+        // {
+            // $f_site = 1;
+        // }
+
         $f_upd = 0;
         if (isset($_POST['notif_up']) && $_POST['notif_up'] === 'on')
         {

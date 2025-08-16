@@ -135,7 +135,7 @@ $title = 'Lettre d\'informations'; ?>
 <label for="f_notif_up">M'inscrire à la newsletter <?= $site_name; ?></label>
 <input type="checkbox" name="notif_up" id="f_notif_up" checked><br>
 </fieldset>
-<fieldset><legendBlog Nael-Accessvision</legend>
+<fieldset><legend>Blog Nael-Accessvision</legend>
 <!-- <label for="f_freq_n">Recevoir un mail&nbsp;:</label>
 <select name="freq_n" id="f_freq_n"><option value="1">Quotidiennement</option><option value="2">Tous les 2 jours</option><option value="3" selected>Hebdomadairement</option><option value="4">Quinzomadairement</option><option value="5">Mensuellement</option></select><br>
 -->

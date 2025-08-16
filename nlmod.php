@@ -162,13 +162,13 @@ if (isset($_GET['redir']) && $_GET['redir'])
     echo ' checked="checked"';
 } ?>><br>
 -->
-<label for="f_notif_up">Me notifier de la mise à jour d'un article&nbsp;:</label>
+<label for="f_notif_up">M'inscrire à la newsletter <?= $site_name; ?></label>
 <input type="checkbox" name="notif_up" id="f_notif_up"<?php if ($nldata['notif_upd'])
 {
     echo ' checked="checked"';
 } ?>><br>
 </fieldset>
-<fieldset><legend>NVDA.FR</legend>
+<fieldset><legend>Blog Nael-Accessvision</legend>
 <!-- <label for="f_freq_n">Recevoir un mail&nbsp;:</label>
 <select name="freq_n" id="f_freq_n" autocomplete="off"><option value="1"<?php if ($nldata['freq_n'] === 1)
 {
@@ -187,7 +187,7 @@ if (isset($_GET['redir']) && $_GET['redir'])
     echo ' selected';
 } ?>>Mensuellement</option></select><br>
 -->
-<label for="f_notif_up_n">Me notifier de la mise à jour d'un article&nbsp;:</label>
+<label for="f_notif_up_n">M'inscrire à la newsletter Blog Nael-Accessvision</label>
 <input type="checkbox" name="notif_up_n" id="f_notif_up_n"<?php if ($nldata['notif_upd_n'])
 {
     echo ' checked="checked"';

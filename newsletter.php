@@ -122,8 +122,7 @@ $title = 'Lettre d\'informations'; ?>
     });
 </script>
 <?php endif; ?>
-<p>Inscrivez-vous à la lettre d'informations <?php print $site_name; ?> pour connaître toutes les nouveautés et maintenir vos logiciels à jour! Vous pouvez choisir d'être notifié à chaque mise à jour d'un logiciel.<br>
-Veuillez noter que la lettre d'informations <?php print $site_name; ?> est envoyé automatiquement, sans aucune intervention de la part de l'équipe, à 19:50.</p>
+<p>Inscrivez-vous à la newsletter <?php print $site_name; ?> pour connaître toutes nos actualités, nouveautés et informations!</p>
 <form action="?a=s&noredir=true" method="post">
 <label for="f_mail">Adresse e-mail&nbsp;:</label>
 <input type="email" name="mail" id="f_mail" maxlength="255" required><br>
@@ -133,17 +132,17 @@ Veuillez noter que la lettre d'informations <?php print $site_name; ?> est envoy
 <label for="f_notif_site">Me notifier d'une mise à jour du site&nbsp;:</label>
 <input type="checkbox" name="notif_site" id="f_notif_site" checked><br>
 -->
-<label for="f_notif_up">Me notifier de la mise à jour d'un article&nbsp;:</label>
+<label for="f_notif_up">M'inscrire à la newsletter <?= $site_name; ?></label>
 <input type="checkbox" name="notif_up" id="f_notif_up" checked><br>
 </fieldset>
-<fieldset><legend>NVDA.FR</legend>
+<fieldset><legendBlog Nael-Accessvision</legend>
 <!-- <label for="f_freq_n">Recevoir un mail&nbsp;:</label>
 <select name="freq_n" id="f_freq_n"><option value="1">Quotidiennement</option><option value="2">Tous les 2 jours</option><option value="3" selected>Hebdomadairement</option><option value="4">Quinzomadairement</option><option value="5">Mensuellement</option></select><br>
 -->
-<label for="f_notif_up_n">Me notifier de la mise à jour d'un article&nbsp;:</label>
+<label for="f_notif_up_n">M'inscrire à la newsletter Blog Nael-Accessvision</label>
 <input type="checkbox" name="notif_up_n" id="f_notif_up_n" checked><br>
 </fieldset>
-<p><p>Votre adresse e-mail ainsi que toutes vos informations personnelles ne seront pas partagées avec des tiers. Cet abonnement peut être annulé à tout moment.</p></p>
+<p>Votre adresse e-mail ainsi que toutes vos informations personnelles ne seront pas partagées avec des tiers. Cet abonnement peut être annulé à tout moment.</p>
 <input type="submit" value="S'abonner">
 </form>
 </main>

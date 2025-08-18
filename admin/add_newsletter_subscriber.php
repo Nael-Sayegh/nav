@@ -61,7 +61,8 @@ function addNewsletterSubscriber($email, $options = []) {
     try {
         $SQL = <<<SQL
         INSERT INTO newsletter_mails (
-            hash, mail, freq, freq_n, notif_site, notif_upd, notif_upd_n, lang
+            hash, mail, freq, freq_n, notif_site, notif_upd, notif_upd_n,
+            lastmail, lastmail_n, lang
         ) VALUES (
             :hash, :mail, :freq, :freq_n, :notif_site, :notif_upd, :notif_upd_n,
             :lastmail, :lastmail_n, :lang

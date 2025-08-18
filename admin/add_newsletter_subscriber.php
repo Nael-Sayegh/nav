@@ -63,7 +63,8 @@ function addNewsletterSubscriber($email, $options = []) {
         INSERT INTO newsletter_mails (
             hash, mail, freq, freq_n, notif_site, notif_upd, notif_upd_n, lang
         ) VALUES (
-            :hash, :mail, :freq, :freq_n, :notif_site, :notif_upd, :notif_upd_n, :lang
+            :hash, :mail, :freq, :freq_n, :notif_site, :notif_upd, :notif_upd_n,
+            :lastmail, :lastmail_n, :lang
         )
         SQL;
 
@@ -76,6 +77,8 @@ function addNewsletterSubscriber($email, $options = []) {
             ':notif_site' => $config['notif_site'] ? 1 : 0,
             ':notif_upd' => $config['notif_upd'] ? 1 : 0,
             ':notif_upd_n' => $config['notif_upd_n'] ? 1 : 0,
+            ':lastmail' => time(),
+            ':lastmail_n' => time(),
             ':lang' => $config['lang']
         ]);
 

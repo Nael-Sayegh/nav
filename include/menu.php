@@ -177,7 +177,7 @@ else: ?>
 </div>
 <script>
     document.getElementById("boutonjs").style.display = "block";
-    if (window.innerWidth <= 820)
+    if (window.innerWidth <= 400)
     {
         rdisp("ulli_menu", "popup_ulli_menu");
     }

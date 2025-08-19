@@ -327,19 +327,6 @@ foreach ($files as $data)
     {
         ?>
 <span class="sr_only" role="heading" aria-level="2" aria-labelledby="filestitle"></span>
-<div id="js-sort-container" hidden style="margin:1em 0;">
-<label for="js_sort"><?= tr($tr, 'sort_label') ?></label>
-<select id="js_sort">
-<option value="date"><?= tr($tr, 'sort_date') ?></option>
-<option value="hits"><?= tr($tr, 'sort_dl') ?></option>
-<option value="name"><?= tr($tr, 'sort_filename') ?></option>
-<option value="title"><?= tr($tr, 'sort_title') ?></option>
-<option value="filesize"><?= tr($tr, 'sort_size') ?></option>
-</select>
-</div>
-<noscript>
-  <p><?= tr($tr, 'js_to_sort') ?></p>
-</noscript>
 <table id="sw_files">
 <caption><strong id="filestitle"><?= tr($tr, 'files_title', ['title' => $title]) ?></strong></caption>
 <thead>
@@ -492,14 +479,6 @@ if (!$first)
 <td>'.$sw['downloads'].'</td></tr>';
 } ?>
 <tr>
-<td><?= tr($tr, 'visits') ?></td>
-<td><?= $sw['hits'] ?></td>
-</tr>
-<tr>
-<td><?= tr($tr, 'lastmodif') ?></td>
-<td><?= tr($tr, 'lastmodif_val', ['author' => $sw['author'],'date' => getFormattedDate($sw['date'], tr($tr0, 'fndatetime'))]) ?></td>
-</tr>
-<tr>
 <td><?= tr($tr, 'id') ?></td>
 <td>A<?= $sw['id'] ?> (<?= '<a href="/c'.$sw['category'].'">'.$catMap[$sw['category']].'</a>' ?>)</td>
 </tr>
@@ -512,7 +491,7 @@ if (!$first)
 ?>
 <!--<tr>
 <td><?= tr($tr, 'rating_average') ?></td>
-<td><?php //if ($rating_count === 0): ?>
+<td><?php //if ($rating_count === 0):?>
 <em><?= tr($tr, 'rating_no_votes') ?></em>
 <?php /*else:
     echo tr($tr, 'rating_details', ['avg' => numberlocale($avg), 'count' => $rating_count]);
@@ -538,8 +517,8 @@ endif;*/ ?>
 <div class="rating-radios">
 <?php /*for ($i = 1; $i <= 5; $i++):*/ ?>
 <input type="radio" name="rating" id="rating<?= $i ?>" value="<?= $i ?>"<?= $user_rating === $i ? 'checked' : '' ?>>
-<label for="rating<?= $i ?>"><?= $i == 1 ? $i . " (".tr($tr,'rating_1_explanation').")" : ($i == 5 ? $i ." (".tr($tr,'rating_5_explanation').")" : $i) ?></label>
-<?php //endfor; ?>
+<label for="rating<?= $i ?>"><?= $i == 1 ? $i . ' ('.tr($tr, 'rating_1_explanation').')' : ($i == 5 ? $i .' ('.tr($tr, 'rating_5_explanation').')' : $i) ?></label>
+<?php //endfor;?>
 </div>
 </fieldset>
 <button type="submit"><?= tr($tr, ($user_rating === null) ? 'rating_submit' : 'rating_update') ?></button><?php /* if ($user_rating !== null)
@@ -547,9 +526,9 @@ endif;*/ ?>
     echo ' | <a href="?deleterating">'.tr($tr, 'delete_rating').'</a>';
 } */ ?>
 </form>
-<?php //else: ?>
+<?php //else:?>
 <p><em><?= tr($tr, 'rating_login_required') ?></em></p>
-<?php //endif; ?>
+<?php //endif;?>
 <div id="comments">
 <?php
 /*$SQL = <<<SQL
@@ -582,7 +561,7 @@ if (isset($_GET['cedit']))
     {
         if (canManageComment($data))
         {*/
-            ?>
+?>
 <form action="?id=<?php echo $sw['id'].'&cedit2='.$data['id'] ?>" method="post" id="cedit">
 <fieldset><legend><?= tr($tr, 'comments_mod') ?></legend>
 <label for="fc_text"><?= tr($tr, 'comments_text') ?></label><br>
@@ -666,42 +645,5 @@ function subscribe_comments(e, mod)
 }
 </script>
 <?php } ?>
-<script>
-    document.addEventListener('DOMContentLoaded', function()
-    {
-        const sortContainer = document.getElementById('js-sort-container');
-        if (sortContainer) sortContainer.hidden = false;
-        const select  = document.getElementById('js_sort');
-        const tbody   = document.querySelector('#sw_files tbody');
-        const rows    = Array.from(tbody.querySelectorAll('tr'));
-        function sortRows(criteria)
-        {
-            const sorted = rows.slice().sort((a, b) =>
-            {
-                let va = a.dataset[criteria], vb = b.dataset[criteria];
-                if (['date','hits','filesize'].includes(criteria))
-                {
-                    va = parseInt(va, 10);
-                    vb = parseInt(vb, 10);
-                }
-                else
-                {
-                    va = va.toLowerCase();
-                    vb = vb.toLowerCase();
-                }
-                if (va < vb) return (['date','hits','filesize'].includes(criteria) ? 1 : -1);
-                if (va > vb) return (['date','hits','filesize'].includes(criteria) ? -1 : 1);
-                return 0;
-            });
-            tbody.innerHTML = '';
-            sorted.forEach(tr => tbody.appendChild(tr));
-        };
-        sortRows(select.value);
-        select.addEventListener('change', () =>
-        {
-            sortRows(select.value);
-        });
-    });
-</script>
 </body>
 </html>

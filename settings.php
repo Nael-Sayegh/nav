@@ -12,19 +12,13 @@ if (isset($_GET['act']) && $_GET['act'] === 'form')
     }
     setcookie('menu', $menu, ['expires' => time() + 31536000, 'path' => '/', 'secure' => true, 'httponly' => true, 'samesite' => 'strict']);
 
-    $fontsize = '16';
+    $fontsize = '20';
     if (isset($_POST['fontsize']) && in_array($_POST['fontsize'], ['11','16','20','24']))
     {
         $fontsize = $_POST['fontsize'];
     }
     setcookie('fontsize', (string) $fontsize, ['expires' => time() + 31536000, 'path' => '/', 'secure' => true, 'httponly' => true, 'samesite' => 'strict']);
 
-    $infosdef = '0';
-    if (isset($_POST['infosdef']))
-    {
-        $infosdef = '1';
-    }
-    setcookie('infosdef', $infosdef, ['expires' => time() + 31536000, 'path' => '/', 'secure' => true, 'httponly' => true, 'samesite' => 'strict']);
 
 
     if ($logged && isset($_POST['token']) && $_POST['token'] === $login['token'])
@@ -32,11 +26,10 @@ if (isset($_GET['act']) && $_GET['act'] === 'form')
         $settings = json_decode((string) $login['settings'], true);
         $settings['menu'] = $menu;
         $settings['fontsize'] = $fontsize;
-        $settings['infosdef'] = $infosdef;
         $SQL = <<<SQL
             UPDATE accounts SET settings=:set WHERE id=:id
             SQL;
-        $req = $bdd2->prepare($SQL);
+        $req = $bdd->prepare($SQL);
         $req->execute([':set' => json_encode($settings), ':id' => $login['id']]);
     }
 
@@ -49,19 +42,17 @@ elseif (isset($_GET['act']) && $_GET['act'] === '0')
     {
         $settings = json_decode((string) $login['settings'], true);
         $settings['menu'] = '0';
-        $settings['fontsize'] = '16';
-        $settings['infosdef'] = '1';
+        $settings['fontsize'] = '20';
         $SQL = <<<SQL
             UPDATE accounts SET settings=:set WHERE id=:id
             SQL;
-        $req = $bdd2->prepare($SQL);
+        $req = $bdd->prepare($SQL);
         $req->execute([':set' => json_encode($settings), ':id' => $login['id']]);
     }
     else
     {
         setcookie('menu', '', ['expires' => 0, 'secure' => 0]);
         setcookie('fontsize', '', ['expires' => 0, 'secure' => 0]);
-        setcookie('infosdef', '', ['expires' => 0, 'secure' => 0]);
     }
     header('Location: /');
     exit();
@@ -83,8 +74,7 @@ if ($logged)
     echo '<input type="hidden" name="token" value="'.$login['token'].'">';
 }
 $menu = $_COOKIE['menu'] ?? '0';
-$fontsize = $_COOKIE['font_size'] ?? '16';
-$infosdef = $_COOKIE['infosdef'] ?? '1';
+$fontsize = $_COOKIE['font_size'] ?? '20';
 ?>
 <h3><?= tr($tr, 'gui') ?></h3>
 <label for="menu_choice"><?= tr($tr, 'combomenu') ?></label>
@@ -107,11 +97,6 @@ $infosdef = $_COOKIE['infosdef'] ?? '1';
 {
     echo'selected';
 }?>><?= tr($tr, '24') ?></option></select><br>
-<label for="f_slideridcc"><?= tr($tr, 'slider') ?></label>
-<input type="checkbox" id="f_slideridcc" name="infosdef" <?php if ($infosdef === '1')
-{
-    echo 'checked="checked"';
-} ?>><br>
 <input type="submit" value="<?= tr($tr, 'savebtn') ?>">
 </form>
 <form action="?act=0" method="post" aria-label="Réinitialiser">

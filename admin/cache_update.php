@@ -26,10 +26,6 @@ if (isset($_GET['cache']))
     {
         include($_SERVER['DOCUMENT_ROOT'].'/tasks/history_cache.php');
     }
-    if ($_GET['cache'] === 'all' || $_GET['cache'] === 'slider')
-    {
-        include($_SERVER['DOCUMENT_ROOT'].'/tasks/slider_cache.php');
-    }
     if ($_GET['cache'] === 'all' || $_GET['cache'] === 'codestat')
     {
         include($_SERVER['DOCUMENT_ROOT'].'/tasks/codestat.php');
@@ -72,7 +68,6 @@ if (!empty($obcache))
 <ul>
 <li><a href="?cache=menu">Mettre à jour le cache des menus (catégories)</a></li>
 <li><a href="?cache=journal">Mettre à jour le cache du journal des modifications</a></li>
-<li><a href="?cache=slider">Mettre à jour le cache du slider</a></li>
 <li><a href="?cache=codestat">Mettre à jour le cache des statistiques du code</a></li>
 <li><a href="?cache=langs">Mettre à jour le cache des langues</a></li>
 <li><a href="?cache=accounts">Lancer la tâche de gestion des comptes membre</a></li>

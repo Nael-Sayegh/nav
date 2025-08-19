@@ -21,7 +21,7 @@ if (isset($_POST['username']) && isset($_POST['psw']))
     $SQL = <<<SQL
         SELECT * FROM accounts WHERE username=:username OR email=:mail LIMIT 2
         SQL;
-    $req = $bdd2->prepare($SQL);
+    $req = $bdd->prepare($SQL);
     $req->execute([':username' => $_POST['username'], ':mail' => $_POST['username']]);
 
     while ($data = $req->fetch())
@@ -45,7 +45,7 @@ if (isset($_POST['username']) && isset($_POST['psw']))
             $SQL2 = <<<SQL
                 INSERT INTO sessions (account, session, connectid, expire, created, token) VALUES (:acc,:session,:connectid,:exp,:create,:token)
                 SQL;
-            $req2 = $bdd2->prepare($SQL2);
+            $req2 = $bdd->prepare($SQL2);
             $req2->execute([':acc' => $data['id'], ':session' => password_hash($session, PASSWORD_DEFAULT), ':connectid' => $connectid, ':exp' => $expire, ':create' => $created, ':token' => $token]);
             $to = $_POST['redirect'] ?? ($_SESSION['intended_after_login'] ?? '/');
             unset($_SESSION['intended_after_login']);
@@ -64,7 +64,7 @@ if (isset($_GET['signed']) && isset($_GET['mail']))
     $SQL = <<<SQL
         SELECT email FROM accounts WHERE id=:id AND confirmed=false LIMIT 1
         SQL;
-    $req = $bdd2->prepare($SQL);
+    $req = $bdd->prepare($SQL);
     $req->execute([':id' => $_GET['signed']]);
     if ($data = $req->fetch())
     {

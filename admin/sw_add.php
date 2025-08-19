@@ -101,7 +101,7 @@ if (isset($_GET['form']) && isset($_POST['sname']) && isset($_POST['category']))
         }
 
         $social = isset($_POST['social']) && $_POST['social'] === 'on';
-        $published = !empty($_POST['published']);
+        $published = !empty($_POST['published']) ? 1 : 0;
     }
 
     if (empty($log))
@@ -132,7 +132,6 @@ if (isset($_GET['form']) && isset($_POST['sname']) && isset($_POST['category']))
                 send_discord($somsg);
             }
             require_once($_SERVER['DOCUMENT_ROOT'].'/tasks/history_cache.php');
-            require_once($_SERVER['DOCUMENT_ROOT'].'/tasks/slider_cache.php');
         }
 
         header('Location: sw_mod.php?listfiles='.$lastid);

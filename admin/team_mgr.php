@@ -24,7 +24,7 @@ if (isset($_GET['add']) && isset($_POST['name']) && isset($_POST['status']) && i
     $SQL = <<<SQL
         INSERT INTO team (name, status, date, age, account_id, short_name, bio, works, mastodon, rights) VALUES(:name,:status,:date,:age,:acc,:short,:bio,:works,:masto,:rights)
         SQL;
-    $req = $bdd2->prepare($SQL);
+    $req = $bdd->prepare($SQL);
     $req->execute([':name' => $_POST['name'], ':status' => $_POST['status'], ':date' => time(), ':age' => strtotime(preg_replace('/^(\d{2})\/(\d{2})\/(\d{4})$/', '$3-$2-$1', $_POST['age'])), ':acc' => $account_id, ':short' => $_POST['short_name'], ':bio' => $_POST['bio'], ':works' => $_POST['works'], ':masto' => $_POST['mastodon'], ':rights' => $json]);
 }
 if (isset($_GET['delete']))
@@ -32,7 +32,7 @@ if (isset($_GET['delete']))
     $SQL = <<<SQL
         DELETE FROM team WHERE id=:id
         SQL;
-    $req = $bdd2->prepare($SQL);
+    $req = $bdd->prepare($SQL);
     $req->execute([':id' => $_GET['delete']]);
 }
 if (isset($_GET['mod2']) && isset($_POST['name']) && isset($_POST['status']) && isset($_POST['age']) && isset($_POST['account_id']) && isset($_POST['short_name']) && isset($_POST['bio']) && isset($_POST['works']) && isset($_POST['mastodon']))
@@ -47,7 +47,7 @@ if (isset($_GET['mod2']) && isset($_POST['name']) && isset($_POST['status']) && 
     $SQL = <<<SQL
         UPDATE team SET name=:name, status=:status, age=:age, account_id=:acc, short_name=:short, bio=:bio, works=:works, mastodon=:masto, rights=:rights WHERE id=:id
         SQL;
-    $req = $bdd2->prepare($SQL);
+    $req = $bdd->prepare($SQL);
     $req->execute([':name' => htmlentities((string) $_POST['name']), ':status' => $_POST['status'], ':age' => strtotime(preg_replace('/^(\d{2})\/(\d{2})\/(\d{4})$/', '$3-$2-$1', $_POST['age'])), ':acc' => $_POST['account_id'], ':short' => $_POST['short_name'], ':bio' => $_POST['bio'], ':works' => $_POST['works'], ':masto' => $_POST['mastodon'], ':rights' => $json, ':id' => $_GET['mod2']]);
 }
 ?>
@@ -68,7 +68,7 @@ if (isset($_GET['mod2']) && isset($_POST['name']) && isset($_POST['status']) && 
 $SQL = <<<SQL
     SELECT * FROM team ORDER BY name ASC
     SQL;
-foreach ($bdd2->query($SQL) as $data)
+foreach ($bdd->query($SQL) as $data)
 {
     echo '<tr><td>M'.$data['account_id'].'/E'.$data['id'].'</td><td>'.$data['name'].'</td><td>'.$data['short_name'].'</td><td>'.$data['status'].'</td><td>'.date('d/m/Y H:i', $data['date']).'</td><td>'.intval((time() - $data['age']) / 31557600).'</td><td>@'.$data['mastodon'].'</td><td><details><summary>Droits</summary><ul>';
     $rightsMap = json_decode((string) $data['rights'], true) ?: [];
@@ -88,7 +88,7 @@ if (isset($_GET['mod']))
     $SQL = <<<SQL
         SELECT * FROM team WHERE id=:id LIMIT 1
         SQL;
-    $req = $bdd2->prepare($SQL);
+    $req = $bdd->prepare($SQL);
     $req->execute([':id' => $_GET['mod']]);
     if ($data = $req->fetch())
     { ?>
@@ -104,7 +104,7 @@ if (isset($_GET['mod']))
         $SQL2 = <<<SQL
             SELECT id, username FROM accounts WHERE rank='a' ORDER BY id ASC
             SQL;
-        foreach ($bdd2->query($SQL2) as $data2)
+        foreach ($bdd->query($SQL2) as $data2)
         {
             echo '<option value="'.$data2['id'].'"'.(($data2['id'] === $data['account_id']) ? ' selected' : '').'>M'.$data2['id'].' '.htmlentities((string) $data2['username']).'</option>';
         }
@@ -159,7 +159,7 @@ if (isset($_GET['mod']))
 $SQL = <<<SQL
     SELECT id, username FROM accounts WHERE rank='a' ORDER BY id ASC
     SQL;
-foreach ($bdd2->query($SQL) as $data)
+foreach ($bdd->query($SQL) as $data)
 {
     echo '<option value="'.$data['id'].'">M'.$data['id'].' '.htmlentities((string) $data['username']).'</option>';
 }

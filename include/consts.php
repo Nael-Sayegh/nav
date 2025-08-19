@@ -200,20 +200,20 @@ function setTimeZone($timezone, $lc_code)
 
 function getUsernameById($id)
 {
-    global $bdd2;
+    global $bdd;
     if (is_numeric($id))
     {
         $id = (int) $id;
         $SQL = <<<SQL
             SELECT * FROM accounts WHERE id=:id
             SQL;
-        $req = $bdd2->prepare($SQL);
+        $req = $bdd->prepare($SQL);
         $req->execute([':id' => $id]);
         if ($user = $req->fetch())
         {
-            if ($user['rank'] === "a")
+            if ($user['rank'] === 'a')
             {
-                $req2 = $bdd2->prepare('SELECT short_name FROM team WHERE account_id = '.$user['id']);
+                $req2 = $bdd->prepare('SELECT short_name FROM team WHERE account_id = '.$user['id']);
                 $req2->execute();
                 if ($admin = $req2->fetch())
                 {
@@ -231,7 +231,7 @@ function getUsernameById($id)
 
 function getTeamEmails(?string $right = null)
 {
-    global $bdd2;
+    global $bdd;
 
     $sql = <<<SQL
         SELECT
@@ -243,7 +243,7 @@ function getTeamEmails(?string $right = null)
         WHERE team.works IN ('1', '2')
         SQL;
 
-    $req = $bdd2->prepare($sql);
+    $req = $bdd->prepare($sql);
     $req->execute();
     $rows = $req->fetchAll(PDO::FETCH_ASSOC);
     $emails = [];
@@ -280,12 +280,11 @@ if (isset($modemaintenance) && $modemaintenance && !(isset($logged) && $logged &
     http_response_code(503);
     echo <<<HTML
         <!DOCTYPE html>
-        <html lang="{$lang}">
+        <html lang="fr">
         <head>
         <meta charset="utf-8">
         <meta name="robots" content="noindex, nofollow">
         <title>Site en maintenance</title>
-        <audio src="/audio/forbidden.mp3" autoplay></audio>
         </head>
         <body>
         <h1>Maintenance en cours</h1>

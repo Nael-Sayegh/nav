@@ -24,10 +24,10 @@ if (isset($_GET['a']) && $_GET['a'] === 's')
     {
         $log .= 'L\'adresse e-mail ne doit pas être vide et ne doit pas excéder les 255 caractères&#8239;!<br>';
     }
-    if (!isset($_POST['freq']) || !($_POST['freq'] === '1' || $_POST['freq'] === '2' || $_POST['freq'] === '3' || $_POST['freq'] === '4' || $_POST['freq'] === '5'))
-    {
-        $log .= 'Veuillez renseigner une fréquence d\'envoi valide.<br>';
-    }
+    // if (!isset($_POST['freq']) || !($_POST['freq'] === '1' || $_POST['freq'] === '2' || $_POST['freq'] === '3' || $_POST['freq'] === '4' || $_POST['freq'] === '5'))
+    // {
+    //     $log .= 'Veuillez renseigner une fréquence d\'envoi valide.<br>';
+    // }
     if (empty($log))
     {
         $SQL = <<<SQL
@@ -42,11 +42,15 @@ if (isset($_GET['a']) && $_GET['a'] === 's')
         else
         {
             $hash = sha1(strval(random_int(0, mt_getrandmax()) + time()).$_POST['mail']).sha1($_POST['mail'].$_SERVER['REMOTE_ADDR'].strval(random_int(0, mt_getrandmax())));
-            $f_site = 0;
-            if (isset($_POST['notif_site']) && $_POST['notif_site'] === 'on')
-            {
-                $f_site = 1;
-            }
+            $freq = 3;
+            $freq_n = 3;
+            $f_site = 1;
+
+            // $f_site = 0;
+            // if (isset($_POST['notif_site']) && $_POST['notif_site'] === 'on')
+            // {
+            //     $f_site = 1;
+            // }
             $f_upd = 0;
             if (isset($_POST['notif_up']) && $_POST['notif_up'] === 'on')
             {
@@ -57,31 +61,33 @@ if (isset($_GET['a']) && $_GET['a'] === 's')
             {
                 $f_upd_n = 1;
             }
-            $subject = 'Confirmation de l\'inscription à la lettre d\'informations';
+
+            $subject = 'Confirmation d\'inscription à la lettre d\'informations';
             $body = <<<HTML
                 <div id="content">
                 <h2>Bonjour</h2>
-                <p>Vous avez bien été abonné à la lettre d'informations {$site_name}.</p>
-                <a id="link" href="{SITE_URL}/nlmod.php?id={$hash}">Confirmez votre inscription en cliquant sur ce lien (expire après 24h)</a>
-                <p>Vous pouvez, avec ce même lien, modifier les paramètres de votre abonnement ou vous désinscrire. Vous serez automatiquement désinscrit un an après la dernière fois que vous visitez ce lien.</p>
+                <p>Vous avez bien été inscrit à la lettre d'informations {$site_name}.</p>
+                <p>Votre inscription est maintenant active et vous recevrez les prochaines newsletters selon vos préférences.</p>
+                <p>Vous pouvez modifier les paramètres de votre abonnement ou vous désinscrire à l'adresse suivante :<br>
+                 <a href="{SITE_URL}/nlmod.php?id={$hash}">{SITE_URL}/nlmod.php?id={$hash}</a></p>
                 </div>
                 HTML;
             $altBody = <<<TEXT
                 Bonjour,
-                Vous avez bien été abonné à la lettre d'informations {$site_name}.
-                Confirmez votre inscription en cliquant sur ce lien (expire après 24h) :
-                {SITE_URL}/nlmod.php?id={$hash}
-                Vous pouvez, avec ce même lien, modifier les paramètres de votre abonnement ou vous désinscrire. Vous serez automatiquement désinscrit un an après la dernière fois que vous visitez ce lien.
+                Vous avez bien été inscrit à la lettre d'informations {$site_name}.
+                Votre inscription est maintenant active et vous recevrez les prochaines newsletters selon vos préférences.
+                Vous pouvez modifier les paramètres de votre abonnement ou vous désinscrire à l'adresse suivante :
+                https://{SITE_URL}/nlmod.php?id={$hash}
                 TEXT;
+
             if (sendMail($_POST['mail'], $subject, $body, $altBody))
             {
                 $SQL = <<<SQL
-                    INSERT INTO newsletter_mails (hash, mail, expire, freq, freq_n, notif_site, notif_upd, notif_upd_n, confirm, lang, lastmail, lastmail_n) VALUES (:hash, :mail, :exp, :frq, :frqn, :notifsite, :notifupd, :notifupdn, false, :lng, :last, :lastn)
-                    SQL;
+                INSERT INTO newsletter_mails (hash, mail, freq, freq_n, notif_site, notif_upd, notif_upd_n, lang, lastmail, lastmail_n) VALUES (:hash, :mail, :frq, :frqn, :notifsite, :notifupd, :notifupdn, :lng, :last, :lastn)
+                SQL;
                 $req = $bdd->prepare($SQL);
-                $req->execute([':hash' => $hash, ':mail' => $_POST['mail'], ':exp' => time() + 86400, ':frq' => $_POST['freq'], ':frqn' => $_POST['freq_n'],  ':notifsite' => $f_site, ':notifupd' => $f_upd, ':notifupdn' => $f_upd_n, ':lng' => $lang, ':last' => time(), ':lastn' => time()]);
-
-                $log .= 'Vous êtes bien inscrit à la lettre d\'informations '.$site_name.'.<br>Veuillez cliquer sur le lien valable 24 heures envoyé à '.$_POST['mail'].' pour confirmer votre inscription.<br>Le mail peut mettre quelques minutes à arriver. Si vous ne le recevez toujours pas, vérifiez dans les indésirables.';
+                $req->execute([':hash' => $hash, ':mail' => $_POST['mail'], ':frq' => $freq, ':frqn' => $freq_n,  ':notifsite' => $f_site, ':notifupd' => $f_upd, ':notifupdn' => $f_upd_n, ':lng' => $lang, ':last' => time(), ':lastn' => time()]);
+                $log .= 'Vous êtes bien inscrit à la lettre d\'informations '.$site_name.'.<br>Un email de confirmation vous a été envoyé à '.$_POST['mail'].'.';
             }
             else
             {
@@ -92,7 +98,7 @@ if (isset($_GET['a']) && $_GET['a'] === 's')
 }
 if (isset($_GET['stop']))
 {
-    $log .= 'Vous avez bien été désinscrit de la lettre d\'informations '.$site_name.'. Un mail vous a été envoyé pour confirmer. Vous ne recevrez plus aucun mail de notre part.';
+    $log .= 'Vous avez bien été désinscrit de la lettre d\'informations '.$site_name.'. Un mail de désinscription vous a été envoyé. Vous ne recevrez plus aucun mail de notre part.';
 }
 
 $title = 'Lettre d\'informations'; ?>
@@ -116,26 +122,27 @@ $title = 'Lettre d\'informations'; ?>
     });
 </script>
 <?php endif; ?>
-<p>Inscrivez-vous à la lettre d'informations <?php print $site_name; ?> pour connaître toutes les nouveautés et maintenir vos logiciels à jour! Vous pouvez choisir d'être notifié à chaque mise à jour d'un logiciel.<br>
-Veuillez noter que la lettre d'informations <?php print $site_name; ?> est envoyé automatiquement, sans aucune intervention de la part de l'équipe, à 19:50.</p>
+<p>Inscrivez-vous à la newsletter <?php print $site_name; ?> pour connaître toutes nos actualités, nouveautés et informations!</p>
 <form action="?a=s&noredir=true" method="post">
 <label for="f_mail">Adresse e-mail&nbsp;:</label>
 <input type="email" name="mail" id="f_mail" maxlength="255" required><br>
 <fieldset><legend><?php print $site_name; ?></legend>
-<label for="f_freq">Recevoir un mail&nbsp;:</label>
+<!-- <label for="f_freq">Recevoir un mail&nbsp;:</label>
 <select name="freq" id="f_freq"><option value="1">Quotidiennement</option><option value="2">Tous les 2 jours</option><option value="3" selected>Hebdomadairement</option><option value="4">Quinzomadairement</option><option value="5">Mensuellement</option></select><br>
 <label for="f_notif_site">Me notifier d'une mise à jour du site&nbsp;:</label>
 <input type="checkbox" name="notif_site" id="f_notif_site" checked><br>
-<label for="f_notif_up">Me notifier de la mise à jour d'un article&nbsp;:</label>
+-->
+<label for="f_notif_up">M'inscrire à la newsletter <?= $site_name; ?></label>
 <input type="checkbox" name="notif_up" id="f_notif_up" checked><br>
 </fieldset>
-<fieldset><legend>NVDA.FR</legend>
-<label for="f_freq_n">Recevoir un mail&nbsp;:</label>
+<fieldset><legend>Blog Nael-Accessvision</legend>
+<!-- <label for="f_freq_n">Recevoir un mail&nbsp;:</label>
 <select name="freq_n" id="f_freq_n"><option value="1">Quotidiennement</option><option value="2">Tous les 2 jours</option><option value="3" selected>Hebdomadairement</option><option value="4">Quinzomadairement</option><option value="5">Mensuellement</option></select><br>
-<label for="f_notif_up_n">Me notifier de la mise à jour d'un article&nbsp;:</label>
+-->
+<label for="f_notif_up_n">M'inscrire à la newsletter Blog Nael-Accessvision</label>
 <input type="checkbox" name="notif_up_n" id="f_notif_up_n" checked><br>
 </fieldset>
-<p>Votre adresse e-mail ainsi que toutes vos informations personnelles ne seront pas partagées avec des tiers. Cet abonnement peut être annulé à tout moment. Il sera automatiquement annulé au bout d'un an si vous ne le renouvelez pas (la date d'expiration est affichée en bas de chaque mail).</p>
+<p>Votre adresse e-mail ainsi que toutes vos informations personnelles ne seront pas partagées avec des tiers. Cet abonnement peut être annulé à tout moment.</p>
 <input type="submit" value="S'abonner">
 </form>
 </main>

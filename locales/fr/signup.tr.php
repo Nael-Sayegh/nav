@@ -4,7 +4,7 @@ $tr = [
   '_' => 'signup',
   '_todo_level' => 0,
   '_last_author' => 'Nael Sayegh',
-  '_last_modif' => 1750707589,
+  '_last_modif' => 1755606789,
   'title' => 'Se créer un compte {{site}}',
   'log_lenght_username' => 'Votre nom d\'utilisateur doit comporter entre 3 et 32 caractères.',
   'log_lenght_mail' => 'Votre adresse e-mail ne doit pas dépasser 255 caractères.',
@@ -23,7 +23,7 @@ $tr = [
   'form_nl_freq_weekly' => '(mail hebdomadaire pour rester informer des mises à jours)',
   'enable_js' => 'Activez JavaScript si vous souhaitez générer un mot de passe via le site',
   'form_use_cookies' => <<<ENDSTR
-    <p>L'usage des cookies est nécessaire pour utiliser l'espace membres. Vous créer un compte {{site}} confirme que vous acceptez les cookies en vous identifiant.<br>Nous ne partagerons pas votre adresse e-mail avec des tiers. Vous pourrez modifier les paramètres de votre compte ou le supprimer à tout moment.</p>
-  ENDSTR,
+        <p>L'usage des cookies est nécessaire pour utiliser l'espace membres. Vous créer un compte {{site}} confirme que vous acceptez les cookies en vous identifiant.<br>Nous ne partagerons pas votre adresse e-mail avec des tiers. Vous pourrez modifier les paramètres de votre compte ou le supprimer à tout moment.</p>
+      ENDSTR,
   'form_submit' => 'S\'inscrire',
 ];

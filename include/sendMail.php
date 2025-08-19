@@ -11,7 +11,7 @@ function sendMail($recipients, string $subject, string $contentHtml, string $con
     global $site_name;
     $css = $options['css'] ?? '';
     $includeNotice = $options['includeAutoReplyNotice'] ?? true;
-    $logoUrl = SITE_URL.'/images/logo128-170.png';
+    $logoUrl = SITE_URL.'/images/logo672-450.png';
     $styleBlock = $css
         ? <<<HTML
             <style>
@@ -23,7 +23,7 @@ function sendMail($recipients, string $subject, string $contentHtml, string $con
     $headerHtml = <<<HTML
         <header style="text-align:center; padding:1em 0;">
         <h1 style="margin:0;">{$site_name}</h1>
-        <img src="{$logoUrl}" alt="Logo" style="max-height:60px;">
+        <img src="{$logoUrl}" alt="Logo" style="max-height:150px;">
         </header>
         HTML;
     $noticeHtml = $includeNotice

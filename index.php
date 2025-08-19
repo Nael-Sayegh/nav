@@ -7,22 +7,10 @@ $tr = load_tr($lang, 'index');
 $title = tr($tr, 'title'); ?>
 <!DOCTYPE html>
 <html lang="<?= $lang ?>">
-<?php $css_path .= '<link rel="stylesheet" href="/css/slider.css">';
-require_once('include/header.php'); ?>
+<?php require_once('include/header.php'); ?>
 <body>
 <?php require_once('include/banner.php'); ?>
 <div id="container">
-<?php
-if ((isset($_COOKIE['infosdef']) && $_COOKIE['infosdef'] === '1') || !isset($_COOKIE['infosdef']))
-{
-    include('cache/slider_'.$lang.'.html');
-}
-else
-{
-    echo '<h2>'.tr($tr, 'sliderinactitle').'</h2>'.tr($tr, 'sliderinactext');
-    include('Slider.php');
-}
-?>
 <main id="contenu">
 <?php if (isset($_GET['contactconfirm']) && $_GET['contactconfirm'])
 {
@@ -36,11 +24,7 @@ else
 <?= tr($tr, 'maintext', ['lastosv' => $lastosv]) ?>
 </main>
 </div>
-<?php if ((isset($_COOKIE['infosdef']) && $_COOKIE['infosdef'] === '1') || !isset($_COOKIE['infosdef']))
-{ ?>
 <script src="/scripts/jquery.js"></script>
-<script src="/scripts/slider.js"></script>
-<?php } ?>
 <?php require_once('include/footer.php'); ?>
 </body>
 </html>

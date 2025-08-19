@@ -120,7 +120,7 @@ function render_menu(string $mode, array $items)
                         '<li role="link"%s><a role="menuitem" href="%s" title="%s">%s</a></li>',
                         $cur,
                         $it['url'],
-                        $title,
+                        str_replace('{{site}}', $site_name, $title),
                         $label
                     );
                     break;
@@ -161,7 +161,7 @@ foreach ([
     '/privacy.php'      => 'menu_privacy',
 ] as $url => $key)
 {
-    $items[] = ['type' => 'link', 'url' => $url, 'label' => $key, 'params' => isset($params)?$params:[]];
+    $items[] = ['type' => 'link', 'url' => $url, 'label' => $key, 'params' => isset($params) ? $params : []];
 }
 ?>
 <nav id="nav">

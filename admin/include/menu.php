@@ -13,7 +13,6 @@ if (basename((string) $_SERVER['SCRIPT_NAME']) === 'index.php')
         'Communication & actualités' => [
             ['href' => 'tickets.php',     'label' => 'Tickets',               'right' => 'manage_tickets'],
             ['href' => 'publication.php', 'label' => 'Publications sociales', 'right' => 'manage_publications'],
-            ['href' => 'slidermgr.php',   'label' => 'Slider',                'right' => 'manage_slider'],
         ],
         'Lettre d’informations' => [
             ['href' => 'nl_send.php', 'label' => 'Lancer un envoi maintenant',     'right' => 'manage_newsletter'],
@@ -54,9 +53,6 @@ switch ($_SERVER['DOCUMENT_URI'])
         echo '<details><summary>Menu</summary><ul style="list-style-type: none;"><li><a href="sw_mod.php">Modifier un article</a></li><li><a href="sw_cat.php">Catégories</a></li><li><a href="translate_todo.php">Traductions</a></li></ul></details>';
         break;
     case 'showstats.php':
-    case 'slidermgr.php':
-        echo '<details><summary>Menu</summary><ul style="list-style-type: none;"><li><a href="cache_update.php">Caches</a></li></ul></details>';
-        break;
     case 'nl_list.php':
         echo '<details><summary>Menu</summary><ul style="list-style-type: none;"><li><a href="nl_send.php">Envoyer la lettre d\'informations</a></li></ul></details>';
         break;

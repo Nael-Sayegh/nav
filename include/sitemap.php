@@ -31,7 +31,7 @@ function update_sitemap_url($url, $lastmod = null, $sitemap = null) {
 
     file_put_contents($sitemap, $formattedXml);
 
-    notify_google_sitemap_update();
+    notify_all_search_engines();
     return true;
 }
 

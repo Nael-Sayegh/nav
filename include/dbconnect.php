@@ -1,6 +1,11 @@
 <?php
 
-require_once 'config.local.php';
+// Chargement de la configuration avec fallback
+if (file_exists(__DIR__ . '/config.local.php')) {
+    require_once __DIR__ . '/config.local.php';
+} else {
+    require_once __DIR__ . '/config.php';
+}
 
 try
 {
@@ -9,6 +14,6 @@ try
 }
 catch (PDOException $e)
 {
-    print 'Erreur de connexion à la base de données 1';
     error_log('DB connect error: '.$e->getMessage());
+    throw new Exception('Erreur de connexion à la base de données: ' . $e->getMessage());
 }

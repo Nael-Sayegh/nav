@@ -1,13 +1,6 @@
 <?php
 require_once'config.local.php';
 require_once 'dbconnect.php';
-/**
- * Ajoute ou met à jour une URL dans sitemap.xml
- * @param string $url URL complète (ex: SITE_URL.'/article.php?id=123')
- * @param string $lastmod Date de dernière modif (Y-m-d), optionnel
- * @param string $sitemap Chemin du sitemap.xml
- * @return bool
- */
 
 function update_sitemap_url($url, $lastmod = null, $sitemap = null) {
     if ($sitemap === null) {
@@ -31,7 +24,6 @@ function update_sitemap_url($url, $lastmod = null, $sitemap = null) {
     }
     $xmlstr = $xml->asXML();
 
-    // Formatage du XML pour avoir une meilleure lisibilité
     $dom = new DOMDocument('1.0', 'UTF-8');
     $dom->formatOutput = true;
     $dom->loadXML($xmlstr);
@@ -39,27 +31,17 @@ function update_sitemap_url($url, $lastmod = null, $sitemap = null) {
 
     file_put_contents($sitemap, $formattedXml);
 
-    // Signaler à Google que le sitemap a été mis à jour
     notify_google_sitemap_update();
-
     return true;
 }
 
-
-/**
- * Notifie Google que le sitemap a été mis à jour
- * @param string $sitemapUrl URL complète du sitemap (optionnel)
- * @return bool
- */
 function notify_google_sitemap_update($sitemapUrl = null) {
     if ($sitemapUrl === null) {
         $sitemapUrl = rtrim(SITE_URL, '/') . '/sitemap.xml';
     }
 
-    // URL de l'API Google pour signaler la mise à jour du sitemap
     $googlePingUrl = 'https://www.google.com/ping?sitemap=' . urlencode($sitemapUrl);
 
-    // Envoyer la requête à Google
     $context = stream_context_create([
         'http' => [
             'timeout' => 30,
@@ -71,7 +53,6 @@ function notify_google_sitemap_update($sitemapUrl = null) {
     try {
         $response = @file_get_contents($googlePingUrl, false, $context);
 
-        // Optionnel : log de la notification
         if (function_exists('error_log')) {
             if ($response !== false) {
                 error_log("Sitemap notification sent to Google: $sitemapUrl");
@@ -89,20 +70,12 @@ function notify_google_sitemap_update($sitemapUrl = null) {
     }
 }
 
-/**
- * Notifie Bing que le sitemap a été mis à jour
- * @param string $sitemapUrl URL complète du sitemap (optionnel)
- * @return bool
- */
 function notify_bing_sitemap_update($sitemapUrl = null) {
     if ($sitemapUrl === null) {
         $sitemapUrl = rtrim(SITE_URL, '/') . '/sitemap.xml';
     }
 
-    // URL de l'API Bing pour signaler la mise à jour du sitemap
     $bingPingUrl = 'https://www.bing.com/ping?sitemap=' . urlencode($sitemapUrl);
-
-    // Envoyer la requête à Bing
     $context = stream_context_create([
         'http' => [
             'timeout' => 30,
@@ -114,7 +87,6 @@ function notify_bing_sitemap_update($sitemapUrl = null) {
     try {
         $response = @file_get_contents($bingPingUrl, false, $context);
 
-        // Optionnel : log de la notification
         if (function_exists('error_log')) {
             if ($response !== false) {
                 error_log("Sitemap notification sent to Bing: $sitemapUrl");
@@ -132,23 +104,12 @@ function notify_bing_sitemap_update($sitemapUrl = null) {
     }
 }
 
-/**
- * Notifie tous les moteurs de recherche supportés
- * @param string $sitemapUrl URL complète du sitemap (optionnel)
- * @return array Résultats des notifications [moteur => success]
- */
 function notify_all_search_engines($sitemapUrl = null) {
     $results = [];
     $results['google'] = notify_google_sitemap_update($sitemapUrl);
     $results['bing'] = notify_bing_sitemap_update($sitemapUrl);
     return $results;
 }
-/**
- * Supprime une URL du sitemap.xml
- * @param string $url URL complète à supprimer
- * @param string $sitemap Chemin du sitemap.xml
- * @return bool
- */
 
 function remove_sitemap_url($url, $sitemap = null) {
     if ($sitemap === null) {
@@ -168,7 +129,6 @@ function remove_sitemap_url($url, $sitemap = null) {
     }
     $xmlstr = $xml->asXML();
 
-    // Formatage du XML pour avoir une meilleure lisibilité
     $dom = new DOMDocument('1.0', 'UTF-8');
     $dom->formatOutput = true;
     $dom->loadXML($xmlstr);
@@ -176,29 +136,10 @@ function remove_sitemap_url($url, $sitemap = null) {
 
     file_put_contents($sitemap, $formattedXml);
 
-    // Signaler à Google que le sitemap a été mis à jour
     notify_google_sitemap_update();
 
     return true;
 }
-
-// Chargement de la config et de la connexion BDD comme dans le reste du site
-
-/**
- * Générateur de sitemap.xml personnalisable
- *
- * - Peut être appelé en CLI, navigateur, ou inclus dans un autre script
- * - Permet d'ajouter des URLs manuelles
- * - Génère dynamiquement les URLs d'articles et de catégories
- *
- * Utilisation CLI :
- *   php generate_sitemap.php
- * Utilisation PHP :
- *   require 'generate_sitemap.php';
- *   generate_sitemap([...options...]);
- */
-
-
 
 function shouldExclude($path, $exclude) {
     foreach ($exclude as $ex) {
@@ -222,7 +163,6 @@ function getFiles($dir, $exclude, $includeExtensions) {
     }
     return $files;
 }
-
 
 function generate_sitemap(array $options = []) {
     global $bdd;
@@ -312,44 +252,22 @@ function generate_sitemap(array $options = []) {
             }
     }
 
-/**
- * Met à jour le sitemap.xml (wrapper simple)
- * @param array $options Options à passer à generate_sitemap
- * @return int Nombre d'URLs générées
- */
-
     $xmlStr = $xml->asXML();
 
-    // Formatage du XML pour avoir une meilleure lisibilité
     $dom = new DOMDocument('1.0', 'UTF-8');
     $dom->formatOutput = true;
     $dom->loadXML($xmlStr);
     $formattedXml = $dom->saveXML();
 
-    // Génère le sitemap à la racine du projet (../sitemap.xml depuis admin/)
     file_put_contents($rootDir . '/sitemap.xml', $formattedXml);
 
-    // Signaler à Google que le sitemap a été mis à jour
     notify_google_sitemap_update();
 
     return $added;
 }
 
-// --- Exécution directe (CLI ou navigateur) ---
-
 if (php_sapi_name() === 'cli' || isset($_SERVER['REQUEST_METHOD'])) {
-    // Vérification des prérequis
-    if (!defined('SITE_URL') || SITE_URL === 'BASE DOMAIN OF YOUR WEBSITE') {
-        echo "ERREUR: Veuillez configurer SITE_URL dans votre fichier config.local.php\n";
-        exit(1);
-    }
-
-    echo "Génération du sitemap en cours...\n";
-    echo "URL de base: " . SITE_URL . "\n";
-
-    // L'URL de base est prise automatiquement depuis SITE_URL (config.local.php)
-    $nb = generate_sitemap([
-        // 'manualUrls' => [SITE_URL . '/page-speciale'],
-    ]);
-    echo "Sitemap généré avec succès ($nb URLs).\n";
+    echo "Generation of the sitemap in progress\n";
+    $nb = generate_sitemap();
+    echo "Sitemap generated successfully ($nb URLs).\n";
 }

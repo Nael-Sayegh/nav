@@ -1,7 +1,6 @@
 <?php
-// Pour déplacement dans admin/, on utilise des chemins relatifs
-require_once __DIR__ . '/../include/config.local.php';
-require_once __DIR__ . '/../include/dbconnect.php';
+require_once 'config.local.php';
+require_once 'dbconnect.php';
 
 /**
  * Ajoute ou met à jour une URL dans sitemap.xml
@@ -13,7 +12,7 @@ require_once __DIR__ . '/../include/dbconnect.php';
 
 function update_sitemap_url($url, $lastmod = null, $sitemap = null) {
     if ($sitemap === null) {
-        $sitemap = __DIR__ . '/../sitemap.xml';
+        $sitemap =  $document_root . '/sitemap.xml';
     }
     if (!file_exists($sitemap)) return false;
     $xml = simplexml_load_file($sitemap);
@@ -34,6 +33,7 @@ function update_sitemap_url($url, $lastmod = null, $sitemap = null) {
     $xmlstr = $xml->asXML();
     file_put_contents($sitemap, $xmlstr);
     return true;
+    }
 
 
 /**
@@ -45,7 +45,7 @@ function update_sitemap_url($url, $lastmod = null, $sitemap = null) {
 
 function remove_sitemap_url($url, $sitemap = null) {
     if ($sitemap === null) {
-        $sitemap = __DIR__ . '/../sitemap.xml';
+        $sitemap = $document_root . '/sitemap.xml';
     }
     if (!file_exists($sitemap)) return false;
     $xml = simplexml_load_file($sitemap);
@@ -63,10 +63,6 @@ function remove_sitemap_url($url, $sitemap = null) {
     file_put_contents($sitemap, $xmlstr);
     return true;
 }
-
-
-// ...
-
 
 // Chargement de la config et de la connexion BDD comme dans le reste du site
 
@@ -111,9 +107,8 @@ function getFiles($dir, $exclude, $includeExtensions) {
 
 
 function generate_sitemap(array $options = []) {
-    $baseUrl = defined('SITE_URL') ? rtrim(SITE_URL, '/') . '/' : '';
-    // Pour admin/: rootDir = dossier parent du script (racine du projet)
-    $rootDir = $options['rootDir'] ?? dirname(__DIR__);
+    $baseUrl = $SITE_URL ? rtrim($SITE_URL, '/') . '/' : '';
+    $rootDir = $options['rootDir'] ?? $document_root;
     $exclude = $options['exclude'] ?? [
         'admin',
         'cache',
@@ -159,7 +154,6 @@ function generate_sitemap(array $options = []) {
         $added++;
     }
 
-    // Ajout des URLs manuelles (ex: pages dynamiques, routes personnalisées)
     foreach ($manualUrls as $url) {
         $u = $xml->addChild('url');
         $u->addChild('loc', htmlspecialchars($url));
@@ -167,7 +161,6 @@ function generate_sitemap(array $options = []) {
         $added++;
     }
 
-    // Ajout dynamique des articles (article.php?id=xxx)
     if (($addArticles || $addCategories) && isset($bdd)) {
         if ($addArticles) {
             $sql = 'SELECT id, date FROM softwares';
@@ -201,9 +194,6 @@ function generate_sitemap(array $options = []) {
  * @param array $options Options à passer à generate_sitemap
  * @return int Nombre d'URLs générées
  */
-function update_sitemap(array $options = []) {
-    return generate_sitemap($options);
-}
 
     $xmlStr = $xml->asXML();
     // Génère le sitemap à la racine du projet (../sitemap.xml depuis admin/)

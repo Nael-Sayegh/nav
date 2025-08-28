@@ -4,6 +4,7 @@ $justna = true;
 $titlePAdm = 'Catégories';
 require_once($_SERVER['DOCUMENT_ROOT'].'/include/log.php');
 require_once($_SERVER['DOCUMENT_ROOT'].'/include/consts.php');
+require_once($_SERVER['DOCUMENT_ROOT'].'/include/sitemap.php');
 requireAdminRight('manage_categories');
 if (isset($_GET['add']) && isset($_POST['name']))
 {
@@ -12,6 +13,7 @@ if (isset($_GET['add']) && isset($_POST['name']))
         SQL;
     $req = $bdd->prepare($SQL);
     $req->execute([':name' => htmlspecialchars((string) $_POST['name']), ':text' => $_POST['text']]);
+    update_sitemap_url($site_url . '/c' . $bdd->lastInsertId());
 }
 if (isset($_GET['delete']))
 {
@@ -20,6 +22,7 @@ if (isset($_GET['delete']))
         SQL;
     $req = $bdd->prepare($SQL);
     $req->execute([':id' => $_GET['delete']]);
+    remove_sitemap_url($site_url . '/c' . $_GET['delete']);
 }
 if (isset($_GET['mod2']) && isset($_POST['name']))
 {
@@ -28,6 +31,7 @@ if (isset($_GET['mod2']) && isset($_POST['name']))
         SQL;
     $req = $bdd->prepare($SQL);
     $req->execute([':name' => htmlspecialchars((string) $_POST['name']), ':text' => $_POST['text'], ':id' => $_GET['mod2']]);
+    update_sitemap_url($site_url . '/c' . $_GET['mod2']);
 }
 ?>
 <!DOCTYPE html>

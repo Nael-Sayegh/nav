@@ -7,6 +7,7 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/include/consts.php');
 require_once $_SERVER['DOCUMENT_ROOT'].'/include/lib/MDConverter.php';
 requireAdminRight('manage_content');
 require_once($_SERVER['DOCUMENT_ROOT'].'/include/package_managers.php');
+require_once($_SERVER['DOCUMENT_ROOT'].'/include/sitemap.php');
 $time = time();
 $addfile_hash = '';
 $addfile_path = '';
@@ -53,6 +54,8 @@ if ((isset($_GET['token']) && $_GET['token'] === $login['token']) || (isset($_PO
         $req->execute([':name' => $_POST['name'], ':cat' => $_POST['category'], ':date' => $time, ':desc' => $mod_description, ':text' => $mod_text, ':keywords' => $mod_keywords, ':website' => $mod_website, ':author' => $admin_name, ':id' => $_GET['mod']]);
         header('Location: sw_mod.php?list='.$_POST['category']);
         include($_SERVER['DOCUMENT_ROOT'].'/tasks/history_cache.php');
+        update_sitemap_url($site_url.'/a'.$_GET['mod']);
+
         exit();
     }
     if (isset($_POST['rsw']))
@@ -101,6 +104,7 @@ if ((isset($_GET['token']) && $_GET['token'] === $login['token']) || (isset($_PO
             $req = $bdd->prepare($SQL);
             $req->execute(['sw_id' => $_POST['rsw']]);
             $bdd->commit();
+            remove_sitemap_url($site_url.'/a'.$_POST['rsw']);
         }
         catch (PDOException $e)
         {
@@ -197,6 +201,7 @@ if ((isset($_GET['token']) && $_GET['token'] === $login['token']) || (isset($_PO
                 SQL;
             $req = $bdd->prepare($SQL);
             $req->execute([':date' => time(), ':author' => $admin_name, ':id' => $data['sw_id']]);
+            update_sitemap_url($site_url.'/a'.$data['sw_id']);
             include($_SERVER['DOCUMENT_ROOT'].'/tasks/history_cache.php');
 
             if (isset($_POST['social']) && $_POST['social'] === 'on')
@@ -417,6 +422,7 @@ if ((isset($_GET['token']) && $_GET['token'] === $login['token']) || (isset($_PO
                         SQL;
                     $req = $bdd->prepare($SQL);
                     $req->execute([':swid' => $_GET['upload'], ':name' => $filename, ':hash' => $hash, ':type' => $filetype, ':title' => $_POST['title'], ':date' => time(), ':size' => $filesize, ':lbl' => $label, ':md' => md5_file($file), ':sha' => sha1_file($file), ':arch' => $_POST['arch'], ':plat' => $_POST['platform']]);
+                    update_sitemap_url($site_url.'/a'.$_GET['upload']);
                     include($_SERVER['DOCUMENT_ROOT'].'/tasks/history_cache.php');
 
                     if (isset($_POST['social']) && $_POST['social'] === 'on')

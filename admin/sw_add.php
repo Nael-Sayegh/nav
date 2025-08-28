@@ -5,6 +5,7 @@ $justna = true;
 $titlePAdm = 'Ajout d\'un article';
 require_once($_SERVER['DOCUMENT_ROOT'].'/include/log.php');
 require_once($_SERVER['DOCUMENT_ROOT'].'/include/consts.php');
+require_once($_SERVER['DOCUMENT_ROOT'].'/include/sitemap.php');
 requireAdminRight('manage_content');
 
 $categories = [];
@@ -120,6 +121,7 @@ if (isset($_GET['form']) && isset($_POST['sname']) && isset($_POST['category']))
                 SQL;
             $req = $bdd->prepare($SQL);
             $req->execute([':swid' => $lastid, ':lng' => $f_lang, ':date' => time(), ':name' => $name, ':text' => $text, ':keywords' => $keywords, ':desc' => $description, ':website' => $website, ':author' => $admin_name, ':published' => $published]);
+            update_sitemap_url($site_url.'/a'.$lastid);
 
             if ($social)
             {

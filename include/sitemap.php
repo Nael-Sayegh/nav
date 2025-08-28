@@ -264,7 +264,7 @@ function notify_all_search_engines($sitemapUrl = null) {
     return $results;
 }
 
-if (php_sapi_name() === 'cli' || isset($_SERVER['REQUEST_METHOD'])) {
+if (php_sapi_name() === 'cli') {
     echo "Generation of the sitemap in progress\n";
     $nb = generate_sitemap();
     echo "Sitemap generated successfully ($nb URLs).\n";

@@ -135,9 +135,7 @@ function remove_sitemap_url($url, $sitemap = null) {
     $formattedXml = $dom->saveXML();
 
     file_put_contents($sitemap, $formattedXml);
-
-    notify_google_sitemap_update();
-
+    notify_all_search_engines();
     return true;
 }
 
@@ -261,8 +259,7 @@ function generate_sitemap(array $options = []) {
 
     file_put_contents($rootDir . '/sitemap.xml', $formattedXml);
 
-    notify_google_sitemap_update();
-
+    notify_all_search_engines();
     return $added;
 }
 

@@ -57,8 +57,10 @@ function generate_sitemap(array $options = []) {
         'login_redirect.php',
         'logout.php',
         'members_list.php',
-        'nl.php',
+        'nav_redirect.php',
+        'nlmod.php',
         'pull_repo.php',
+        'search.php',
         'settings.php',
     ];
     $includeExtensions = $options['includeExtensions'] ?? ['php', 'html', 'htm'];

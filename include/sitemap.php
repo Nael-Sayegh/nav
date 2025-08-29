@@ -92,7 +92,10 @@ function generate_sitemap(array $options = []) {
 
     if ($addArticles || $addCategories) {
         if ($addArticles) {
-            $sql = 'SELECT id, date FROM softwares WHERE published = true';
+            $sql = 'SELECT DISTINCT softwares.id, softwares.date
+                    FROM softwares
+                    LEFT JOIN softwares_tr ON softwares.id = softwares_tr.sw_id
+                    WHERE softwares_tr.published = true';
             $req = $bdd->query($sql);
             while ($row = $req->fetch()) {
                 $url = $baseUrl . 'a' . $row['id'];

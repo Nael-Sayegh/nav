@@ -6,6 +6,7 @@ $titlePAdm = 'Traductions';
 require_once($_SERVER['DOCUMENT_ROOT'].'/include/log.php');
 require_once($_SERVER['DOCUMENT_ROOT'].'/include/consts.php');
 require_once $_SERVER['DOCUMENT_ROOT'].'/include/lib/MDConverter.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/include/sitemap.php';
 requireAdminRight('manage_translations');
 $tr_todo = [0 => 'Référence', 1 => 'OK', 2 => 'À vérifier', 3 => 'À modifier', 4 => 'À terminer'];
 
@@ -60,6 +61,8 @@ if (isset($_GET['type']))
                         SQL;
                     $req2 = $bdd->prepare($SQL2);
                     $req2->execute([':pub' => ($_GET['a'] === 'pub'), ':id' => $_GET['tr'], ':swid' => $data['id']]);
+                    if ($_GET['a'] === 'pub') update_sitemap_url($site_url.'/a'.$data['id']);
+                    else remove_sitemap_url($site_url.'/a'.$data['id']);
                     header('Location: ?type=article&id='.$data['id']);
                     exit();
                 }

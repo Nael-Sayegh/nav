@@ -4,6 +4,7 @@ $justna = true;
 $titlePAdm = "Gérer le sitemap";
 require_once($_SERVER['DOCUMENT_ROOT'].'/include/log.php');
 require_once($_SERVER['DOCUMENT_ROOT'].'/include/consts.php');
+requireAdminRight('manage_sitemap');
 require_once($_SERVER['DOCUMENT_ROOT'].'/include/sitemap.php');
 $log = "";
 if (isset($_GET['act']) && $_GET['act'] === 'g') {

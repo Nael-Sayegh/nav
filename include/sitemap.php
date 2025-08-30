@@ -127,8 +127,6 @@ function generate_sitemap(array $options = []) {
     $formattedXml = $dom->saveXML();
 
     file_put_contents($rootDir . '/sitemap.xml', $formattedXml);
-
-    notify_all_search_engines();
     return $added;
 }
 
@@ -156,7 +154,6 @@ function remove_sitemap_url($url, $sitemap = null) {
     $formattedXml = $dom->saveXML();
 
     file_put_contents($sitemap, $formattedXml);
-    notify_all_search_engines();
     return true;
 }
 
@@ -188,85 +185,7 @@ function update_sitemap_url($url, $lastmod = null, $sitemap = null) {
     $formattedXml = $dom->saveXML();
 
     file_put_contents($sitemap, $formattedXml);
-
-    notify_all_search_engines();
     return true;
-}
-
-function notify_google_sitemap_update($sitemapUrl = null) {
-    if ($sitemapUrl === null) {
-        $sitemapUrl = rtrim(SITE_URL, '/') . '/sitemap.xml';
-    }
-
-    $googlePingUrl = 'https://www.google.com/ping?sitemap=' . urlencode($sitemapUrl);
-
-    $context = stream_context_create([
-        'http' => [
-            'timeout' => 30,
-            'method' => 'GET',
-            'header' => 'User-Agent: Mozilla/5.0 (compatible; SitemapNotifier/1.0)'
-        ]
-    ]);
-
-    try {
-        $response = @file_get_contents($googlePingUrl, false, $context);
-
-        if (function_exists('error_log')) {
-            if ($response !== false) {
-                error_log("Sitemap notification sent to Google: $sitemapUrl");
-            } else {
-                error_log("Failed to notify Google about sitemap update: $sitemapUrl");
-            }
-        }
-
-        return $response !== false;
-    } catch (Exception $e) {
-        if (function_exists('error_log')) {
-            error_log("Error notifying Google about sitemap: " . $e->getMessage());
-        }
-        return false;
-    }
-}
-
-function notify_bing_sitemap_update($sitemapUrl = null) {
-    if ($sitemapUrl === null) {
-        $sitemapUrl = rtrim(SITE_URL, '/') . '/sitemap.xml';
-    }
-
-    $bingPingUrl = 'https://www.bing.com/ping?sitemap=' . urlencode($sitemapUrl);
-    $context = stream_context_create([
-        'http' => [
-            'timeout' => 30,
-            'method' => 'GET',
-            'header' => 'User-Agent: Mozilla/5.0 (compatible; SitemapNotifier/1.0)'
-        ]
-    ]);
-
-    try {
-        $response = @file_get_contents($bingPingUrl, false, $context);
-
-        if (function_exists('error_log')) {
-            if ($response !== false) {
-                error_log("Sitemap notification sent to Bing: $sitemapUrl");
-            } else {
-                error_log("Failed to notify Bing about sitemap update: $sitemapUrl");
-            }
-        }
-
-        return $response !== false;
-    } catch (Exception $e) {
-        if (function_exists('error_log')) {
-            error_log("Error notifying Bing about sitemap: " . $e->getMessage());
-        }
-        return false;
-    }
-}
-
-function notify_all_search_engines($sitemapUrl = null) {
-    $results = [];
-    $results['google'] = notify_google_sitemap_update($sitemapUrl);
-    $results['bing'] = notify_bing_sitemap_update($sitemapUrl);
-    return $results;
 }
 
 if (php_sapi_name() === 'cli') {

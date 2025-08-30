@@ -119,15 +119,15 @@ if (isset($_GET['mod']))
 <option value="0" <?php if ($data['works'] === '0')
 {
     echo 'selected';
-} ?>>Nael-Accessvision</option>
+} ?>><?= $site_name; ?></option>
 <option value="1" <?php if ($data['works'] === '1')
 {
     echo 'selected';
-} ?>><?php print $site_name; ?></option>
+} ?>Blog Nael-Accessvision</option>
 <option value="2" <?php if ($data['works'] === '2')
 {
     echo 'selected';
-} ?>>Nael-Accessvision et <?php print $site_name; ?></option>
+} ?>><?= $site_name; ?> et Blog Nael-Accessvision</option>
 </select><br>
 <label for="f2_mastodon">Pseudo Mastodon (sans le @ et avec l'instance si différent de mastodon.progaccess.net)&nbsp;:</label><input type="text" name="mastodon" id="f2_mastodon" maxlength="255" value="<?= $data['mastodon'] ?>"><br>
 <fieldset>

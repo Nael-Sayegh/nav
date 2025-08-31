@@ -45,7 +45,33 @@ if (isset($_GET['act']) && $_GET['act'] === 'r') {
     <?php require_once('include/banner.php');
     if (isset($log) && !empty($log)) {
         echo '<p role="alert">' . $log . '</p>';
-    } ?>
+    }
+
+    // Récupérer les URLs du sitemap actuel
+    $sitemap_urls = get_sitemap_urls();
+    ?>
+    <h1>Sitemap actuel</h1>
+    <?php if (!empty($sitemap_urls)): ?>
+    <table>
+        <thead>
+            <tr>
+                <th>URL</th>
+                <th>Dernière modification</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($sitemap_urls as $url): ?>
+            <tr>
+                <td><a href="<?= htmlspecialchars($url['loc']) ?>" target="_blank"><?= htmlspecialchars($url['loc']) ?></a></td>
+                <td><?= $url['lastmod'] ? htmlspecialchars($url['lastmod']) : 'Non définie' ?></td>
+            </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+    <p><strong>Total : <?= count($sitemap_urls) ?> URLs</strong></p>
+    <?php else: ?>
+    <p>Aucun sitemap trouvé ou sitemap vide. <a href="?act=g">Générer le sitemap</a></p>
+    <?php endif; ?>
     <h2>Gérer le sitemap entier</h2>
     <form method="post" action="?act=g">
         <button type="submit">Générer le sitemap</button>

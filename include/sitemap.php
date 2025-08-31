@@ -188,6 +188,27 @@ function update_sitemap_url($url, $lastmod = null, $sitemap = null) {
     return true;
 }
 
+function get_sitemap_urls($sitemap = null) {
+    if ($sitemap === null) {
+        $sitemap = DOCUMENT_ROOT . '/sitemap.xml';
+    }
+    if (!file_exists($sitemap)) {
+        return [];
+    }
+    $xml = simplexml_load_file($sitemap);
+    if (!$xml) {
+        return [];
+    }
+    $urls = [];
+    foreach ($xml->url as $url) {
+        $urls[] = [
+            'loc' => (string)$url->loc,
+            'lastmod' => isset($url->lastmod) ? (string)$url->lastmod : null
+        ];
+    }
+    return $urls;
+}
+
 if (php_sapi_name() === 'cli') {
     echo "Generation of the sitemap in progress\n";
     $nb = generate_sitemap();

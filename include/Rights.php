@@ -18,6 +18,7 @@ const ALL_ADMIN_RIGHTS = [
     'access_control_panel'   => 'Accéder au panneau de contrôle du serveur',
     'access_webmail'         => 'Accéder au Webmail',
     'view_phpinfo'           => 'Voir phpinfo()',
+    'manage_sitemap'         => 'Gérer le sitemap',
 ];
 
 const ALL_MEMBER_RIGHTS = [

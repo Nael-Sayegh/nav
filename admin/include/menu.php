@@ -20,6 +20,7 @@ if (basename((string) $_SERVER['SCRIPT_NAME']) === 'index.php')
             ['href' => 'nl_list.php', 'label' => 'Voir les abonnés',               'right' => 'manage_newsletter'],
         ],
         'Contenu technique' => [
+            ['href' => 'manage_sitemap.php','label' => 'Gérer le sitemap','right' => 'manage_sitemap'],
             ['href' => 'up_publish.php','label' => 'Versions','right' => 'publish_versions'],
             ['href' => 'showstats.php','label' => 'Statistiques','right' => 'view_stats'],
             ['href' => 'maintenance.php','label' => 'Maintenance','right' => 'maintenance'],

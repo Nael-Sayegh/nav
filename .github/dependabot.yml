@@ -4,7 +4,10 @@ updates:
   - package-ecosystem: "composer"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+      day: "wednesday"
+      time: "13:45"
+      timezone: "Europe/Paris"
     rebase-strategy: "auto"
     open-pull-requests-limit: 10
     assignees:
@@ -23,7 +26,10 @@ updates:
   - package-ecosystem: "gitsubmodule"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+      day: "wednesday"
+      time: "13:45"
+      timezone: "Europe/Paris"
     open-pull-requests-limit: 5
     assignees:
       - "Nael-Sayegh"

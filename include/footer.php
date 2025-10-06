@@ -40,6 +40,7 @@ if (defined('CESIUM_URL') && ($cesiumUrl = constant('CESIUM_URL')))
 <a target="_blank" href="<?= $cesiumUrl ?>" title="<?= tr($tr0, 'footer_link_g1', ['site' => $site_name]) ?>"><img id="g1" alt="<?= tr($tr0, 'footer_link_g1', ['site' => $site_name]) ?>" src="/images/gbreve-simple.svg" style="width:32px;height:32px;"></a>
 <?php } ?>
 </details>
+<?php endif; ?>
 <a href="legal.php"><?php echo tr($tr0, 'footer_mention'); ?></a><br>
 Copyright &copy 2020-<?php print date('Y'); ?> <?= tr($tr0, 'footer_copyright', ['site' => $site_name]) ?><br>
 <p><?php getContentLastModif(); ?><br>

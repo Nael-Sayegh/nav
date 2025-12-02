@@ -582,7 +582,7 @@ if (isset($logged) && $logged && (checkMemberRights('comment_articles') || ($log
 }*/ ?>
 <fieldset><legend><?= tr($tr, 'comments_send') ?></legend>
 <p><?= tr($tr, 'comments_warn') ?></p>
-<p><?= tr($tr, 'comments_nickname', ['nickname' => getUsernameById($login['id'])]) ?></p>
+<p><?= tr($tr, 'comments_nickname', ['nickname' => $login['usernamek']]) ?></p>
 <label for="fc_text"><?= tr($tr, 'comments_text') ?></label><br>
 <textarea id="fc_text" class="ta" name="text" maxlength="1023" onkeyup="close_confirm=true"><?php /*if (isset($_POST['text']) && strlen((string) $_POST['text']) <= 1023)
 {

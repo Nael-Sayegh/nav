@@ -46,7 +46,7 @@ if (isset($_GET['domain']) && in_array($_GET['domain'], ['prod','dev','onion','o
 <?php
 
 $reqp = '';
-if (!empty($domain))
+if ($domain !== '' && $domain !== '0')
 {
     $reqp = ' domain="'.$domain.'" AND';
 }

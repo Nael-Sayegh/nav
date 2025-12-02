@@ -73,6 +73,7 @@ function list_files_recursive(string $root, array $include_dirs, array $exclude_
                 $included = true;
                 break;
             }
+
             if (str_starts_with($rel, $include_dir.'/'))
             {
                 $included = true;

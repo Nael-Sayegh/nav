@@ -26,7 +26,7 @@ if (isset($_POST['username'], $_POST['psw']))
 
     while ($data = $req->fetch())
     {
-        if (password_verify($_POST['psw'], (string) $data['password']))
+        if (password_verify((string) $_POST['psw'], (string) $data['password']))
         {
             if (!empty($data['twofa_enabled']) && !empty($data['twofa_secret']))
             {

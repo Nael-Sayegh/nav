@@ -36,7 +36,7 @@ if ((isset($_GET['token']) && $_GET['token'] === $login['token']) || (isset($_PO
             $ok = false;
             $log .= '<li>'.tr($tr, 'err_name_length').'</li>';
         }
-        if (strlen($_POST['mail']) > 255 || empty($_POST['mail']))
+        if (strlen((string) $_POST['mail']) > 255 || empty($_POST['mail']))
         {
             $ok = false;
             $log .= '<li>'.tr($tr, 'err_mail_length').'</li>';

@@ -24,7 +24,7 @@ if (isset($_GET['a']) && $_GET['a'] === 'form' && isset($_POST['username'], $_PO
     {
         $log .= '<li>'.tr($tr, 'log_diff_psw').'</li>';
     }
-    if (strlen($_POST['psw']) > 128 || strlen($_POST['psw']) < 8)
+    if (strlen((string) $_POST['psw']) > 128 || strlen((string) $_POST['psw']) < 8)
     {
         $log .= '<li>'.tr($tr, 'log_lenght_psw').'</li>';
     }
@@ -81,7 +81,7 @@ if (isset($_GET['a']) && $_GET['a'] === 'form' && isset($_POST['username'], $_PO
                     exit();
                 }
             }
-            $password = password_hash($_POST['psw'], PASSWORD_DEFAULT);
+            $password = password_hash((string) $_POST['psw'], PASSWORD_DEFAULT);
             $mhash = hash('sha512', strval(time() + random_int(1000000, 99999999)).$password.strval(random_int(100000, 99999999)));
             $settings = ['mhash' => $mhash,'menu' => '0','fontsize' => '16','date' => '0'];
             if (isset($_COOKIE['menu']) && $_COOKIE['menu'] === '1')

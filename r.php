@@ -33,6 +33,7 @@ if (isset($_GET['id']) && $_GET['id'] !== '')
             header('Location: '.$links[intval($_GET['m'])][1]);
             exit();
         }
+
         echo 'Erreur: Miroir introuvable';
 
         $req->closeCursor();
@@ -107,6 +108,7 @@ elseif (isset($_GET['p']) && $_GET['p'] !== '')
             header('Location: '.$links[intval($_GET['m'])][1]);
             exit();
         }
+
         echo 'Erreur: Miroir introuvable';
 
         $req->closeCursor();

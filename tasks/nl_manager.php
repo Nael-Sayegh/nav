@@ -262,6 +262,7 @@ if (!isDev() || isset($debug))
                     {
                         continue;
                     }
+
                     if ($entry_tr === '0')
                     {
                         continue;

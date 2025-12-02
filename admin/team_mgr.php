@@ -25,7 +25,7 @@ if (isset($_GET['add'], $_POST['name'], $_POST['status'], $_POST['age'], $_POST[
         INSERT INTO team (name, status, date, age, account_id, short_name, bio, works, mastodon, rights) VALUES(:name,:status,:date,:age,:acc,:short,:bio,:works,:masto,:rights)
         SQL;
     $req = $bdd->prepare($SQL);
-    $req->execute([':name' => $_POST['name'], ':status' => $_POST['status'], ':date' => time(), ':age' => strtotime(preg_replace('/^(\d{2})\/(\d{2})\/(\d{4})$/', '$3-$2-$1', $_POST['age'])), ':acc' => $account_id, ':short' => $_POST['short_name'], ':bio' => $_POST['bio'], ':works' => $_POST['works'], ':masto' => $_POST['mastodon'], ':rights' => $json]);
+    $req->execute([':name' => $_POST['name'], ':status' => $_POST['status'], ':date' => time(), ':age' => strtotime((string) preg_replace('/^(\d{2})\/(\d{2})\/(\d{4})$/', '$3-$2-$1', (string) $_POST['age'])), ':acc' => $account_id, ':short' => $_POST['short_name'], ':bio' => $_POST['bio'], ':works' => $_POST['works'], ':masto' => $_POST['mastodon'], ':rights' => $json]);
 }
 if (isset($_GET['delete']))
 {
@@ -48,7 +48,7 @@ if (isset($_GET['mod2'], $_POST['name'], $_POST['status'], $_POST['age'], $_POST
         UPDATE team SET name=:name, status=:status, age=:age, account_id=:acc, short_name=:short, bio=:bio, works=:works, mastodon=:masto, rights=:rights WHERE id=:id
         SQL;
     $req = $bdd->prepare($SQL);
-    $req->execute([':name' => htmlentities((string) $_POST['name']), ':status' => $_POST['status'], ':age' => strtotime(preg_replace('/^(\d{2})\/(\d{2})\/(\d{4})$/', '$3-$2-$1', $_POST['age'])), ':acc' => $_POST['account_id'], ':short' => $_POST['short_name'], ':bio' => $_POST['bio'], ':works' => $_POST['works'], ':masto' => $_POST['mastodon'], ':rights' => $json, ':id' => $_GET['mod2']]);
+    $req->execute([':name' => htmlentities((string) $_POST['name']), ':status' => $_POST['status'], ':age' => strtotime((string) preg_replace('/^(\d{2})\/(\d{2})\/(\d{4})$/', '$3-$2-$1', (string) $_POST['age'])), ':acc' => $_POST['account_id'], ':short' => $_POST['short_name'], ':bio' => $_POST['bio'], ':works' => $_POST['works'], ':masto' => $_POST['mastodon'], ':rights' => $json, ':id' => $_GET['mod2']]);
 }
 ?>
 <!DOCTYPE html>

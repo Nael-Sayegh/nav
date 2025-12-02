@@ -4,8 +4,6 @@ $finder = PhpCsFixer\Finder::create()
     ->in([
         __DIR__,
         __DIR__.'/admin',
-        __DIR__.'/api',
-        __DIR__.'/gadgets',
         __DIR__.'/include',
         __DIR__.'/tasks',
         __DIR__.'/a',

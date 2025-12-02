@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 <?php print $css_path; ?>
-<style>body {font-size: <?php if (isset($_COOKIE['fontsize']) && preg_match('#[0-9]{1,2}#', (string) $_COOKIE['fontsize']))
+<style>body {font-size: <?php if (isset($_COOKIE['fontsize']) && preg_match('#\d{1,2}#', (string) $_COOKIE['fontsize']))
 {
     echo $_COOKIE['fontsize'];
 }

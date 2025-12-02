@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $tr = [
   '_' => 'contacter',
   '_todo_level' => 0,
@@ -25,7 +27,7 @@ $tr = [
   'f_obj_tuto' => 'Suggestion de tutoriel',
   'f_obj_modif' => 'Demande de modification',
   'f_obj_site' => 'Demande de site',
-  'f_obj_akbug' => 'Bug de l\'AccessiKey',
+  'f_obj_akbug' => "Bug de l'AccessiKey",
   'f_obj_mkbug' => 'Bug de MaintenanceKey',
   'f_obj_privacy' => 'Demande sur la confidentialité',
   'f_obj_graph' => 'Rapport de problème graphique',

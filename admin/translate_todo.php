@@ -28,7 +28,7 @@ elseif (!isset($_GET['article_todo']))
 }
 
 $whereClause = '';
-if (count($conditions) > 0)
+if ($conditions !== [])
 {
     $whereClause = 'WHERE ' . implode(' AND ', $conditions);
 }
@@ -39,7 +39,7 @@ $sql = "
     FROM softwares_tr
     LEFT JOIN softwares
         ON softwares.id = softwares_tr.sw_id
-    $whereClause
+    {$whereClause}
     ORDER BY softwares_tr.todo_level DESC
 ";
 
@@ -57,7 +57,7 @@ $req->execute($params);
     <script src="/scripts/default.js"></script>
 </head>
 <body>
-<?php require_once('include/banner.php'); ?>
+<?php require_once(__DIR__ . '/include/banner.php'); ?>
 
 <h2 id="tr-articles">Articles</h2>
 <form action="translate_todo.php#tr-articles" method="get">

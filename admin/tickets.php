@@ -23,7 +23,7 @@ if (isset($_GET['waiting']))
     $req = $bdd->prepare($SQL);
     $req->execute([':id' => $_GET['waiting']]);
 }
-if (isset($_GET['close']) && isset($_POST['clo']) && $_POST['clo'] === 'FERMER')
+if (isset($_GET['close'], $_POST['clo'])   && $_POST['clo'] === 'FERMER')
 {
     $SQL = <<<SQL
         SELECT * FROM tickets WHERE id=:id LIMIT 1
@@ -32,7 +32,7 @@ if (isset($_GET['close']) && isset($_POST['clo']) && $_POST['clo'] === 'FERMER')
     $req->execute([':id' => $_GET['close']]);
     if ($data = $req->fetch())
     {
-        $subject = "Ticket {$data['id']} fermé";
+        $subject = sprintf('Ticket %s fermé', $data['id']);
         $body = <<<HTML
             <h2>Fermeture du ticket {$data['subject']}</h2>
             <p>{$admin_name} vient de fermer votre ticket numéro {$data['id']} sur {$site_name}.</p>
@@ -72,7 +72,7 @@ if (isset($_GET['close']) && isset($_POST['clo']) && $_POST['clo'] === 'FERMER')
     $req->execute([':date' => time(), ':id' => $_GET['close']]);
 }
 
-if (isset($_GET['delete']) && isset($_POST['del']) && $_POST['del'] === 'SUPPRIMER')
+if (isset($_GET['delete'], $_POST['del'])   && $_POST['del'] === 'SUPPRIMER')
 {
     $SQL = <<<SQL
         DELETE FROM tickets WHERE id=:id
@@ -80,7 +80,7 @@ if (isset($_GET['delete']) && isset($_POST['del']) && $_POST['del'] === 'SUPPRIM
     $req = $bdd->prepare($SQL);
     $req->execute([':id' => $_GET['delete']]);
 }
-if (isset($_GET['send']) && isset($_POST['msg']))
+if (isset($_GET['send'], $_POST['msg']))
 {
     $SQL = <<<SQL
         SELECT * FROM tickets WHERE id=:id LIMIT 1
@@ -108,7 +108,7 @@ if (isset($_GET['send']) && isset($_POST['msg']))
                 padding: 8px;
             }
             CSS;
-        $subject = "Re: {$data['subject']} (Ticket #{$data['id']}#)";
+        $subject = sprintf('Re: %s (Ticket #%s#)', $data['subject'], $data['id']);
         $body = <<<HTML
             <p>## Ne pas écrire en-dessous de cette ligne ##</p>
             <h2>Réponse à votre ticket {$data['subject']}</h2>
@@ -142,7 +142,7 @@ if (isset($_GET['send']) && isset($_POST['msg']))
             Pour continuer la discussion, répondez à ce message sans en modifier l'objet ou consultez le ticket à l'adresse suivante:
             {SITE_URL}/admin/tickets.php?ticket={$data['id']}
             TEXT;
-        if (sendMail(getTeamEmails('manage_tickets'), $subject, $teamBody, $teamAltBody, [TICKETS_BOT_MAIL, "{$site_name} Tickets Bot"], ['css' => $css, 'includeAutoReplyNotice' => false]) && sendMail($data['expeditor_email'], $subject, $body, $altBody, [TICKETS_BOT_MAIL, "{$site_name} Tickets Bot"], ['css' => $css, 'includeAutoReplyNotice' => false]))
+        if (sendMail(getTeamEmails('manage_tickets'), $subject, $teamBody, $teamAltBody, [TICKETS_BOT_MAIL, $site_name . ' Tickets Bot'], ['css' => $css, 'includeAutoReplyNotice' => false]) && sendMail($data['expeditor_email'], $subject, $body, $altBody, [TICKETS_BOT_MAIL, $site_name . ' Tickets Bot'], ['css' => $css, 'includeAutoReplyNotice' => false]))
         {
             $log = 'Réponse envoyée';
         }
@@ -161,7 +161,7 @@ if (isset($_GET['create']) && $_POST['name'] && $_POST['mail'] && $_POST['obj'] 
     $hash = hash('sha512', strval(time()).strval(random_int(0, mt_getrandmax())).$_POST['name'].strval(random_int(0, mt_getrandmax())));
     $req->execute([':subject' => $_POST['obj'], ':mail' => $_POST['mail'], ':name' => $_POST['name'], ':msg' => $message, ':hash' => $hash, ':date' => $time]);
     $ticketId = $bdd->lastInsertId();
-    $subject = "{$_POST['obj']} (Ticket #{$ticketId}#)";
+    $subject = sprintf('%s (Ticket #%s#)', $_POST['obj'], $ticketId);
     $teamBody = <<<HTML
         <p>## Ne pas écrire en-dessous de cette ligne ##</p>
         <h2>Création du ticket {$_POST['obj']}</h2>
@@ -179,7 +179,7 @@ if (isset($_GET['create']) && $_POST['name'] && $_POST['mail'] && $_POST['obj'] 
         Pour y répondre, répondez à ce message sans en modifier l'objet ou consultez le ticket à l'adresse suivante:
         {SITE_URL}/admin/tickets.php?ticket={$ticketId}
         TEXT;
-    sendMail(getTeamEmails('manage_tickets'), $subject, $teamBody, $teamAltBody, [TICKETS_BOT_MAIL, "{$site_name} Tickets Bot"], ['includeAutoReplyNotice' => false]);
+    sendMail(getTeamEmails('manage_tickets'), $subject, $teamBody, $teamAltBody, [TICKETS_BOT_MAIL, $site_name . ' Tickets Bot'], ['includeAutoReplyNotice' => false]);
     $body = <<<HTML
         <p>## Ne pas écrire en-dessous de cette ligne ##</p>
         <h2>Création du ticket {$_POST['obj']}</h2>
@@ -201,7 +201,7 @@ if (isset($_GET['create']) && $_POST['name'] && $_POST['mail'] && $_POST['obj'] 
         $log = 'Ticket créé, mails envoyés';
     }
 }
-function getStatus($status, $asTd = false)
+function getStatus($status, $asTd = false): string
 {
     $map = [
         0 => ['color' => 'C00000', 'label' => 'Nouveau'],
@@ -216,12 +216,9 @@ function getStatus($status, $asTd = false)
 
     if ($asTd)
     {
-        return "<td class=\"ticket_{$hex}\">{$label}</td>";
+        return sprintf('<td class="ticket_%s">%s</td>', $hex, $label);
     }
-    else
-    {
-        return "<b style=\"color:#{$hex}\">{$label}</b>";
-    }
+    return sprintf('<b style="color:#%s">%s</b>', $hex, $label);
 }
 ?>
 <!DOCTYPE html>
@@ -234,7 +231,7 @@ function getStatus($status, $asTd = false)
 <script type="text/javascript" src="/scripts/default.js"></script>
 </head>
 <body>
-<?php require_once('include/banner.php');
+<?php require_once(__DIR__ . '/include/banner.php');
 if (isset($_GET['ticket']))
 { ?>
 <ul>
@@ -318,7 +315,7 @@ if (isset($_GET['ticket']))
     }
     else
     {
-        echo '<p>Le ticket n\'existe pas.</p>';
+        echo "<p>Le ticket n'existe pas.</p>";
     }
 }
 else

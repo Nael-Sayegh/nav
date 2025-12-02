@@ -1,11 +1,11 @@
 <?php
 $logonly = true;
-require_once('include/log.php');
+require_once(__DIR__ . '/include/log.php');
 $stats_page = 'home';
 set_include_path($_SERVER['DOCUMENT_ROOT']);
-require_once('include/consts.php');
-require_once('include/sendMail.php');
-require_once('vendor/autoload.php');
+require_once(__DIR__ . '/include/consts.php');
+require_once(__DIR__ . '/include/sendMail.php');
+require_once(__DIR__ . '/vendor/autoload.php');
 use RobThree\Auth\Providers\Qr\EndroidQrCodeProvider;
 use RobThree\Auth\TwoFactorAuth;
 
@@ -24,10 +24,10 @@ if ((isset($_GET['token']) && $_GET['token'] === $login['token']) || (isset($_PO
 {
     if (isset($_GET['sendmail']))
     {
-        require_once('include/sendconfirm.php');
+        require_once(__DIR__ . '/include/sendconfirm.php');
         send_confirm($login['id'], $login['email'], $settings['mhash'], $login['username']);
     }
-    if (isset($_GET['settings']) && isset($_POST['username']) && isset($_POST['mail']))
+    if (isset($_GET['settings'], $_POST['username'], $_POST['mail']))
     {
         $ok = true;
         $username = $_POST['username'];
@@ -61,7 +61,7 @@ if ((isset($_GET['token']) && $_GET['token'] === $login['token']) || (isset($_PO
         }
         $bd_m = 0;
         $bd_d = 0;
-        if (isset($_POST['bd_m']) && isset($_POST['bd_d']) && preg_match('/^\d\d?$/', $_POST['bd_m']) && preg_match('/^\d\d?$/', $_POST['bd_d']))
+        if (isset($_POST['bd_m'], $_POST['bd_d'])   && preg_match('/^\d\d?$/', $_POST['bd_m']) && preg_match('/^\d\d?$/', $_POST['bd_d']))
         {
             $bd_m = intval($_POST['bd_m']);
             $bd_d = intval($_POST['bd_d']);
@@ -83,24 +83,20 @@ if ((isset($_GET['token']) && $_GET['token'] === $login['token']) || (isset($_PO
                 $req = $bdd->prepare($SQL);
                 $req->execute([':username' => $username, ':email' => $_POST['mail'], ':set' => json_encode($settings), ':sub' => $comments_sub, ':id' => $login['id']]);
                 header('Location: /home.php?settings_ok&mail_sent');
-                require_once('include/sendconfirm.php');
+                require_once(__DIR__ . '/include/sendconfirm.php');
                 send_confirm($login['id'], $_POST['mail'], $settings['mhash'], $username);
                 exit();
             }
-            else
-            {
-                $SQL = <<<SQL
+            $SQL = <<<SQL
                     UPDATE accounts SET username=:username, email=:email, settings=:set, subscribed_comments=:sub WHERE id=:id
                     SQL;
-                $req = $bdd->prepare($SQL);
-                $req->execute([':username' => $username, ':email' => $_POST['mail'], ':set' => json_encode($settings), ':sub' => $comments_sub, ':id' => $login['id']]);
-                header('Location: /home.php?settings_ok');
-                exit();
-            }
+            $req = $bdd->prepare($SQL);
+            $req->execute([':username' => $username, ':email' => $_POST['mail'], ':set' => json_encode($settings), ':sub' => $comments_sub, ':id' => $login['id']]);
+            header('Location: /home.php?settings_ok');
             exit();
         }
     }
-    if (isset($_GET['chpsw']) && isset($_POST['oldpsw']) && isset($_POST['newpsw']) && isset($_POST['newrpsw']))
+    if (isset($_GET['chpsw'], $_POST['oldpsw'], $_POST['newpsw'], $_POST['newrpsw']))
     {
         $ok = true;
         if ($_POST['newpsw'] !== $_POST['newrpsw'])
@@ -205,7 +201,7 @@ if ((isset($_GET['token']) && $_GET['token'] === $login['token']) || (isset($_PO
         $req = $bdd->prepare($SQL);
         $req->execute([':exp' => time() - 1, ':acc' => $login['id'], ':id' => $_GET['rm_ses'], ':exp2' => time()]);
     }
-    if (isset($_GET['enable2fa']) && isset($_POST['code']) && isset($_SESSION['2fa_secret']))
+    if (isset($_GET['enable2fa'], $_POST['code'], $_SESSION['2fa_secret']))
     {
         $ok = false;
         if ($tfa->verifyCode($_SESSION['2fa_secret'], $_POST['code']))
@@ -219,10 +215,7 @@ if ((isset($_GET['token']) && $_GET['token'] === $login['token']) || (isset($_PO
             header('Location: /home.php?2fa_enabled');
             exit();
         }
-        else
-        {
-            $log .= '<li>'.tr($tr, 'err_2fa_code_invalid').'</li>';
-        }
+        $log .= '<li>'.tr($tr, 'err_2fa_code_invalid').'</li>';
     }
     if (isset($_GET['disable2fa']) && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_disable']))
     {
@@ -242,7 +235,7 @@ if ((isset($_GET['token']) && $_GET['token'] === $login['token']) || (isset($_PO
         }
     }
 }
-require_once('include/user_rank.php');
+require_once(__DIR__ . '/include/user_rank.php');
 if (isset($_GET['settings_ok']))
 {
     $log .= '<li>'.tr($tr, 'log_settings_ok').'</li>';
@@ -266,13 +259,13 @@ if (isset($_GET['2fa_disabled']))
 ?>
 <!DOCTYPE html>
 <html lang="<?= $lang ?>">
-<?php require_once('include/header.php'); ?>
+<?php require_once(__DIR__ . '/include/header.php'); ?>
 <body>
-<?php require_once('include/banner.php'); ?>
+<?php require_once(__DIR__ . '/include/banner.php'); ?>
 <main id="container">
 <h1 id="contenu"><?php print $title; ?></h1>
 <div id="alertZone" role="alert" aria-live="assertive"></div>
-<?php if (!empty($log)): ?>
+<?php if ($log !== '' && $log !== '0'): ?>
 <noscript>
 <ul class="log" role="alert"><?= $log ?></ul>
 </noscript>
@@ -293,7 +286,7 @@ if (isset($_GET['2fa_disabled']))
 <li><?= tr($tr, 'profile_rank', ['rank' => urank($login['rank'])]) ?></li>
 <li><?= tr($tr, 'profile_id', ['id' => ($login['team_id'] ? 'E'.$login['team_id'].'' : '') . 'M'.$login['id']]) ?></li>
 <li><?= tr($tr, 'profile_signup_date', ['date' => getFormattedDate($login['signup_date'], tr($tr0, 'fndatetime'))]) ?></li>
-<?php if (isset($settings['bd_m']) && isset($settings['bd_d']))
+<?php if (isset($settings['bd_m'], $settings['bd_d']))
 { ?>
 <li><?php $date = getdate();
     echo tr($tr, 'profile_birthday', ['date' => ((($settings['bd_m'] === $date['mon'] && $settings['bd_d'] === $date['mday']) || ($settings['bd_m'] === 2 && $date['mon'] === 3 && $settings['bd_d'] === 29 && $date['mday'] === 1 && $date['year'] % 4 === 0)) ? tr($tr, 'profile_happy_birthday').' &#127874;' : zeros($settings['bd_d'], 2).'/'.zeros($settings['bd_m'], 2))]); ?></li>
@@ -314,19 +307,16 @@ while ($notif = $req->fetch())
 {
     $data = json_decode((string) $notif['data'], true);
     $notif_html = '<li id="lnotif'.$notif['id'].'" class="lnotif lnotif_'.($notif['unread'] ? '' : 'un').'read"><span class="lnotif_date">'.getFormattedDate($notif['date'], tr($tr0, 'fndatetime')).'</span> <span class="lnotif_text">';
-    if (isset($data['type']))
+    if (isset($data['type']) && ($data['type'] === 'new_comment' && isset($data['article'])))
     {
-        if ($data['type'] === 'new_comment' && isset($data['article']))
-        {
-            $SQL2 = <<<SQL
+        $SQL2 = <<<SQL
                 SELECT name FROM softwares WHERE id=:id LIMIT 1
                 SQL;
-            $req2 = $bdd->prepare($SQL2);
-            $req2->execute([':id' => $data['article']]);
-            if ($tmp = $req2->fetch())
-            {
-                $notif_html .= tr($tr, 'notifs_new_comment', ['link' => '<a href="/a'.$data['article'].'">'.$tmp['name'].'</a>.']);
-            }
+        $req2 = $bdd->prepare($SQL2);
+        $req2->execute([':id' => $data['article']]);
+        if ($tmp = $req2->fetch())
+        {
+            $notif_html .= tr($tr, 'notifs_new_comment', ['link' => '<a href="/a'.$data['article'].'">'.$tmp['name'].'</a>.']);
         }
     }
     $notif_html .= '</span> <a class="lnotif_readlink" href="?notif_read='.$notif['id'].'&token='.$login['token'].'" onclick="read_notif(event, '.$notif['id'].', true)" style="display:'.($notif['unread'] ? 'initial' : 'none').'">('.tr($tr, 'notifs_read').')</a><a class="lnotif_unreadlink" href="?notif_unread='.$notif['id'].'&token='.$login['token'].'" onclick="read_notif(event, '.$notif['id'].', false)" style="display:'.($notif['unread'] ? 'none' : 'initial').'">('.tr($tr, 'notifs_unread').')</a></li>';
@@ -455,7 +445,7 @@ while ($data = $req->fetch())
 </fieldset>
 </form>
 </main>
-<?php require_once('include/footer.php'); ?>
+<?php require_once(__DIR__ . '/include/footer.php'); ?>
 
 <script type="text/javascript" src="/scripts/jquery.js"></script>
 <script type="text/javascript" src="/scripts/pa_api.js"></script>

@@ -12,9 +12,12 @@ $log = '';
 // In case splitting is needed, submessages are numbered:
 // " xx/yy" (6 chars) is written at the end.
 // The function tries to split at spaces.
-function split_msg(string $msg, int $minlen, int $maxlen)
+/**
+ * @return mixed[]
+ */
+function split_msg(string $msg, int $minlen, int $maxlen): array
 {
-    $len = strlen((string) $msg);
+    $len = strlen($msg);
     if ($len <= $maxlen)
     {
         return [$msg];
@@ -29,7 +32,7 @@ function split_msg(string $msg, int $minlen, int $maxlen)
         if ($to >= $len)
         {
             // Last submessage
-            $msgs[] = substr((string) $msg, $from);
+            $msgs[] = substr($msg, $from);
             break;
         }
         $removed = 1;
@@ -43,11 +46,12 @@ function split_msg(string $msg, int $minlen, int $maxlen)
             }
             $to--;
         }
-        $msgs[] = substr((string) $msg, $from, $to - $from - $removed);
+        $msgs[] = substr($msg, $from, $to - $from - $removed);
         $from = $to;
     }
+    $counter = count($msgs);
 
-    for ($i = 0; $i < count($msgs); $i++)
+    for ($i = 0; $i < $counter; $i++)
     {
         $msgs[$i] .= "\n" . ($i + 1) . '/' . count($msgs);
     }
@@ -55,29 +59,29 @@ function split_msg(string $msg, int $minlen, int $maxlen)
     return $msgs;
 }
 
-if (isset($_GET['form']) && isset($_POST['pf']) && isset($_POST['msg']))
+if (isset($_GET['form'], $_POST['pf'], $_POST['msg']))
 {
     $plainmsg = $_POST['msg'];
 
-    if (in_array('facebook', $_POST['pf']))
+    if (in_array('facebook', $_POST['pf'], true))
     {
         require_once($_SERVER['DOCUMENT_ROOT'].'/include/lib/facebook/fb_publisher.php');
         send_facebook($plainmsg);
         $log .= '<li>Message Facebook envoyé.</li>';
     }
-    if (in_array('discord', $_POST['pf']))
+    if (in_array('discord', $_POST['pf'], true))
     {
         require_once($_SERVER['DOCUMENT_ROOT'].'/include/lib/discord_publisher.php');
         send_discord($plainmsg);
         $log .= '<li>Message Discord envoyé.</li>';
     }
-    if (in_array('mastodon', $_POST['pf']))
+    if (in_array('mastodon', $_POST['pf'], true))
     {
         require_once($_SERVER['DOCUMENT_ROOT'].'/include/lib/Mastodon/mastodon_publisher.php');
         $msgs = split_msg($plainmsg, 100, MASTODON_MAX_LEN);
-        foreach ($msgs as $submsg)
+        foreach ($msgs as $msg)
         {
-            send_mastodon($submsg);
+            send_mastodon($msg);
         }
         $log .= '<li>Message Mastodon envoyé en '.count($msgs).' morceaux.</li>';
     }
@@ -97,7 +101,7 @@ if (isset($_GET['form']) && isset($_POST['pf']) && isset($_POST['msg']))
 
 if (isset($_GET['nl']))
 {
-    $message = 'La lettre d\'infos du '.$datejour.' est envoyée à '.date('H:i').'!'."\n\n".$admin_name;
+    $message = "La lettre d'infos du ".$datejour.' est envoyée à '.date('H:i').'!'."\n\n".$admin_name;
     if ($_POST['nl'] === 'fb' || $_POST['nl'] === 'all')
     {
         require_once($_SERVER['DOCUMENT_ROOT'].'/include/lib/facebook/fb_publisher.php');
@@ -125,9 +129,9 @@ if (isset($_GET['swfb']))
 <script type="text/javascript" src="/scripts/default.js"></script>
 </head>
 <body>
-<?php require_once('include/banner.php'); ?>
+<?php require_once(__DIR__ . '/include/banner.php'); ?>
 <div id="alertZone" role="alert" aria-live="assertive"></div>
-<?php if (!empty($log)): ?>
+<?php if ($log !== '' && $log !== '0'): ?>
 <noscript>
 <ul role="alert"><?= $log ?></ul>
 </noscript>

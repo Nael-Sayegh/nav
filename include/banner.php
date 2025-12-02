@@ -3,9 +3,9 @@
 <?php
 if (isset($_SERVER['HTTP_USER_AGENT']) && str_contains((string) $_SERVER['HTTP_USER_AGENT'], 'Trident'))
 {
-    include 'include/trident.php';
+    include __DIR__ . '/include/trident.php';
 }
 //include 'include/loginbox.php';
-include 'include/searchtool.php'; ?>
+include __DIR__ . '/include/searchtool.php'; ?>
 </header>
-<?php include 'include/menu.php'; ?>
+<?php include __DIR__ . '/include/menu.php'; ?>

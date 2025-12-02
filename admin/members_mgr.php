@@ -15,7 +15,7 @@ if (isset($_GET['delete']))
     $req = $bdd->prepare($SQL);
     $req->execute([':id' => $_GET['delete']]);
 }
-if (isset($_GET['mod2']) && isset($_POST['username'], $_POST['email'], $_POST['rank']))
+if (isset($_GET['mod2'], $_POST['username'],$_POST['email'],$_POST['rank']))
 {
     $SQLOld = <<<SQL
         SELECT rights, twofa_enabled FROM accounts WHERE id = :id
@@ -31,16 +31,16 @@ if (isset($_GET['mod2']) && isset($_POST['username'], $_POST['email'], $_POST['r
         }
         $posted = $_POST['rights'] ?? [];
         $rightsMap = [];
-        foreach (ALL_MEMBER_RIGHTS as $key => $_label)
+        foreach (array_keys(ALL_MEMBER_RIGHTS) as $key)
         {
             $rightsMap[$key] = in_array($key, $posted, true) ? 1 : 0;
         }
         $json = json_encode($rightsMap, JSON_PRESERVE_ZERO_FRACTION);
         $changes = [];
-        foreach (ALL_MEMBER_RIGHTS as $key => $label)
+        foreach (array_keys(ALL_MEMBER_RIGHTS) as $key)
         {
             $oldVal = !empty($oldMap[$key]);
-            $newVal = !empty($rightsMap[$key]);
+            $newVal = isset($rightsMap[$key]) && $rightsMap[$key] !== 0;
             if ($oldVal !== $newVal)
             {
                 $changes[$key] = $newVal;
@@ -58,7 +58,7 @@ if (isset($_GET['mod2']) && isset($_POST['username'], $_POST['email'], $_POST['r
         if (!empty($_POST['password']))
         {
             $rawPassword = (string)$_POST['password'];
-            $password = password_hash((string) $rawPassword, PASSWORD_DEFAULT);
+            $password = password_hash($rawPassword, PASSWORD_DEFAULT);
         }
         $SQL = <<<SQL
             UPDATE accounts SET username=:username, email=:email, password=:psw, rank=:rank, rights=:rights WHERE id=:id
@@ -166,7 +166,7 @@ if (isset($_GET['mod2']) && isset($_POST['username'], $_POST['email'], $_POST['r
 <script type="text/javascript" src="/scripts/default.js"></script>
 </head>
 <body>
-<?php require_once('include/banner.php'); ?>
+<?php require_once(__DIR__ . '/include/banner.php'); ?>
 <table border="1">
 <thead><tr><th>Nom d'utilisateur</th><th>Adresse mail</th><th>Rang</th><th>Droits</th><th>Statut A2F</th><th>Actions</th></tr></thead>
 <tbody>

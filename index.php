@@ -1,15 +1,15 @@
 <?php
 set_include_path($_SERVER['DOCUMENT_ROOT']);
 $stats_page = 'index';
-require_once('include/log.php');
-require_once('include/consts.php');
+require_once(__DIR__ . '/include/log.php');
+require_once(__DIR__ . '/include/consts.php');
 $tr = load_tr($lang, 'index');
 $title = tr($tr, 'title'); ?>
 <!DOCTYPE html>
 <html lang="<?= $lang ?>">
-<?php require_once('include/header.php'); ?>
+<?php require_once(__DIR__ . '/include/header.php'); ?>
 <body>
-<?php require_once('include/banner.php'); ?>
+<?php require_once(__DIR__ . '/include/banner.php'); ?>
 <div id="container">
 <main id="contenu">
 <?php if (isset($_GET['contactconfirm']) && $_GET['contactconfirm'])
@@ -25,6 +25,6 @@ $title = tr($tr, 'title'); ?>
 </main>
 </div>
 <script src="/scripts/jquery.js"></script>
-<?php require_once('include/footer.php'); ?>
+<?php require_once(__DIR__ . '/include/footer.php'); ?>
 </body>
 </html>

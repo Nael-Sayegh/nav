@@ -1,7 +1,7 @@
 <?php $logonly = true;
 $adminonly = true;
 $justna = true;
-$titlePAdm = 'Modification d\'un article';
+$titlePAdm = "Modification d'un article";
 require_once($_SERVER['DOCUMENT_ROOT'].'/include/log.php');
 require_once($_SERVER['DOCUMENT_ROOT'].'/include/consts.php');
 require_once $_SERVER['DOCUMENT_ROOT'].'/include/lib/MDConverter.php';
@@ -90,10 +90,10 @@ if ((isset($_GET['token']) && $_GET['token'] === $login['token']) || (isset($_PO
                 'softwares_packages',
                 'softwares_tr',
             ];
-            foreach ($tables as $tbl)
+            foreach ($tables as $table)
             {
                 $SQL = <<<SQL
-                    DELETE FROM {$tbl} WHERE sw_id = :sw_id
+                    DELETE FROM {$table} WHERE sw_id = :sw_id
                     SQL;
                 $req = $bdd->prepare($SQL);
                 $req->execute(['sw_id' => $_POST['rsw']]);
@@ -212,7 +212,7 @@ if ((isset($_GET['token']) && $_GET['token'] === $login['token']) || (isset($_PO
                 $req = $bdd->query($SQL);
                 if ($data = $req->fetch())
                 {
-                    $somsg = $_POST['title'].' : '.SITE_URL.'/dl/'.(!empty($_POST['label']) ? $_POST['label'] : $data['id']).' '.SITE_URL.'/a'.$data['sw_id'].' '.$admin_name;
+                    $somsg = $_POST['title'].' : '.SITE_URL.'/dl/'.(empty($_POST['label']) ? $data['id'] : $_POST['label']).' '.SITE_URL.'/a'.$data['sw_id'].' '.$admin_name;
                     include_once($_SERVER['DOCUMENT_ROOT'].'/include/lib/Mastodon/mastodon_publisher.php');
                     send_mastodon($somsg);
                     require_once($_SERVER['DOCUMENT_ROOT'].'/include/lib/discord_publisher.php');
@@ -251,10 +251,9 @@ if ((isset($_GET['token']) && $_GET['token'] === $login['token']) || (isset($_PO
                     SQL;
                 $req2 = $bdd->prepare($SQL);
                 $req2->execute([':type' => finfo_file($finfo, $file), ':date' => time(), ':size' => filesize($file), ':md' => md5_file($file), ':sha' => sha1_file($file), ':id' => $data['id']]);
-                finfo_close($finfo);
                 if (isset($_GET['social']) && $_GET['social'] === 'on')
                 {
-                    $somsg = $data['title'].' : '.SITE_URL.'/dl/'.(!empty($data['label']) ? $data['label'] : $data['id']).' '.SITE_URL.'/a'.$data['sw_id'].' '.$admin_name;
+                    $somsg = $data['title'].' : '.SITE_URL.'/dl/'.(empty($data['label']) ? $data['id'] : $data['label']).' '.SITE_URL.'/a'.$data['sw_id'].' '.$admin_name;
                     include_once($_SERVER['DOCUMENT_ROOT'].'/include/lib/Mastodon/mastodon_publisher.php');
                     send_mastodon($somsg);
                     require_once($_SERVER['DOCUMENT_ROOT'].'/include/lib/discord_publisher.php');
@@ -359,17 +358,13 @@ if ((isset($_GET['token']) && $_GET['token'] === $login['token']) || (isset($_PO
             switch ($_POST['method'])
             {
                 case 'form':
-                    if (!file_exists($file))
-                    {
-                        if (isset($_FILES['file']) && $_FILES['file']['error'] === UPLOAD_ERR_OK && $_FILES['file']['size'] <= 2147483648)
-                        {
-                            move_uploaded_file($_FILES['file']['tmp_name'], $file);
-                            $filename = (isset($_POST['name']) && !empty($_POST['name'])) ? $_POST['name'] : $_FILES['file']['name'];
-                            $filesize = $_FILES['file']['size'];
-                            $filetype = $_FILES['file']['type'];
-                            $ok = true;
-                            $complete = true;
-                        }
+                    if (!file_exists($file) && (isset($_FILES['file']) && $_FILES['file']['error'] === UPLOAD_ERR_OK && $_FILES['file']['size'] <= 2147483648)) {
+                        move_uploaded_file($_FILES['file']['tmp_name'], $file);
+                        $filename = (isset($_POST['name']) && !empty($_POST['name'])) ? $_POST['name'] : $_FILES['file']['name'];
+                        $filesize = $_FILES['file']['size'];
+                        $filetype = $_FILES['file']['type'];
+                        $ok = true;
+                        $complete = true;
                     }
                     break;
                 case 'ext':
@@ -428,7 +423,7 @@ if ((isset($_GET['token']) && $_GET['token'] === $login['token']) || (isset($_PO
                     if (isset($_POST['social']) && $_POST['social'] === 'on')
                     {
                         $somsg = $_POST['title'].' :';
-                        if (!empty($label))
+                        if ($label !== '' && $label !== '0')
                         {
                             $somsg .= ' '.SITE_URL.'/dl/'.$label;
                         }
@@ -444,14 +439,11 @@ if ((isset($_GET['token']) && $_GET['token'] === $login['token']) || (isset($_PO
                     header('Location: sw_mod.php?listfiles='.$_GET['upload']);
                     exit();
                 }
-                else
-                {
-                    $SQL = <<<SQL
+                $SQL = <<<SQL
                         INSERT INTO softwares_files (sw_id,name,hash,title,label) VALUES(:swid,:name,:hash,:title,:label)
                         SQL;
-                    $req = $bdd->prepare($SQL);
-                    $req->execute([':swid' => $_GET['upload'], ':name' => $_POST['name'], ':hash' => $hash, ':title' => $_POST['title'], ':label' => $label]);
-                }
+                $req = $bdd->prepare($SQL);
+                $req->execute([':swid' => $_GET['upload'], ':name' => $_POST['name'], ':hash' => $hash, ':title' => $_POST['title'], ':label' => $label]);
             }
         }
     }
@@ -572,8 +564,8 @@ else
 <script type="text/javascript" src="/scripts/default.js"></script>
 </head>
 <body>
-<?php require_once('include/banner.php');
-if (empty($_GET))
+<?php require_once(__DIR__ . '/include/banner.php');
+if ($_GET === [])
 {
     echo '<ul title="Lister les articles de&nbsp;:">';
     $SQL2 = <<<SQL
@@ -918,58 +910,77 @@ if (isset($_GET['modf']))
         SQL;
     $req = $bdd->prepare($SQL);
     $req->execute([':id' => $_GET['modf']]);
-    if ($data = $req->fetch())
-    { ?>
-<a href="?listfiles=<?= $data['sw_id'] ?>">Liste des fichiers de l'article</a>
-<form id="f_modf_form" action="?modf2=<?= $data['id'] ?>" method="post" enctype="multipart/form-data" onsubmit="f_modf_submit(event)">
-<input type="hidden" name="token" value="<?= $login['token'] ?>">
+    if ($data = $req->fetch()) {
+        ?>
+<a href="?listfiles=
+        <?= $data['sw_id'] ?>
+        ">Liste des fichiers de l'article</a>
+<form id="f_modf_form" action="?modf2=
+        <?= $data['id'] ?>
+        " method="post" enctype="multipart/form-data" onsubmit="f_modf_submit(event)">
+<input type="hidden" name="token" value="
+        <?= $login['token'] ?>
+        ">
 <h2>Modifier un fichier</h2>
 <fieldset>
 <legend>Métadonnées</legend>
 <label for="f_modf_title">Titre du fichier&nbsp;:</label>
-<input type="text" name="title" id="f_modf_title" value="<?= $data['title'] ?>" required><br>
+<input type="text" name="title" id="f_modf_title" value="
+        <?= $data['title'] ?>
+        " required><br>
 <label for="f_modf_name">Nom du fichier&nbsp;:</label>
-<input type="text" name="name" id="f_modf_name" value="<?= $data['name'] ?>" required><br>
+<input type="text" name="name" id="f_modf_name" value="
+        <?= $data['name'] ?>
+        " required><br>
 <label for="f_modf_label">Label&nbsp;:</label>
-<input type="text" name="label" id="f_modf_label" value="<?= $data['label'] ?>" maxlength="16" readonly=<?php (!empty($data['label']) ? true : false); ?>>
-<?php if (!empty($data['label']))
-{
-    echo '<p>Le label de ce fichier est déjà renseigné, pour le modifier, supprimez ce fichier et ajoutez en un nouveau.</p>';
-} ?>
+<input type="text" name="label" id="f_modf_label" value="
+        <?= $data['label'] ?>
+        " maxlength="16" readonly=<?php 
+        ?>>
+<?php 
+        if (!empty($data['label']))
+    {
+        echo '<p>Le label de ce fichier est déjà renseigné, pour le modifier, supprimez ce fichier et ajoutez en un nouveau.</p>';
+    }
+        ?>
 
 <label for="f_modf_arch">Architecture&nbsp;:</label>
 <select name="arch" id="f_modf_arch">
-<option value=""<?php if (!in_array($data['arch'], $ARCHS))
-{
-    echo 'selected';
-} ?>></option>
-<?php
-        foreach ($ARCHS as $arch_id => $arch_title)
+<option value=""<?php 
+        if (!in_array($data['arch'], $ARCHS))
         {
-            echo '<option value="'.$arch_id.'"';
-            if ($data['arch'] === $arch_id)
-            {
-                echo ' selected';
-            } echo '>'.$arch_title.'</option>';
+            echo 'selected';
         }
+        ?>></option>
+<?php 
+        foreach ($ARCHS as $arch_id => $arch_title)
+                {
+                    echo '<option value="'.$arch_id.'"';
+                    if ($data['arch'] === $arch_id)
+                    {
+                        echo ' selected';
+                    } echo '>'.$arch_title.'</option>';
+                }
         ?>
 </select><br>
 
 <label for="f_modf_platform">Plateforme&nbsp;:</label>
 <select name="platform" id="f_modf_platform">
-<option value=""<?php if (!in_array($data['platform'], $PLATFORMS))
+<option value=""<?php 
+        if (!in_array($data['platform'], $PLATFORMS))
 {
     echo 'selected';
-} ?>></option>
-<?php
+}
+        ?>></option>
+<?php 
         foreach ($PLATFORMS as $platform)
-        {
-            echo '<option value="'.$platform.'"';
-            if ($data['platform'] === $platform)
-            {
-                echo ' selected';
-            } echo '>'.$platform.'</option>';
-        }
+                {
+                    echo '<option value="'.$platform.'"';
+                    if ($data['platform'] === $platform)
+                    {
+                        echo ' selected';
+                    } echo '>'.$platform.'</option>';
+                }
         ?>
 </select>
 </fieldset>
@@ -1001,10 +1012,12 @@ if (isset($_GET['modf']))
 </fieldset>
 
 <label for="f_modf_social">Annoncer sur les médias sociaux&nbsp;:</label>
-<input type="checkbox" name="social" id="f_modf_social"<?php if (!isDev())
+<input type="checkbox" name="social" id="f_modf_social"<?php 
+        if (!isDev())
 {
     echo ' checked';
-} ?>><br>
+}
+        ?>><br>
 <button type="submit">Modifier</button>
 <progress class="upload-progress" id="upload-progress"></progress>
 
@@ -1045,7 +1058,8 @@ f_modf_group_method();
     });
 </script>
 </form>
-<?php }$req->closeCursor();
+<?php 
+    }$req->closeCursor();
 }
 if (isset($_GET['modm']))
 {

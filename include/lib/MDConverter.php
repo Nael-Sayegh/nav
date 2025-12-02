@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 $document_root = __DIR__.'/../..';
 require_once $document_root.'/vendor/autoload.php';
 
 use League\CommonMark\CommonMarkConverter;
 
-function convertToMD($text)
+function convertToMD($text): string
 {
     $converter = new CommonMarkConverter([
         'html_input' => 'allow',

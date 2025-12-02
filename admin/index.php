@@ -13,7 +13,7 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/include/consts.php');
 <script src="/scripts/default.js"></script>
 </head>
 <body>
-<?php require_once('include/banner.php'); ?>
+<?php require_once(__DIR__ . '/include/banner.php'); ?>
 <h2>Statistiques</h2>
 <p><?php
 require_once($_SERVER['DOCUMENT_ROOT'].'/cache/codestatc.php');

@@ -1,7 +1,7 @@
 <?php
 set_include_path($_SERVER['DOCUMENT_ROOT']);
-require_once('include/log.php');
-require_once('include/consts.php');
+require_once(__DIR__ . '/include/log.php');
+require_once(__DIR__ . '/include/consts.php');
 $tr = load_tr($lang, 'search');
 $title = tr($tr, 'title');
 $stats_page = 'recherche';
@@ -30,9 +30,9 @@ if (isset($_GET['q']) && $_GET['q'] !== '' && strlen((string) $_GET['q']) <= 255
 ?>
 <!DOCTYPE html>
 <html lang="<?= $lang ?>">
-<?php require_once('include/header.php'); ?>
+<?php require_once(__DIR__ . '/include/header.php'); ?>
 <body>
-<?php require_once('include/banner.php'); ?>
+<?php require_once(__DIR__ . '/include/banner.php'); ?>
 <main id="container">
 <h1 id="contenu"><?php
 if (!empty($searchterms))
@@ -59,8 +59,8 @@ if (!empty($searchterms))
     $cat = [];
     if (!empty($_GET['c']) && is_array($_GET['c']))
     {
-        $catIds = array_filter($_GET['c'], fn ($v) => $v !== '');
-        if (count($catIds) > 0)
+        $catIds = array_filter($_GET['c'], fn ($v): bool => $v !== '');
+        if ($catIds !== [])
         {
             $placeholders = [];
             foreach (array_values($catIds) as $i => $catId)
@@ -93,29 +93,46 @@ if (!empty($searchterms))
     foreach ($entries as $sw_id => $entry)
     {
         $entry_tr = '';
-        if (array_key_exists($lang, $entry['trs']))
+        if (array_key_exists((string) $lang, $entry['trs']))
         {
             $entry_tr = $lang;
         }
         else
         {
-            foreach ($langs_prio as &$i_lang)
+            foreach ($langs_prio as &$lang_prio)
             {
-                if (array_key_exists($i_lang, $entry['trs']))
+                if (array_key_exists((string) $lang_prio, $entry['trs']))
                 {
-                    $entry_tr = $i_lang;
+                    $entry_tr = $lang_prio;
                     break;
                 }
             }
         }
         unset($i_lang);
-        if (empty($entry_tr)) // Error: sw has no translations
-        {continue;
+        if ($entry_tr === 0)
+        {
+            continue;
+        }
+        if ($entry_tr === '')
+        {
+            continue;
+        }
+        if ($entry_tr === '0')
+        {
+            continue;
+        }
+        if ($entry_tr === '')
+        {
+            continue;
+        }
+        if ($entry_tr === '0')
+        {
+            continue;
         }
 
         $tags = explode(' ', (string) $entry['trs'][$entry_tr]['tags']);
         $pts = intval($terms[0] === '*');
-        if ($pts)
+        if ($pts !== 0)
         {
             array_shift($tags);
         }
@@ -142,10 +159,7 @@ if (!empty($searchterms))
                     }
                 }
             }
-            if ($imp > 0)
-            {
-                $imp--;
-            }
+            $imp--;
             unset($tag);
         }
         unset($term);
@@ -155,7 +169,10 @@ if (!empty($searchterms))
         }
     }
     // remove the first occurence of v in a
-    function array_remove($a, $v)
+    /**
+     * @return mixed[]
+     */
+    function array_remove($a, $v): array
     {
         $r = [];
         $o = false;
@@ -174,7 +191,7 @@ if (!empty($searchterms))
         return $r;
     }
     $btime = microtime(true) - $atime;
-    if (count($results) === 0)
+    if ($results === [])
     {
         echo '<span id="log">'.tr($tr, 'noresult', ['terms' => '<span class="log_quote">'.htmlentities((string) $searchterms).'</span>']).'</span>';
     }
@@ -182,7 +199,7 @@ if (!empty($searchterms))
     {
         echo '<p id="timelog">'.tr($tr, 'found', ['count' => count($results),'time' => numberlocale(intval($btime * 1000000) / 1000)]).'</p>';
     }
-    while (count($results) > 0)
+    while ($results !== [])
     {
         $max = ['pts' => 0];
         foreach ($results as &$rs)
@@ -200,6 +217,6 @@ if (!empty($searchterms))
 }
 ?>
 </main>
-<?php require_once('include/footer.php'); ?>
+<?php require_once(__DIR__ . '/include/footer.php'); ?>
 </body>
 </html>

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $document_root = __DIR__.'/..';
 require_once($document_root.'/include/dbconnect.php');
 
@@ -26,7 +28,7 @@ foreach ($bdd->query($SQL) as $data)
 $langs_html_opts = '';
 foreach ($langs_alpha as $i)
 {
-    $escaped = str_replace('\'', '\\\'', str_replace('\\', '\\\\', $langs[$i]));
+    $escaped = str_replace("'", '\\\'', str_replace('\\', '\\\\', $langs[$i]));
     $langs_html_opts .= '<option value="'.$i.'" title="'.$i.'">'.$escaped.'</option>';
 }
 
@@ -35,13 +37,15 @@ $available_trs_index = [];
 $all = scandir($document_root.'/locales');
 if ($all === false)
 {
-    throw new RuntimeException("Impossible de lister $document_root/locales");
+    throw new RuntimeException(sprintf('Impossible de lister %s/locales', $document_root));
 }
-$trsdirs = array_filter($all, function ($d) use ($document_root) {
+
+$trsdirs = array_filter($all, function (string $d) use ($document_root): bool {
     if (in_array($d, ['.', '..', 'LICENSE.txt'], true))
     {
         return false;
     }
+
     return is_dir($document_root . '/locales/' . $d);
 });
 foreach ($trsdirs as $trsdir)
@@ -52,7 +56,8 @@ foreach ($trsdirs as $trsdir)
     {
         continue;
     }
-    $trsfiles = array_filter($files, fn ($f) => preg_match('/^(.+)\.tr\.php$/', (string) $f));
+
+    $trsfiles = array_filter($files, fn (string $f): int|false => preg_match('/^(.+)\.tr\.php$/', $f));
     foreach ($trsfiles as $trsfile)
     {
         if (preg_match('/^(.+)\\.tr\\.php$/', $trsfile, $match))

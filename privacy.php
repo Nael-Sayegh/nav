@@ -1,19 +1,19 @@
 <?php set_include_path($_SERVER['DOCUMENT_ROOT']);
 set_include_path($_SERVER['DOCUMENT_ROOT']);
-require_once('include/log.php');
-require_once('include/consts.php');
+require_once(__DIR__ . '/include/log.php');
+require_once(__DIR__ . '/include/consts.php');
 $tr = load_tr($lang, 'privacy');
 $title = tr($tr, 'title');
 $stats_page = 'conf'; ?>
 <!DOCTYPE html>
 <html lang="<?= $lang; ?>">
-<?php require_once('include/header.php'); ?>
+<?php require_once(__DIR__ . '/include/header.php'); ?>
 <body>
-<?php require_once('include/banner.php'); ?>
+<?php require_once(__DIR__ . '/include/banner.php'); ?>
 <main id="container">
 <h1 id="contenu"><?php print $title; ?></h1>
 <?php echo tr($tr, 'maintext'); ?>
 </main>
-<?php require_once('include/footer.php'); ?>
+<?php require_once(__DIR__ . '/include/footer.php'); ?>
 </body>
 </html>

@@ -1,9 +1,11 @@
 <?php
 
-require_once 'consts.php';
-require_once 'sendMail.php';
+declare(strict_types=1);
 
-function send_confirm($account, $email, $mhash, $username)
+require_once __DIR__ . '/consts.php';
+require_once __DIR__ . '/sendMail.php';
+
+function send_confirm(string $account, $email, string $mhash, $username): void
 {
     global $lang;
     $tr1 = load_tr($lang, 'sendconfirm');

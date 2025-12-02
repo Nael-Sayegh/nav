@@ -1,7 +1,7 @@
 <?php
 set_include_path($_SERVER['DOCUMENT_ROOT']);
-require_once('include/log.php');
-require_once('include/consts.php');
+require_once(__DIR__ . '/include/log.php');
+require_once(__DIR__ . '/include/consts.php');
 $tr = load_tr($lang, 'art_list');
 $title = tr($tr, 'title');
 $stats_page = 'art-list';
@@ -16,9 +16,9 @@ foreach ($bdd->query($SQL) as $data)
 ?>
 <!DOCTYPE html>
 <html lang="fr">
-<?php require_once('include/header.php'); ?>
+<?php require_once(__DIR__ . '/include/header.php'); ?>
 <body>
-<?php require_once('include/banner.php'); ?>
+<?php require_once(__DIR__ . '/include/banner.php'); ?>
 <main id="container">
 <h1 id="contenu"><?php print $title; ?></h1>
 <form method="get">
@@ -66,17 +66,17 @@ foreach ($bdd->query($SQL) as $data)
 foreach ($entries as $sw_id => $entry)
 {
     $entry_tr = '';
-    if (array_key_exists($lang, $entry['trs']))
+    if (array_key_exists((string) $lang, $entry['trs']))
     {
         $entry_tr = $lang;
     }
     else
     {
-        foreach ($langs_prio as &$i_lang)
+        foreach ($langs_prio as &$lang_prio)
         {
-            if (array_key_exists($i_lang, $entry['trs']))
+            if (array_key_exists((string) $lang_prio, $entry['trs']))
             {
-                $entry_tr = $i_lang;
+                $entry_tr = $lang_prio;
                 break;
             }
         }
@@ -93,6 +93,6 @@ $req->closeCursor();
 </ul>
 <p><b><?= tr($tr, 'nb_found', ['count' => count($entries)]) ?></p>
 </main>
-<?php require_once('include/footer.php'); ?>
+<?php require_once(__DIR__ . '/include/footer.php'); ?>
 </body>
 </html>

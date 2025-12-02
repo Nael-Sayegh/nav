@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $document_root = __DIR__.'/..';
 require_once($document_root.'/include/consts.php');
 $SQL = <<<SQL
@@ -20,6 +22,7 @@ while ($data = $req->fetch())
         $files .= $data['id'];
     }
 }
+
 $SQL = <<<SQL
     SELECT * FROM softwares_mirrors WHERE date>=:date ORDER BY date DESC
     SQL;
@@ -38,7 +41,7 @@ while ($data = $req->fetch())
     }
 }
 
-if (!empty($files))
+if ($files !== '' && $files !== '0')
 {
     $message = 'Mises à jour d\'aujourd\'hui :'.$files;
     if (isset($debug))

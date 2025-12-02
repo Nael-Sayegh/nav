@@ -11,7 +11,7 @@ function is_current(?string $path)
     return $cur_norm === $path_norm;
 }
 
-function render_menu(string $mode, array $items)
+function render_menu(string $mode, array $items): void
 {
     global $lang, $tr0, $args, $site_name;
 
@@ -19,23 +19,23 @@ function render_menu(string $mode, array $items)
     {
         echo '<form method="get">';
         echo args_html_form($args);
-        echo '<select name="lang" autocomplete="off"'.'aria-label="'.tr($tr0, 'menu_changelang').'"'.'title="'.    tr($tr0, 'menu_changelang').'">'.langs_html_opts($lang).'</select>
+        echo '<select name="lang" autocomplete="off"aria-label="'.tr($tr0, 'menu_changelang').'"'.'title="'.    tr($tr0, 'menu_changelang').'">'.langs_html_opts($lang).'</select>
         <input type="submit" value="OK">
         </form>
         <form method="get" action="/nav_redirect.php">';
         echo args_html_form($args);
         echo '<label for="menu_select">'.tr($tr0, 'menu_linklistlabel').'</label><select name="d" id="menu_select" onkeypress="redirect(event,this);">';
         $openGroup = false;
-        foreach ($items as $it)
+        foreach ($items as $item)
         {
-            switch ($it['type'] ?? 'link')
+            switch ($item['type'] ?? 'link')
             {
                 case 'menutitle':
                     if ($openGroup)
                     {
                         echo '</optgroup>';
                     }
-                    echo '<optgroup label="'.tr($tr0, $it['label']).'">';
+                    echo '<optgroup label="'.tr($tr0, $item['label']).'">';
                     $openGroup = true;
                     break;
 
@@ -49,24 +49,24 @@ function render_menu(string $mode, array $items)
 
                 case 'link':
                 default:
-                    $sel   = is_current($it['url'])
+                    $sel   = is_current($item['url'])
                            ? ' selected aria-current="page"'
                            : '';
-                    if (isset($it['raw_label']))
+                    if (isset($item['raw_label']))
                     {
-                        $label = htmlspecialchars($it['raw_label']);
+                        $label = htmlspecialchars($item['raw_label']);
                     }
                     else
                     {
-                        $label = tr($tr0, $it['label'], $it['params'] ?? []);
+                        $label = tr($tr0, $item['label'], $item['params'] ?? []);
                     }
-                    $title = htmlspecialchars($it['params']['title'] ?? '');
+                    $title = htmlspecialchars($item['params']['title'] ?? '');
                     printf(
                         '<option value="%s"%s title="%s">%s</option>',
-                        $it['url'],
+                        $item['url'],
                         $sel,
                         $title,
-                        $label
+                        $label,
                     );
                     break;
             }
@@ -80,23 +80,23 @@ function render_menu(string $mode, array $items)
     else
     {
         $cls = $mode === 'listjs' ? 'ulmenu_js' : 'ulmenu_njs';
-        echo "<ul role=\"menu\" class=\"{$cls}\">";
+        echo sprintf('<ul role="menu" class="%s">', $cls);
         printf(
             '<li><form method="get">%s<select name="lang" autocomplete="off" aria-label="%s" title="%s">%s</select><input type="submit" value="OK"></form></li>',
             args_html_form($args),
             tr($tr0, 'menu_changelang'),
             tr($tr0, 'menu_changelang'),
-            langs_html_opts($lang)
+            langs_html_opts($lang),
         );
-        foreach ($items as $it)
+        foreach ($items as $item)
         {
-            switch ($it['type'] ?? 'link')
+            switch ($item['type'] ?? 'link')
             {
                 case 'menutitle':
                     printf(
                         '<li class="menutitle" role="separator" aria-disabled="true" aria-label="%s">%s</li>',
-                        tr($tr0, $it['label']),
-                        tr($tr0, $it['label'])
+                        tr($tr0, $item['label']),
+                        tr($tr0, $item['label']),
                     );
                     break;
 
@@ -106,22 +106,22 @@ function render_menu(string $mode, array $items)
 
                 case 'link':
                 default:
-                    $cur   = is_current($it['url']) ? ' aria-current="page"' : '';
-                    if (isset($it['raw_label']))
+                    $cur   = is_current($item['url']) ? ' aria-current="page"' : '';
+                    if (isset($item['raw_label']))
                     {
-                        $label = htmlspecialchars($it['raw_label']);
+                        $label = htmlspecialchars($item['raw_label']);
                     }
                     else
                     {
-                        $label = tr($tr0, $it['label'], $it['params'] ?? []);
+                        $label = tr($tr0, $item['label'], $item['params'] ?? []);
                     }
-                    $title = htmlspecialchars($it['params']['title'] ?? '');
+                    $title = htmlspecialchars($item['params']['title'] ?? '');
                     printf(
                         '<li role="link"%s><a role="menuitem" href="%s" title="%s">%s</a></li>',
                         $cur,
-                        $it['url'],
+                        $item['url'],
                         str_replace('{{site}}', $site_name, $title),
-                        $label
+                        $label,
                     );
                     break;
             }
@@ -161,7 +161,7 @@ foreach ([
     '/privacy.php'      => 'menu_privacy',
 ] as $url => $key)
 {
-    $items[] = ['type' => 'link', 'url' => $url, 'label' => $key, 'params' => isset($params) ? $params : []];
+    $items[] = ['type' => 'link', 'url' => $url, 'label' => $key, 'params' => $params ?? []];
 }
 ?>
 <nav id="nav">

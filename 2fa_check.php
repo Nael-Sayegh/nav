@@ -1,7 +1,7 @@
 <?php
-require_once('include/log.php');
-require_once('include/consts.php');
-require_once('vendor/autoload.php');
+require_once(__DIR__ . '/include/log.php');
+require_once(__DIR__ . '/include/consts.php');
+require_once(__DIR__ . '/vendor/autoload.php');
 use RobThree\Auth\Providers\Qr\EndroidQrCodeProvider;
 use RobThree\Auth\TwoFactorAuth;
 
@@ -40,15 +40,12 @@ if (isset($_POST['code']))
         header('Location: /login_redirect.php');
         exit();
     }
-    else
-    {
-        $log = tr($tr, 'wrong_2fa');
-    }
+    $log = tr($tr, 'wrong_2fa');
 }
 ?>
 <!DOCTYPE html>
 <html lang="<?= $lang ?>">
-<?php require_once('include/header.php'); ?>
+<?php require_once(__DIR__ . '/include/header.php'); ?>
 <body>
 <main id="container">
 <h1 id="contenu"><?= tr($tr, '2fa_check_title') ?></h1>

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 // `config.php` IS NOT YOUR config file.
 // `config.local.php` IS YOUR config file.
 // Copy `config.php` to `config.local.php` then fill it with your informations.

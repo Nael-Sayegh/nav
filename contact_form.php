@@ -1,16 +1,16 @@
 <?php set_include_path($_SERVER['DOCUMENT_ROOT']);
-include_once('include/log.php');
-require_once('include/consts.php');
-require_once('include/sendMail.php');
-require_once('include/lib/mtcaptcha/lib/class.mtcaptchalib.php');
-require_once('include/lib/MDConverter.php');
+include_once(__DIR__ . '/include/log.php');
+require_once(__DIR__ . '/include/consts.php');
+require_once(__DIR__ . '/include/sendMail.php');
+require_once(__DIR__ . '/include/lib/mtcaptcha/lib/class.mtcaptchalib.php');
+require_once(__DIR__ . '/include/lib/MDConverter.php');
 $tr = load_tr($lang, 'contacter');
 $title = 'Contacter l\'équipe '.$site_name;
 $stats_page = 'contacter';
 
 $log = '';
 $reply = false;
-if (isset($_GET['reply']) && isset($_GET['h']))
+if (isset($_GET['reply'], $_GET['h']))
 {
     $SQL = <<<SQL
         SELECT * FROM tickets WHERE id=:id AND hash=:hash
@@ -93,7 +93,7 @@ if (isset($_GET['act']) && ($_GET['act'] === 'contact' || $_GET['act'] === 'repl
                 }
                 else
                 {
-                    $log .= '<li>Veuillez renseigner l\'objet de votre message.</li>';
+                    $log .= "<li>Veuillez renseigner l'objet de votre message.</li>";
                 }
             }
             if (isset($_POST['msg']) && strlen((string) $_POST['msg']) > 10)
@@ -107,7 +107,7 @@ if (isset($_GET['act']) && ($_GET['act'] === 'contact' || $_GET['act'] === 'repl
             {
                 $log .= '<li>Votre message serait certainement plus utile en comportant plus de 10 caractères.</li>';
             }
-            if (empty($log))
+            if ($log === '' || $log === '0')
             {
                 $msg = str_replace("\n\n", '</p><p>', htmlspecialchars((string) $_POST['msg']));
                 $msg = '<p>'.str_replace("\n", '<br>', convertToMD($msg)).'</p>';
@@ -135,7 +135,7 @@ if (isset($_GET['act']) && ($_GET['act'] === 'contact' || $_GET['act'] === 'repl
                     $tickid = $bdd->lastInsertId();
                 }
                 header('Location: /?contactconfirm=1#contactconfirm');
-                $subject = ($reply2) ? "Re: {$rdata2['subject']} (Ticket #{$tickid}#)" : "{$_POST['obj']} (Ticket #{$tickid}#)";
+                $subject = ($reply2) ? sprintf('Re: %s (Ticket #%s#)', $rdata2['subject'], $tickid) : sprintf('%s (Ticket #%s#)', $_POST['obj'], $tickid);
                 if ($reply2)
                 {
                     $introH = <<<HTML
@@ -188,7 +188,7 @@ if (isset($_GET['act']) && ($_GET['act'] === 'contact' || $_GET['act'] === 'repl
 
                     {$endT}
                     TEXT;
-                sendMail(getTeamEmails('manage_tickets'), $subject, $body, $altBody, [TICKETS_BOT_MAIL, "{$site_name} Tickets Bot"], ['includeAutoReplyNotice' => false]);
+                sendMail(getTeamEmails('manage_tickets'), $subject, $body, $altBody, [TICKETS_BOT_MAIL, $site_name . ' Tickets Bot'], ['includeAutoReplyNotice' => false]);
                 if (isset($_POST['copy']))
                 {
                     $dest = ($reply2) ? $rdata2['expeditor_email'] : $_POST['mail'];
@@ -225,7 +225,7 @@ if (isset($_GET['act']) && ($_GET['act'] === 'contact' || $_GET['act'] === 'repl
                         {$introCopyT}
                         {$msg}
                         TEXT;
-                    sendMail($dest, $subject, $bodyCopy, $altBodyCopy, [TICKETS_BOT_MAIL, "{$site_name} Tickets Bot"], ['includeAutoReplyNotice' => false]);
+                    sendMail($dest, $subject, $bodyCopy, $altBodyCopy, [TICKETS_BOT_MAIL, $site_name . ' Tickets Bot'], ['includeAutoReplyNotice' => false]);
                 }
                 exit();
             }
@@ -235,14 +235,14 @@ if (isset($_GET['act']) && ($_GET['act'] === 'contact' || $_GET['act'] === 'repl
 ?>
 <!DOCTYPE html>
 <html lang="fr">
-<?php require_once('include/header.php'); ?>
+<?php require_once(__DIR__ . '/include/header.php'); ?>
 <body>
-<?php require_once('include/banner.php'); ?>
+<?php require_once(__DIR__ . '/include/banner.php'); ?>
 <main id="container">
 <h1 id="contenu">Contacter l'équipe <?php print $site_name; ?></h1>
 <?php echo tr($tr, 'tel', ['site' => $site_name]).'<h2>'.tr($tr, 'mailformtitle').'</h2>'; ?>
 <div id="alertZone" role="alert" aria-live="assertive"></div>
-<?php if (!empty($log)): ?>
+<?php if ($log !== '' && $log !== '0'): ?>
 <noscript>
 <ul id="log" role="alert"><?= $log ?></p>
 </noscript>
@@ -314,6 +314,6 @@ else
 </fieldset>
 </form>
 </main>
-<?php require_once('include/footer.php'); ?>
+<?php require_once(__DIR__ . '/include/footer.php'); ?>
 </body>
 </html>

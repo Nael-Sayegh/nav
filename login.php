@@ -1,9 +1,9 @@
 <?php
 $nolog = true;
-require_once('include/log.php');
+require_once(__DIR__ . '/include/log.php');
 $stats_page = 'login';
 set_include_path($_SERVER['DOCUMENT_ROOT']);
-require_once('include/consts.php');
+require_once(__DIR__ . '/include/consts.php');
 if (session_status() !== PHP_SESSION_ACTIVE)
 {
     session_start();
@@ -16,7 +16,7 @@ $tr = load_tr($lang, 'login');
 $title = tr($tr, 'title');
 
 $log = '';
-if (isset($_POST['username']) && isset($_POST['psw']))
+if (isset($_POST['username'], $_POST['psw']))
 {
     $SQL = <<<SQL
         SELECT * FROM accounts WHERE username=:username OR email=:mail LIMIT 2
@@ -53,25 +53,19 @@ if (isset($_POST['username']) && isset($_POST['psw']))
             header('Location: /login_redirect.php');
             exit();
         }
-        else
-        {
-            $log = tr($tr, 'wrong');
-        }
+        $log = tr($tr, 'wrong');
     }
 }
-if (isset($_GET['signed']) && isset($_GET['mail']))
+if (isset($_GET['signed'], $_GET['mail']))
 {
     $SQL = <<<SQL
         SELECT email FROM accounts WHERE id=:id AND confirmed=false LIMIT 1
         SQL;
     $req = $bdd->prepare($SQL);
     $req->execute([':id' => $_GET['signed']]);
-    if ($data = $req->fetch())
+    if (($data = $req->fetch()) && sha1((string) $data['email']) === $_GET['mail'])
     {
-        if (sha1((string) $data['email']) === $_GET['mail'])
-        {
-            $log = tr($tr, 'account_created');
-        }
+        $log = tr($tr, 'account_created');
     }
 }
 if (isset($_GET['confirmed']))
@@ -97,13 +91,13 @@ elseif (isset($_GET['goodbye']))
 ?>
 <!DOCTYPE html>
 <html lang="<?= $lang ?>">
-<?php require_once('include/header.php'); ?>
+<?php require_once(__DIR__ . '/include/header.php'); ?>
 <body>
-<?php require_once('include/banner.php'); ?>
+<?php require_once(__DIR__ . '/include/banner.php'); ?>
 <main id="container">
 <h1 id="contenu"><?php print $title; ?></h1>
 <div id="alertZone" role="alert" aria-live="assertive"></div>
-<?php if (!empty($log)): ?>
+<?php if (!in_array($log, ['', '0', []], true)): ?>
 <noscript>
 <p id="log" role="alert"><b><?= $log ?></b></p>
 </noscript>
@@ -127,6 +121,6 @@ $redirect = $_SESSION['intended_after_login'] ?? '/';
 <a href="/signup.php"><?= tr($tr, 'signup') ?></a>
 <p><?= tr($tr, 'cookies') ?></p>
 </main>
-<?php require_once('include/footer.php'); ?>
+<?php require_once(__DIR__ . '/include/footer.php'); ?>
 </body>
 </html>

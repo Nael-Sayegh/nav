@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $tr = [
   '_' => 'fg_passwd',
   '_todo_level' => 0,
@@ -13,7 +15,7 @@ $tr = [
   'pwd_no_reuse' => 'Le nouveau mot de passe doit être différent du dernier utilisé',
   'intro_text' => 'Remplissez le formulaire ci-dessous pour demander la réinitialisation de votre mot de passe {{site}}',
   'choose_new_pwd' => 'Remplissez le formulaire ci-dessous pour choisir votre nouveau mot de passe',
-  'login_field' => 'Nom d\'utilisateur ou adresse mail',
+  'login_field' => "Nom d'utilisateur ou adresse mail",
   'request_btn' => 'Réinitialiser',
   'new_password' => 'Nouveau mot de passe&nbsp;:',
   'confirm_password' => 'Nouveau mot de passe (Vérification)&nbsp;:',

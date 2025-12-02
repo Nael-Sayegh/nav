@@ -18,14 +18,14 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/cache/codestatc.php');
 if (isset($_GET['mm0']))
 {
     $maintenance = fopen($_SERVER['DOCUMENT_ROOT'].'/include/maintenance_mode.php', 'w');
-    fputs($maintenance, '<?php $modemaintenance=false; ?>');
+    fwrite($maintenance, '<?php $modemaintenance=false; ?>');
     fclose($maintenance);
     $modemaintenance = false;
 }
 elseif (isset($_GET['mm1']))
 {
     $maintenance = fopen($_SERVER['DOCUMENT_ROOT'].'/include/maintenance_mode.php', 'w');
-    fputs($maintenance, '<?php $modemaintenance=true; ?>');
+    fwrite($maintenance, '<?php $modemaintenance=true; ?>');
     fclose($maintenance);
     $modemaintenance = true;
 }
@@ -39,7 +39,7 @@ elseif (isset($_GET['mm1']))
 <script type="text/javascript" src="/scripts/default.js"></script>
 </head>
 <body>
-<?php require_once('include/banner.php');
+<?php require_once(__DIR__ . '/include/banner.php');
 if (isset($modemaintenance) && $modemaintenance)
 {
     echo '<p>Mode maintenance activé</p><a href="?mm0">Désactiver le mode maintenance</a>';

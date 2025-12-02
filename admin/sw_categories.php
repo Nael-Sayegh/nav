@@ -6,7 +6,7 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/include/log.php');
 require_once($_SERVER['DOCUMENT_ROOT'].'/include/consts.php');
 require_once($_SERVER['DOCUMENT_ROOT'].'/include/sitemap.php');
 requireAdminRight('manage_categories');
-if (isset($_GET['add']) && isset($_POST['name']))
+if (isset($_GET['add'], $_POST['name']))
 {
     $SQL = <<<SQL
         INSERT INTO softwares_categories(name,text) VALUES(:name,:text)
@@ -24,7 +24,7 @@ if (isset($_GET['delete']))
     $req->execute([':id' => $_GET['delete']]);
     remove_sitemap_url($site_url . '/c' . $_GET['delete']);
 }
-if (isset($_GET['mod2']) && isset($_POST['name']))
+if (isset($_GET['mod2'], $_POST['name']))
 {
     $SQL = <<<SQL
         UPDATE softwares_categories SET name=:name, text=:text WHERE id=:id
@@ -43,7 +43,7 @@ if (isset($_GET['mod2']) && isset($_POST['name']))
 <script type="text/javascript" src="/scripts/default.js"></script>
 </head>
 <body>
-<?php require_once('include/banner.php'); ?>
+<?php require_once(__DIR__ . '/include/banner.php'); ?>
 <table border="1">
 <thead><tr><th>Numéro de catégorie</th><th>Nom</th><th>Actions</th></tr></thead>
 <tbody>

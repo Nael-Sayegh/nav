@@ -2,9 +2,9 @@
 $nolog = true;
 set_include_path($_SERVER['DOCUMENT_ROOT']);
 $stats_page = 'mdpforget';
-require_once('include/log.php');
-require_once('include/consts.php');
-require_once('include/sendMail.php');
+require_once(__DIR__ . '/include/log.php');
+require_once(__DIR__ . '/include/consts.php');
+require_once(__DIR__ . '/include/sendMail.php');
 $tr = load_tr($lang, 'fg_passwd');
 $title = tr($tr, 'title');
 $step = $_GET['step'] ?? 'request';
@@ -34,7 +34,7 @@ if ($step === 'request' && $_SERVER['REQUEST_METHOD'] === 'POST')
             SQL;
         $reqTok = $bdd->prepare($SQLTok);
         $reqTok->execute([':uid' => $user['id'], ':tok' => $token, ':exp' => $expires]);
-        $link = SITE_URL."/fg_password.php?step=reset&token={$token}";
+        $link = SITE_URL.('/fg_password.php?step=reset&token=' . $token);
         $subject = tr($tr, 'mail_reset_subject');
         $body = tr($tr, 'mail_reset_body_html', ['username' => $user['username'], 'link' => $link]);
         $altBody = tr($tr, 'mail_reset_body_text', ['username' => $user['username'], 'link' => $link]);
@@ -98,19 +98,17 @@ if ($step === 'reset')
 ?>
 <!DOCTYPE html>
 <html lang="fr">
-<?php require_once('include/header.php'); ?>
+<?php require_once(__DIR__ . '/include/header.php'); ?>
 <body>
-<?php require_once('include/banner.php'); ?>
+<?php require_once(__DIR__ . '/include/banner.php'); ?>
 <main id="container">
 <h1 id="contenu"><?php print $title; ?></h1>
 <?php if ($success): ?>
 <p class="success"><?php echo $success; ?></p>
 <?php endif;
-if ($errors):
-    foreach ($errors as $e): ?>
+foreach ($errors as $e): ?>
 <p role="alert" aria-live="assertive" class="error"><?php echo $e; ?></p>
 <?php endforeach;
-endif;
 if ($step === 'request'): ?>
 <p><?= tr($tr, 'intro_text', ['site' => $site_name]) ?></p>
 <form method="post">
@@ -133,7 +131,7 @@ if ($step === 'request'): ?>
 </form>
 <?php endif; ?>
 </main>
-<?php require_once('include/footer.php'); ?>
+<?php require_once(__DIR__ . '/include/footer.php'); ?>
 <script>
     document.addEventListener('DOMContentLoaded', function()
     {

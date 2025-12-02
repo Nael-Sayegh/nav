@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 const RANK_LABELS = [
     '0' => 'urank_0',
     '1' => 'urank_1',
@@ -7,7 +9,7 @@ const RANK_LABELS = [
     'b' => 'urank_b',
 ];
 
-function urank(string $rank, string $user = '', bool $er = true)
+function urank(string $rank, string $user = '', bool $er = true): string
 {
     global $tr0;
 
@@ -30,7 +32,7 @@ function urank(string $rank, string $user = '', bool $er = true)
     {
         $suffix = sprintf(
             '<span class="rk2r">&#x20;(%s)</span>',
-            $label
+            $label,
         );
     }
 
@@ -39,6 +41,6 @@ function urank(string $rank, string $user = '', bool $er = true)
         $baseClass,
         $label,
         htmlspecialchars($user, ENT_QUOTES, 'UTF-8'),
-        $suffix
+        $suffix,
     );
 }

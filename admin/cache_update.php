@@ -41,7 +41,7 @@ if (isset($_GET['cache']))
 
     $obcache = ob_get_contents();
     ob_end_clean();
-    if (empty($obcache))
+    if (in_array($obcache, ['', '0', false], true))
     {
         header('Location: cache_update.php');
         exit();
@@ -57,11 +57,11 @@ if (isset($_GET['cache']))
 <script type="text/javascript" src="/scripts/default.js"></script>
 </head>
 <body>
-<?php require_once('include/banner.php'); ?>
+<?php require_once(__DIR__ . '/include/banner.php'); ?>
 <?php
-if (!empty($obcache))
+if ($obcache !== '' && $obcache !== '0')
 {
-    echo '<fieldset><legend>Cachers\' stdout</legend>'.$obcache.'</fieldset><br>';
+    echo "<fieldset><legend>Cachers' stdout</legend>".$obcache.'</fieldset><br>';
 }
 ?>
 <a href="?cache=all">Mettre à jour tous les caches</a>

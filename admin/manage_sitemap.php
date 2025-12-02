@@ -1,34 +1,39 @@
 <?php
 $adminonly = true;
 $justna = true;
-$titlePAdm = "Gérer le sitemap";
+$titlePAdm = 'Gérer le sitemap';
 require_once($_SERVER['DOCUMENT_ROOT'].'/include/log.php');
 require_once($_SERVER['DOCUMENT_ROOT'].'/include/consts.php');
 requireAdminRight('manage_sitemap');
 require_once($_SERVER['DOCUMENT_ROOT'].'/include/sitemap.php');
-$log = "";
-if (isset($_GET['act']) && $_GET['act'] === 'g') {
+$log = '';
+if (isset($_GET['act']) && $_GET['act'] === 'g')
+{
     $nb = generate_sitemap();
-    $log .= "Sitemap généré avec $nb URLs";
+    $log .= sprintf('Sitemap généré avec %s URLs', $nb);
 }
-if (isset($_GET['act']) && $_GET['act'] === 'a') {
-    if (isset($_POST['url']) && !empty($_POST['url'])) {
-        $r = update_sitemap_url($_POST['url']);
-        if ($r) {
-            $log .= "URL ajoutée au sitemap : " . htmlspecialchars($_POST['url']);
-        } else {
-            $log .= "Erreur lors de l'ajout de l'URL au sitemap.";
-        }
+if (isset($_GET['act']) && $_GET['act'] === 'a' && (isset($_POST['url']) && !empty($_POST['url'])))
+{
+    $r = update_sitemap_url($_POST['url']);
+    if ($r)
+    {
+        $log .= 'URL ajoutée au sitemap : ' . htmlspecialchars((string) $_POST['url']);
+    }
+    else
+    {
+        $log .= "Erreur lors de l'ajout de l'URL au sitemap.";
     }
 }
-if (isset($_GET['act']) && $_GET['act'] === 'r') {
-    if (isset($_POST['url']) && !empty($_POST['url'])) {
-        $r = remove_sitemap_url($_POST['url']);
-        if ($r) {
-            $log .= "URL retirée du sitemap : " . htmlspecialchars($_POST['url']);
-        } else {
-            $log .= "Erreur lors de la suppression de l'URL du sitemap.";
-        }
+if (isset($_GET['act']) && $_GET['act'] === 'r' && (isset($_POST['url']) && !empty($_POST['url'])))
+{
+    $r = remove_sitemap_url($_POST['url']);
+    if ($r)
+    {
+        $log .= 'URL retirée du sitemap : ' . htmlspecialchars((string) $_POST['url']);
+    }
+    else
+    {
+        $log .= "Erreur lors de la suppression de l'URL du sitemap.";
     }
 }
 ?>
@@ -42,16 +47,17 @@ if (isset($_GET['act']) && $_GET['act'] === 'r') {
     <script type="text/javascript" src="/scripts/default.js"></script>
 </head>
 <body>
-    <?php require_once('include/banner.php');
-    if (isset($log) && !empty($log)) {
-        echo '<p role="alert">' . $log . '</p>';
-    }
+    <?php require_once(__DIR__ . '/include/banner.php');
+if ($log !== '' && $log !== '0')
+{
+    echo '<p role="alert">' . $log . '</p>';
+}
 
-    // Récupérer les URLs du sitemap actuel
-    $sitemap_urls = get_sitemap_urls();
-    ?>
+// Récupérer les URLs du sitemap actuel
+$sitemap_urls = get_sitemap_urls();
+?>
     <h1>Sitemap actuel</h1>
-    <?php if (!empty($sitemap_urls)): ?>
+    <?php if ($sitemap_urls !== []): ?>
     <table>
         <thead>
             <tr>
@@ -60,10 +66,10 @@ if (isset($_GET['act']) && $_GET['act'] === 'r') {
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($sitemap_urls as $url): ?>
+            <?php foreach ($sitemap_urls as $sitemap_url): ?>
             <tr>
-                <td><a href="<?= htmlspecialchars($url['loc']) ?>" target="_blank"><?= htmlspecialchars($url['loc']) ?></a></td>
-                <td><?= $url['lastmod'] ? htmlspecialchars($url['lastmod']) : 'Non définie' ?></td>
+                <td><a href="<?= htmlspecialchars((string) $sitemap_url['loc']) ?>" target="_blank"><?= htmlspecialchars((string) $sitemap_url['loc']) ?></a></td>
+                <td><?= $sitemap_url['lastmod'] ? htmlspecialchars((string) $sitemap_url['lastmod']) : 'Non définie' ?></td>
             </tr>
             <?php endforeach; ?>
         </tbody>

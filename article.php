@@ -167,6 +167,17 @@ if (isset($_GET['comment']) && isset($_POST['text']) && isset($logged) && $logge
         }
         if (!empty($emails))
         {
+            header('Connection: close');
+            ignore_user_abort(true);
+            if (function_exists('fastcgi_finish_request'))
+            {
+                fastcgi_finish_request();
+            }
+            else
+            {
+                @ob_end_flush();
+                @flush();
+            }
             sendMail(array_keys($emails), $subject, $body, $altBody);
         }
         exit();

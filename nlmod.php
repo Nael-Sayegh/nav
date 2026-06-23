@@ -37,9 +37,19 @@ if ($nldata = $req->fetch())
             Vous avez bien été désabonné de la lettre d'informations {$site_name}.
             Ceci sera notre dernier mail, nous sommes tristes de vous voir partir et nous espérons vous revoir bientôt sur {SITE_URL}
             TEXT;
-        sendMail($nldata['mail'], $subject, $body, $altBody);
-
         header('Location: /newsletter.php?stop');
+        header('Connection: close');
+        ignore_user_abort(true);
+        if (function_exists('fastcgi_finish_request'))
+        {
+            fastcgi_finish_request();
+        }
+        else
+        {
+            @ob_end_flush();
+            @flush();
+        }
+        sendMail($nldata['mail'], $subject, $body, $altBody);
         exit();
     }
     if (isset($_GET['mod']))

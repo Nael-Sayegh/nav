@@ -55,13 +55,24 @@ if (isset($_GET['id'], $_GET['h']))
                 'id' => $data['id'],
                 'signup_date' => $memberSignupDate],
             );
-            sendMail($data['email'], $subject, $body, $altBody);
             header('Location: /login.php?confirmed');
             $SQL2 = <<<SQL
                 UPDATE newsletter_mails SET confirm=true, lastmail=:last WHERE mail=:mail
                 SQL;
             $req2 = $bdd->prepare($SQL2);
             $req2->execute([':last' => time(), ':mail' => $data['email']]);
+            header('Connection: close');
+            ignore_user_abort(true);
+            if (function_exists('fastcgi_finish_request'))
+            {
+                fastcgi_finish_request();
+            }
+            else
+            {
+                @ob_end_flush();
+                @flush();
+            }
+            sendMail($data['email'], $subject, $body, $altBody);
             exit();
         }
     }

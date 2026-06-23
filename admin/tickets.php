@@ -60,10 +60,20 @@ if (isset($_GET['close'], $_POST['clo'])   && $_POST['clo'] === 'FERMER')
             Consulter le ticket à l'adresse suivante:
             {SITE_URL}/admin/tickets.php?ticket={$data['id']}
             TEXT;
-        if (sendMail(getTeamEmails('manage_tickets'), $subject, $teamBody, $teamAltBody) && sendMail($data['expeditor_email'], $subject, $body, $altBody))
+        $log = 'Ticket fermé, mails envoyés';
+        header('Connection: close');
+        ignore_user_abort(true);
+        if (function_exists('fastcgi_finish_request'))
         {
-            $log = 'Ticket fermé, mails envoyés';
+            fastcgi_finish_request();
         }
+        else
+        {
+            @ob_end_flush();
+            @flush();
+        }
+        sendMail(getTeamEmails('manage_tickets'), $subject, $teamBody, $teamAltBody);
+        sendMail($data['expeditor_email'], $subject, $body, $altBody);
     }
     $SQL = <<<SQL
         UPDATE tickets SET status=4, date=:date WHERE id=:id
@@ -142,10 +152,20 @@ if (isset($_GET['send'], $_POST['msg']))
             Pour continuer la discussion, répondez à ce message sans en modifier l'objet ou consultez le ticket à l'adresse suivante:
             {SITE_URL}/admin/tickets.php?ticket={$data['id']}
             TEXT;
-        if (sendMail(getTeamEmails('manage_tickets'), $subject, $teamBody, $teamAltBody, [TICKETS_BOT_MAIL, $site_name . ' Tickets Bot'], ['css' => $css, 'includeAutoReplyNotice' => false]) && sendMail($data['expeditor_email'], $subject, $body, $altBody, [TICKETS_BOT_MAIL, $site_name . ' Tickets Bot'], ['css' => $css, 'includeAutoReplyNotice' => false]))
+        $log = 'Réponse envoyée';
+        header('Connection: close');
+        ignore_user_abort(true);
+        if (function_exists('fastcgi_finish_request'))
         {
-            $log = 'Réponse envoyée';
+            fastcgi_finish_request();
         }
+        else
+        {
+            @ob_end_flush();
+            @flush();
+        }
+        sendMail(getTeamEmails('manage_tickets'), $subject, $teamBody, $teamAltBody, [TICKETS_BOT_MAIL, $site_name . ' Tickets Bot'], ['css' => $css, 'includeAutoReplyNotice' => false]);
+        sendMail($data['expeditor_email'], $subject, $body, $altBody, [TICKETS_BOT_MAIL, $site_name . ' Tickets Bot'], ['css' => $css, 'includeAutoReplyNotice' => false]);
     }
 }
 if (isset($_GET['create']) && $_POST['name'] && $_POST['mail'] && $_POST['obj'] && $_POST['msg'])
@@ -179,7 +199,6 @@ if (isset($_GET['create']) && $_POST['name'] && $_POST['mail'] && $_POST['obj'] 
         Pour y répondre, répondez à ce message sans en modifier l'objet ou consultez le ticket à l'adresse suivante:
         {SITE_URL}/admin/tickets.php?ticket={$ticketId}
         TEXT;
-    sendMail(getTeamEmails('manage_tickets'), $subject, $teamBody, $teamAltBody, [TICKETS_BOT_MAIL, $site_name . ' Tickets Bot'], ['includeAutoReplyNotice' => false]);
     $body = <<<HTML
         <p>## Ne pas écrire en-dessous de cette ligne ##</p>
         <h2>Création du ticket {$_POST['obj']}</h2>
@@ -196,10 +215,20 @@ if (isset($_GET['create']) && $_POST['name'] && $_POST['mail'] && $_POST['obj'] 
         {$msg}
         Nous y répondrons très bientôt.
         TEXT;
-    if (sendMail($_POST['mail'], $subject, $body, $altBody))
+    $log = 'Ticket créé, mails envoyés';
+    header('Connection: close');
+    ignore_user_abort(true);
+    if (function_exists('fastcgi_finish_request'))
     {
-        $log = 'Ticket créé, mails envoyés';
+        fastcgi_finish_request();
     }
+    else
+    {
+        @ob_end_flush();
+        @flush();
+    }
+    sendMail(getTeamEmails('manage_tickets'), $subject, $teamBody, $teamAltBody, [TICKETS_BOT_MAIL, $site_name . ' Tickets Bot'], ['includeAutoReplyNotice' => false]);
+    sendMail($_POST['mail'], $subject, $body, $altBody);
 }
 function getStatus($status, $asTd = false): string
 {

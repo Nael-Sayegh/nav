@@ -38,6 +38,17 @@ if ($step === 'request' && $_SERVER['REQUEST_METHOD'] === 'POST')
         $subject = tr($tr, 'mail_reset_subject');
         $body = tr($tr, 'mail_reset_body_html', ['username' => $user['username'], 'link' => $link]);
         $altBody = tr($tr, 'mail_reset_body_text', ['username' => $user['username'], 'link' => $link]);
+        header('Connection: close');
+        ignore_user_abort(true);
+        if (function_exists('fastcgi_finish_request'))
+        {
+            fastcgi_finish_request();
+        }
+        else
+        {
+            @ob_end_flush();
+            @flush();
+        }
         sendMail($user['email'], $subject, $body, $altBody);
     }
 

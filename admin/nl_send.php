@@ -53,6 +53,17 @@ if (isset($_GET['act']) && $_GET['act'] === 'sendnl')
             $allMails[$data['mail']] = $data['hash'];
         }
     }
+    header('Connection: close');
+    ignore_user_abort(true);
+    if (function_exists('fastcgi_finish_request'))
+    {
+        fastcgi_finish_request();
+    }
+    else
+    {
+        @ob_end_flush();
+        @flush();
+    }
     foreach ($allMails as $email => $hash)
     {
         sendMail($email, $_POST['obj'], str_replace('{userid}', $hash, $_POST['text']), 'Ce mail est uniquement disponible au format HTML');

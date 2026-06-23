@@ -154,6 +154,17 @@ if (isset($_GET['mod2'], $_POST['username'],$_POST['email'],$_POST['rank']))
                     Si vous avez perdu votre mot de passe, vous pouvez en demander un nouveau sur la page de réinitialisation de mot de passe: {SITE_URL}/fg_password.php
             TEXT;
     }
+    header('Connection: close');
+    ignore_user_abort(true);
+    if (function_exists('fastcgi_finish_request'))
+    {
+        fastcgi_finish_request();
+    }
+    else
+    {
+        @ob_end_flush();
+        @flush();
+    }
     sendMail($_POST['email'], $subject, $body, $altBody);
 }
 ?>

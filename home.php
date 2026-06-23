@@ -163,8 +163,19 @@ if ((isset($_GET['token']) && $_GET['token'] === $login['token']) || (isset($_PO
                 Motif du départ
                 {$_POST['msgrm']}
                 TEXT;
-            sendMail(getTeamEmails('manage_members'), $subject, $body, $altBody);
             header('Location: /login.php?goodbye');
+            header('Connection: close');
+            ignore_user_abort(true);
+            if (function_exists('fastcgi_finish_request'))
+            {
+                fastcgi_finish_request();
+            }
+            else
+            {
+                @ob_end_flush();
+                @flush();
+            }
+            sendMail(getTeamEmails('manage_members'), $subject, $body, $altBody);
             exit();
         }
     }

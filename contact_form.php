@@ -135,6 +135,17 @@ if (isset($_GET['act']) && ($_GET['act'] === 'contact' || $_GET['act'] === 'repl
                     $tickid = $bdd->lastInsertId();
                 }
                 header('Location: /?contactconfirm=1#contactconfirm');
+                header('Connection: close');
+                ignore_user_abort(true);
+                if (function_exists('fastcgi_finish_request'))
+                {
+                    fastcgi_finish_request();
+                }
+                else
+                {
+                    @ob_end_flush();
+                    @flush();
+                }
                 $subject = ($reply2) ? sprintf('Re: %s (Ticket #%s#)', $rdata2['subject'], $tickid) : sprintf('%s (Ticket #%s#)', $_POST['obj'], $tickid);
                 if ($reply2)
                 {

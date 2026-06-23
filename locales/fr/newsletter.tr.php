@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $tr = [
   '_' => 'newsletter',
   '_todo_level' => 0,
@@ -15,7 +17,7 @@ https://www.progaccess33.net/nlmod.php?id={{hash}}
 Cordialement,
 {{site}}',
   'email_from' => '{{site}}',
-  'mail_title' => 'Lettre d\'informations {{site}}',
+  'mail_title' => "Lettre d'informations {{site}}",
   'mail_logo' => 'Logo',
   'mail_hello' => 'Bonjour {{mail}}',
   'mail_editlink' => 'Cliquez ici pour modifier votre abonnement, le renouveler ou vous désinscrire.',

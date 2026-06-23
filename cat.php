@@ -5,8 +5,8 @@ if (!isset($_GET['id']))
     exit();
 }
 set_include_path($_SERVER['DOCUMENT_ROOT']);
-require_once('include/log.php');
-require_once('include/consts.php');
+require_once(__DIR__ . '/include/log.php');
+require_once(__DIR__ . '/include/consts.php');
 $SQL = <<<SQL
     SELECT * FROM softwares_categories WHERE id=:id
     SQL;
@@ -27,9 +27,9 @@ $args['id'] = $cat_id;
 $stats_page = 'cat'; ?>
 <!DOCTYPE html>
 <html lang="<?= $lang ?>">
-<?php require_once('include/header.php'); ?>
+<?php require_once(__DIR__ . '/include/header.php'); ?>
 <body>
-<?php require_once('include/banner.php'); ?>
+<?php require_once(__DIR__ . '/include/banner.php'); ?>
 <main id="container">
 <h1 id="contenu"><?php print $title; ?></h1>
 <?= str_replace('{{site}}', $site_name, $cat_text) ?>
@@ -57,24 +57,41 @@ while ($data = $req->fetch())
 foreach ($entries as $sw_id => $entry)
 {
     $entry_tr = '';
-    if (array_key_exists($lang, $entry['trs']))
+    if (array_key_exists((string) $lang, $entry['trs']))
     {
         $entry_tr = $lang;
     }
     else
     {
-        foreach ($langs_prio as &$i_lang)
+        foreach ($langs_prio as &$lang_prio)
         {
-            if (array_key_exists($i_lang, $entry['trs']))
+            if (array_key_exists((string) $lang_prio, $entry['trs']))
             {
-                $entry_tr = $i_lang;
+                $entry_tr = $lang_prio;
                 break;
             }
         }
     }
     unset($i_lang);
-    if (empty($entry_tr)) // Error: sw has no translations
-    {continue;
+    if ($entry_tr === 0)
+    {
+        continue;
+    }
+    if ($entry_tr === '')
+    {
+        continue;
+    }
+    if ($entry_tr === '0')
+    {
+        continue;
+    }
+    if ($entry_tr === '')
+    {
+        continue;
+    }
+    if ($entry_tr === '0')
+    {
+        continue;
     }
 
     printf(
@@ -89,12 +106,12 @@ foreach ($entries as $sw_id => $entry)
         htmlspecialchars(strtolower(str_replace('{{site}}', $site_name, $entry['trs'][$entry_tr]['title']))),
         $sw_id,
         str_replace('{{site}}', $site_name, $entry['trs'][$entry_tr]['title']),
-        str_replace('{{site}}', $site_name, $entry['trs'][$entry_tr]['desc'])
+        str_replace('{{site}}', $site_name, $entry['trs'][$entry_tr]['desc']),
     );
 }
 ?>
 </div>
 </main>
-<?php require_once('include/footer.php'); ?>
+<?php require_once(__DIR__ . '/include/footer.php'); ?>
 </body>
 </html>

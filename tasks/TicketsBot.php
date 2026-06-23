@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $document_root = __DIR__.'/..';
 
 require_once $document_root.'/include/consts.php';
@@ -13,13 +15,14 @@ if (!$mbox)
     exit;
 }
 
-function get_mime_type($structure)
+function get_mime_type($structure): string
 {
     $primary = ['TEXT','MULTIPART','MESSAGE','APPLICATION','AUDIO','IMAGE','VIDEO','OTHER'];
     if (!empty($structure->subtype))
     {
         return $primary[(int)$structure->type] . '/' . $structure->subtype;
     }
+
     return 'TEXT/PLAIN';
 }
 
@@ -29,6 +32,7 @@ function get_part($imap, $uid, $mimetype, $structure = null, $partNumber = null)
     {
         $structure = imap_fetchstructure($imap, $uid, FT_UID);
     }
+
     if ($structure)
     {
         if (get_mime_type($structure) === $mimetype)
@@ -42,11 +46,12 @@ function get_part($imap, $uid, $mimetype, $structure = null, $partNumber = null)
                 default => imap_utf8($text),
             };
         }
+
         if ($structure->type === 1 && !empty($structure->parts))
         {
             foreach ($structure->parts as $index => $sub)
             {
-                $prefix = $partNumber ? "$partNumber." : '';
+                $prefix = $partNumber ? $partNumber . '.' : '';
                 if ($data = get_part($imap, $uid, $mimetype, $sub, $prefix . ($index + 1)))
                 {
                     return $data;
@@ -54,10 +59,11 @@ function get_part($imap, $uid, $mimetype, $structure = null, $partNumber = null)
             }
         }
     }
+
     return '';
 }
 
-function getBody($uid, $imap)
+function getBody($uid, $imap): string
 {
     $html = html_entity_decode((string)get_part($imap, $uid, 'TEXT/HTML'));
     if (trim($html) === '')
@@ -65,6 +71,7 @@ function getBody($uid, $imap)
         $plain = (string)get_part($imap, $uid, 'TEXT/PLAIN');
         $html = nl2br(htmlentities($plain, ENT_QUOTES, 'UTF-8'));
     }
+
     return explode('## Ne pas écrire en-dessous de cette ligne ##', $html)[0];
 }
 
@@ -76,7 +83,7 @@ if (!$info || $info->Nmsgs < 1)
 }
 
 $mails = imap_fetch_overview($mbox, '1:' . min(50, $info->Nmsgs), 0);
-if (!$mails)
+if ($mails === [] || $mails === false)
 {
     imap_close($mbox);
     exit;
@@ -88,19 +95,21 @@ foreach ($mails as $mail)
     $hdr = imap_rfc822_parse_headers($hdrText);
     $from = $hdr->from[0]->mailbox . '@' . $hdr->from[0]->host;
     $rawBodyHtml = convertToMD(getBody($mail->uid, $mbox));
-    $rawBodyText = trim(strip_tags((string) $rawBodyHtml));
+    $rawBodyText = trim(strip_tags($rawBodyHtml));
 
     $subject = iconv_mime_decode((string)$mail->subject, 0, 'UTF-8');
     if (!str_contains($subject, '(Ticket #'))
     {
-        imap_delete($mbox, $mail->uid, FT_UID);
+        imap_delete($mbox, (string) $mail->uid, FT_UID);
         continue;
     }
-    if (!preg_match('/\(Ticket #(\d+)#\)/', $subject, $m))
+
+    if (in_array(preg_match('/\(Ticket #(\d+)#\)/', $subject, $m), [0, false], true))
     {
-        imap_delete($mbox, $mail->uid, FT_UID);
+        imap_delete($mbox, (string) $mail->uid, FT_UID);
         continue;
     }
+
     $ticketId = $m[1];
     $SQL = <<<SQL
         SELECT * FROM tickets WHERE id = :id LIMIT 1
@@ -110,7 +119,7 @@ foreach ($mails as $mail)
     $ticket = $req->fetch(PDO::FETCH_ASSOC);
     if (!$ticket)
     {
-        $mailSubj = "Re: [SANS OBJET] (Ticket #{$ticketId}#)";
+        $mailSubj = sprintf('Re: [SANS OBJET] (Ticket #%s#)', $ticketId);
         $body   = <<<HTML
             <h2>Réponse au ticket {$ticketId}</h2>
             <p>Vous avez tenté de répondre par mail à un ticket de {$site_name}.<br>
@@ -124,10 +133,11 @@ foreach ($mails as $mail)
             Si vous souhaitez nous contacter, veuillez ouvrir un nouveau ticket via le formulaire de contact: {SITE_URL}/contact_form.php
             TEXT;
         sendMail($from, $mailSubj, $body, $altBody);
-        imap_delete($mbox, $mail->uid, FT_UID);
+        imap_delete($mbox, (string) $mail->uid, FT_UID);
         continue;
     }
-    $mailSubj   = "Re: {$ticket['subject']} (Ticket #{$ticketId}#)";
+
+    $mailSubj   = sprintf('Re: %s (Ticket #%s#)', $ticket['subject'], $ticketId);
     if ($ticket['status'] === 4 && (time() - $ticket['date']) > 24 * 3600)
     {
         $body   = <<<HTML
@@ -143,9 +153,10 @@ foreach ($mails as $mail)
             Si vous souhaitez nous contacter, veuillez ouvrir un nouveau ticket via le formulaire de contact: {SITE_URL}/contact_form.php
             TEXT;
         sendMail($from, $mailSubj, $body, $altBody);
-        imap_delete($mbox, $mail->uid, FT_UID);
+        imap_delete($mbox, (string) $mail->uid, FT_UID);
         continue;
     }
+
     $admins = getTeamEmails('manage_tickets');
     if ($ticket['expeditor_email'] === $from)
     {
@@ -159,7 +170,7 @@ foreach ($mails as $mail)
         $upd->execute([
             ':msg'  => json_encode($messages),
             ':date' => time(),
-            ':id'   => $ticketId
+            ':id'   => $ticketId,
         ]);
 
         $css = <<<CSS
@@ -186,7 +197,7 @@ foreach ($mails as $mail)
             {SITE_URL}/admin/tickets.php?ticket={$ticketId}
             TEXT;
 
-        sendMail($admins, $mailSubj, $htmlBody, $textBody, [TICKETS_BOT_MAIL, "{$site_name} Tickets Bot"], ['css' => $css, 'includeAutoReplyNotice' => false]);
+        sendMail($admins, $mailSubj, $htmlBody, $textBody, [TICKETS_BOT_MAIL, $site_name . ' Tickets Bot'], ['css' => $css, 'includeAutoReplyNotice' => false]);
 
     }
     elseif (in_array($from, $admins, true))
@@ -195,7 +206,7 @@ foreach ($mails as $mail)
             'SELECT a.id, t.short_name
              FROM accounts a
              LEFT JOIN team t ON t.account_id = a.id
-             WHERE a.email = ? LIMIT 1'
+             WHERE a.email = ? LIMIT 1',
         );
         $q->execute([$from]);
         $r = $q->fetch(PDO::FETCH_ASSOC);
@@ -206,13 +217,13 @@ foreach ($mails as $mail)
         $upd = $bdd->prepare(
             'UPDATE tickets
              SET messages = :msg, status = 2, date = :date, lastadmreply = :last
-             WHERE id = :id'
+             WHERE id = :id',
         );
         $upd->execute([
             ':msg'  => json_encode($messages),
             ':date' => time(),
             ':last' => $admName,
-            ':id'   => $ticketId
+            ':id'   => $ticketId,
         ]);
 
         $css = <<<CSS
@@ -241,7 +252,7 @@ foreach ($mails as $mail)
             {SITE_URL}/contact_form.php?reply={$ticket['id']}&h={$ticket['hash']}
             TEXT;
 
-        sendMail($ticket['expeditor_email'], $mailSubj, $htmlBody, $textBody, [TICKETS_BOT_MAIL, "{$site_name} Tickets Bot"], ['css' => $css, 'includeAutoReplyNotice' => false]);
+        sendMail($ticket['expeditor_email'], $mailSubj, $htmlBody, $textBody, [TICKETS_BOT_MAIL, $site_name . ' Tickets Bot'], ['css' => $css, 'includeAutoReplyNotice' => false]);
 
         $admHtml  = <<<HTML
             <p>## Ne pas écrire en-dessous de cette ligne ##</p>
@@ -259,7 +270,7 @@ foreach ($mails as $mail)
             {SITE_URL}/admin/tickets.php?ticket={$ticketId}
             TEXT;
 
-        sendMail($admins, $mailSubj, $admHtml, $admText, [TICKETS_BOT_MAIL, "{$site_name} Tickets Bot"], ['css' => $css, 'includeAutoReplyNotice' => false]);
+        sendMail($admins, $mailSubj, $admHtml, $admText, [TICKETS_BOT_MAIL, $site_name . ' Tickets Bot'], ['css' => $css, 'includeAutoReplyNotice' => false]);
     }
     else
     {
@@ -276,11 +287,11 @@ foreach ($mails as $mail)
             Merci de bien vouloir renvoyer votre message depuis une adresse remplissant les critères ci-dessus.
             TEXT;
         sendMail($from, $mailSubj, $body, $altBody);
-        imap_delete($mbox, $mail->uid, FT_UID);
+        imap_delete($mbox, (string) $mail->uid, FT_UID);
         continue;
     }
 
-    imap_delete($mbox, $mail->uid, FT_UID);
+    imap_delete($mbox, (string) $mail->uid, FT_UID);
 }
 
 imap_expunge($mbox);

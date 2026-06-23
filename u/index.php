@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 $params = '';
-if (isset($_GET['id']) && preg_match('/[0-9]+/', (string) $_GET['id']))
+if (isset($_GET['id']) && preg_match('/\d+/', (string) $_GET['id']))
 {
     $params .= 'id='.$_GET['id'];
 }
-if (!empty($params))
+
+if ($params !== '' && $params !== '0')
 {
     header('Location: /update.php?'.$params);
     exit();

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $document_root = __DIR__.'/..';
 require_once($document_root.'/include/consts.php');
 
@@ -29,11 +31,12 @@ while ($data = $req->fetch())
         $visitors[$data['domain']] = [1, $data['domain']];
     }
 }
-foreach ($visitors as &$domain)
+
+foreach ($visitors as &$visitor)
 {
     $SQL = <<<SQL
         INSERT INTO daily_visitors (date,visitors,domain) VALUES (:date,:v,:d)
         SQL;
     $req = $bdd->prepare($SQL);
-    $req->execute([':date' => $date, ':v' => $domain[0], ':d' => $domain[1]]);
+    $req->execute([':date' => $date, ':v' => $visitor[0], ':d' => $visitor[1]]);
 }

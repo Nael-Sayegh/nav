@@ -1,7 +1,7 @@
 <?php $logonly = true;
 $adminonly = true;
 $justna = true;
-$titlePAdm = 'Envoyer la lettre d\'informations';
+$titlePAdm = "Envoyer la lettre d'informations";
 require_once($_SERVER['DOCUMENT_ROOT'].'/include/log.php');
 require_once($_SERVER['DOCUMENT_ROOT'].'/include/consts.php');
 require_once($_SERVER['DOCUMENT_ROOT'].'/include/sendMail.php');
@@ -26,9 +26,7 @@ if (isset($_GET['act']) && $_GET['act'] === 'sendnl')
 {
     $site = $_POST['site'] ?? 'site1';
     $allMails = [];
-    $buildSQL = function (string $column): string {
-        return "SELECT mail,hash FROM newsletter_mails WHERE {$column} = true";
-    };
+    $buildSQL = (fn (string $column): string => sprintf('SELECT mail,hash FROM newsletter_mails WHERE %s = true', $column));
     if ($site === 'site1' || $site === 'both')
     {
         $req = $bdd->prepare($buildSQL('notif_upd'));
@@ -55,6 +53,17 @@ if (isset($_GET['act']) && $_GET['act'] === 'sendnl')
             $allMails[$data['mail']] = $data['hash'];
         }
     }
+    header('Connection: close');
+    ignore_user_abort(true);
+    if (function_exists('fastcgi_finish_request'))
+    {
+        fastcgi_finish_request();
+    }
+    else
+    {
+        @ob_end_flush();
+        @flush();
+    }
     foreach ($allMails as $email => $hash)
     {
         sendMail($email, $_POST['obj'], str_replace('{userid}', $hash, $_POST['text']), 'Ce mail est uniquement disponible au format HTML');
@@ -70,7 +79,7 @@ if (isset($_GET['act']) && $_GET['act'] === 'sendnl')
 <script type="text/javascript" src="/scripts/default.js"></script>
 </head>
 <body>
-<?php require_once('include/banner.php'); ?>
+<?php require_once(__DIR__ . '/include/banner.php'); ?>
 <h2>Envoyer une newsletter aux abonnés</h2>
 <p>Remplir le formulaire ci-dessous pour envoyer une newsletter à tous les abonnés</p>
 <form action="?act=sendnl" method="post">

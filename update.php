@@ -1,15 +1,15 @@
 <?php
 ob_start();
 set_include_path($_SERVER['DOCUMENT_ROOT']);
-require_once('include/log.php');
-require_once('include/consts.php');
+require_once(__DIR__ . '/include/log.php');
+require_once(__DIR__ . '/include/consts.php');
 $title = 'Mise à jour du site';
 $stats_page = 'update'; ?>
 <!DOCTYPE html>
 <html lang="fr">
-<?php require_once('include/header.php'); ?>
+<?php require_once(__DIR__ . '/include/header.php'); ?>
 <body>
-<?php require_once('include/banner.php'); ?>
+<?php require_once(__DIR__ . '/include/banner.php'); ?>
 <main id="container">
 <h1 id="contenu"><?php print $title; ?></h1>
 <?php
@@ -46,7 +46,7 @@ if (isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT) !== false
         }
         echo '<p>Par '.$data['authors'].' ('.getFormattedDate($data['date'], tr($tr0, 'fndatetime')).')</p>'.str_replace('{{site}}', $site_name, $data['text']);
         $codestat = json_decode((string) $data['codestat']);
-        if (isset($codestat[0]) && isset($codestat[1]) && isset($codestat[2]) && $codestat[0] !== -1 && $codestat[1] !== -1 && $codestat[2] !== -1)
+        if (isset($codestat[0], $codestat[1], $codestat[2])     && $codestat[0] !== -1 && $codestat[1] !== -1 && $codestat[2] !== -1)
         {
             echo '<hr><p>À cette version, le code du site est composé de <strong>'.$codestat[0].'</strong> fichiers, <strong>'.$codestat[1].'</strong> lignes, soit <strong>'.$codestat[2].'</strong> octets ('.human_filesize($codestat[2]).'o).<br>Seuls les fichiers PHP, HTML, CSS, JS, XML et texte brut sont pris en compte. Les fichiers dont nous ne sommes pas les auteurs ne sont pas comptés (bibliothèques, outils), ni les fichiers dynamiques (caches générés automatiquement), ni les fichiers de traduction (ne contenant que du texte).</p>';
         }
@@ -88,7 +88,7 @@ else
 }
 ?>
 </main>
-<?php require_once('include/footer.php');
+<?php require_once(__DIR__ . '/include/footer.php');
 ob_end_flush(); ?>
 </body>
 </html>

@@ -14,7 +14,7 @@ requireAdminRight('manage_newsletter');?>
 <script type="text/javascript" src="/scripts/default.js"></script>
 </head>
 <body>
-<?php require_once('include/banner.php'); ?>
+<?php require_once(__DIR__ . '/include/banner.php'); ?>
 <table>
 <thead>
 <tr><th>Adresse e-mail</th><th>Hash</th><th>Fréquence</th><th>Dernier mail</th></tr>
@@ -24,7 +24,7 @@ requireAdminRight('manage_newsletter');?>
 $SQL = <<<SQL
     SELECT * FROM newsletter_mails
     SQL;
-function getFrequency($numFreq)
+function getFrequency($numFreq): string
 {
     $stringFreq = '';
     switch ($numFreq)

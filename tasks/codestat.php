@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $document_root = realpath(__DIR__.'/../');
 require_once($document_root.'/include/consts.php');
 
@@ -36,7 +38,7 @@ function list_files_recursive(string $root, array $include_dirs, array $exclude_
     $files = [];
 
     $rii = new RecursiveIteratorIterator(
-        new RecursiveDirectoryIterator($root, FilesystemIterator::SKIP_DOTS)
+        new RecursiveDirectoryIterator($root, FilesystemIterator::SKIP_DOTS),
     );
 
     foreach ($rii as $file)
@@ -48,25 +50,31 @@ function list_files_recursive(string $root, array $include_dirs, array $exclude_
 
         $rel = substr((string) $file->getPathname(), strlen($root) + 1);
 
-        foreach ($exclude_paths as $ex)
+        foreach ($exclude_paths as $exclude_path)
         {
-            $ex = rtrim((string) $ex, '/');
-            if (str_starts_with($rel, $ex.'/') || $rel === $ex)
+            $exclude_path = rtrim((string) $exclude_path, '/');
+            if (str_starts_with($rel, $exclude_path.'/'))
+            {
+                continue 2;
+            }
+
+            if ($rel === $exclude_path)
             {
                 continue 2;
             }
         }
 
         $included = false;
-        foreach ($include_dirs as $dir)
+        foreach ($include_dirs as $include_dir)
         {
-            $dir = rtrim((string) $dir, '/');
-            if ($dir === '' && !str_contains($rel, '/'))
+            $include_dir = rtrim((string) $include_dir, '/');
+            if ($include_dir === '' && !str_contains($rel, '/'))
             {
                 $included = true;
                 break;
             }
-            elseif (str_starts_with($rel, $dir.'/'))
+
+            if (str_starts_with($rel, $include_dir.'/'))
             {
                 $included = true;
                 break;
@@ -79,7 +87,12 @@ function list_files_recursive(string $root, array $include_dirs, array $exclude_
         }
 
         $ext = strtolower(pathinfo($rel, PATHINFO_EXTENSION));
-        if ($ext === '' || !in_array($ext, $allowed_exts))
+        if ($ext === '')
+        {
+            continue;
+        }
+
+        if (!in_array($ext, $allowed_exts, true))
         {
             continue;
         }
@@ -107,15 +120,16 @@ foreach ($files as $file)
             fgets($f, 8192);
             $n_lines++;
         }
+
         fclose($f);
         $n_chars += filesize($path);
     }
     else
     {
-        echo "Not found: $file\n";
+        echo sprintf('Not found: %s%s', $file, PHP_EOL);
     }
 }
 
 $outfile = fopen($document_root.'/cache/codestatc.php', 'w');
-fputs($outfile, '<?php $codestat_n_files='.$n_files.';$codestat_n_lines='.$n_lines.';$codestat_n_chars='.$n_chars.'; ?>');
+fwrite($outfile, '<?php $codestat_n_files='.$n_files.';$codestat_n_lines='.$n_lines.';$codestat_n_chars='.$n_chars.'; ?>');
 fclose($outfile);

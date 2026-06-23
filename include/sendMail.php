@@ -1,8 +1,8 @@
 <?php
 
-use PHPMailer\PHPMailer\Exception;
+declare(strict_types=1);
+
 use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\SMTP;
 
 require_once(__DIR__.'/../vendor/autoload.php');
 
@@ -94,8 +94,6 @@ function sendMail($recipients, string $subject, string $contentHtml, string $con
 
     $sent = true;
 
-    $sent = true;
-
     foreach ((array)$recipients as $dest)
     {
         $mail = new PHPMailer();
@@ -117,7 +115,7 @@ function sendMail($recipients, string $subject, string $contentHtml, string $con
         if (!$mail->send())
         {
             $sent = false;
-            error_log("Failed to sent to $dest: ".$mail->ErrorInfo);
+            error_log(sprintf('Failed to sent to %s: ', $dest).$mail->ErrorInfo);
         }
     }
 

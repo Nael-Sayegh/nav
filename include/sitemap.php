@@ -1,34 +1,58 @@
 <?php
-require_once'config.local.php';
-require_once 'dbconnect.php';
 
-function shouldExclude($path, $exclude) {
-    foreach ($exclude as $ex) {
-        if (stripos($path, DIRECTORY_SEPARATOR . $ex) !== false || basename($path) === $ex) {
+declare(strict_types=1);
+require_once __DIR__ . '/dbconnect.php';
+
+function shouldExclude($path, $exclude): bool
+{
+    foreach ($exclude as $ex)
+    {
+        if (stripos((string) $path, DIRECTORY_SEPARATOR . $ex) !== false || basename((string) $path) === $ex)
+        {
             return true;
         }
     }
+
     return false;
 }
 
-function getFiles($dir, $exclude, $includeExtensions) {
+/**
+ * @return mixed[]
+ */
+function getFiles($dir, $exclude, $includeExtensions): array
+{
     $rii = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir));
     $files = [];
-    foreach ($rii as $file) {
-        if ($file->isDir()) continue;
+    foreach ($rii as $file)
+    {
+        if ($file->isDir())
+        {
+            continue;
+        }
+
         $filePath = $file->getPathname();
-        if (shouldExclude($filePath, $exclude)) continue;
-        $ext = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
-        if (!in_array($ext, $includeExtensions)) continue;
+        if (shouldExclude($filePath, $exclude))
+        {
+            continue;
+        }
+
+        $ext = strtolower(pathinfo((string) $filePath, PATHINFO_EXTENSION));
+        if (!in_array($ext, $includeExtensions, true))
+        {
+            continue;
+        }
+
         $files[] = $filePath;
     }
+
     return $files;
 }
 
-function generate_sitemap(array $options = []) {
+function generate_sitemap(array $options = []): int
+{
     global $bdd;
 
-    $baseUrl = SITE_URL ? rtrim(SITE_URL, '/') . '/' : '';
+    $baseUrl = SITE_URL !== '' ? rtrim(SITE_URL, '/') . '/' : '';
     $rootDir = $options['rootDir'] ?? DOCUMENT_ROOT;
     $exclude = $options['exclude'] ?? [
         '403',
@@ -72,7 +96,8 @@ function generate_sitemap(array $options = []) {
 
     $xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"/>');
     $added = 0;
-    foreach ($files as $file) {
+    foreach ($files as $file)
+    {
         $relativePath = str_replace($rootDir . DIRECTORY_SEPARATOR, '', $file);
         $url = $baseUrl . str_replace(DIRECTORY_SEPARATOR, '/', $relativePath);
         $url = preg_replace('/index\\.(php|html?)$/', '', $url); // Nettoie les index.php
@@ -83,21 +108,25 @@ function generate_sitemap(array $options = []) {
         $added++;
     }
 
-    foreach ($manualUrls as $url) {
+    foreach ($manualUrls as $url)
+    {
         $u = $xml->addChild('url');
-        $u->addChild('loc', htmlspecialchars($url));
+        $u->addChild('loc', htmlspecialchars((string) $url));
         $u->addChild('lastmod', date('Y-m-d'));
         $added++;
     }
 
-    if ($addArticles || $addCategories) {
-        if ($addArticles) {
+    if ($addArticles || $addCategories)
+    {
+        if ($addArticles)
+        {
             $sql = 'SELECT DISTINCT softwares.id, softwares.date
                     FROM softwares
                     LEFT JOIN softwares_tr ON softwares.id = softwares_tr.sw_id
                     WHERE softwares_tr.published = true';
             $req = $bdd->query($sql);
-            while ($row = $req->fetch()) {
+            while ($row = $req->fetch())
+            {
                 $url = $baseUrl . 'a' . $row['id'];
                 $u = $xml->addChild('url');
                 $u->addChild('loc', htmlspecialchars($url));
@@ -106,10 +135,12 @@ function generate_sitemap(array $options = []) {
             }
         }
 
-        if ($addCategories) {
+        if ($addCategories)
+        {
             $sql = 'SELECT id FROM softwares_categories';
             $req = $bdd->query($sql);
-            while ($row = $req->fetch()) {
+            while ($row = $req->fetch())
+            {
                 $url = $baseUrl . 'c' . $row['id'];
                 $u = $xml->addChild('url');
                 $u->addChild('loc', htmlspecialchars($url));
@@ -124,93 +155,141 @@ function generate_sitemap(array $options = []) {
     $dom = new DOMDocument('1.0', 'UTF-8');
     $dom->formatOutput = true;
     $dom->loadXML($xmlStr);
+
     $formattedXml = $dom->saveXML();
 
     file_put_contents($rootDir . '/sitemap.xml', $formattedXml);
     return $added;
 }
 
-function remove_sitemap_url($url, $sitemap = null) {
-    if ($sitemap === null) {
+function remove_sitemap_url($url, $sitemap = null): bool
+{
+    if ($sitemap === null)
+    {
         $sitemap = DOCUMENT_ROOT . '/sitemap.xml';
     }
-    if (!file_exists($sitemap)) return false;
+
+    if (!file_exists($sitemap))
+    {
+        return false;
+    }
+
     $xml = simplexml_load_file($sitemap);
-    if (!$xml) return false;
+    if (!$xml)
+    {
+        return false;
+    }
+
     $toRemove = [];
-    foreach ($xml->url as $i => $u) {
-        if ((string)$u->loc === $url) {
+    foreach ($xml->url as $i => $u)
+    {
+        if ((string)$u->loc === $url)
+        {
             $toRemove[] = $i;
         }
     }
-    foreach (array_reverse($toRemove) as $i) {
+
+    foreach (array_reverse($toRemove) as $i)
+    {
         unset($xml->url[$i]);
     }
+
     $xmlstr = $xml->asXML();
 
     $dom = new DOMDocument('1.0', 'UTF-8');
     $dom->formatOutput = true;
     $dom->loadXML($xmlstr);
+
     $formattedXml = $dom->saveXML();
 
     file_put_contents($sitemap, $formattedXml);
     return true;
 }
 
-function update_sitemap_url($url, $lastmod = null, $sitemap = null) {
-    if ($sitemap === null) {
+function update_sitemap_url($url, $lastmod = null, $sitemap = null): bool
+{
+    if ($sitemap === null)
+    {
         $sitemap =  DOCUMENT_ROOT . '/sitemap.xml';
     }
-    if (!file_exists($sitemap)) return false;
+
+    if (!file_exists($sitemap))
+    {
+        return false;
+    }
+
     $xml = simplexml_load_file($sitemap);
-    if (!$xml) return false;
+    if (!$xml)
+    {
+        return false;
+    }
+
     $found = false;
-    foreach ($xml->url as $u) {
-        if ((string)$u->loc === $url) {
+    foreach ($xml->url as $u)
+    {
+        if ((string)$u->loc === $url)
+        {
             $u->lastmod = $lastmod ?: date('Y-m-d');
             $found = true;
             break;
         }
     }
-    if (!$found) {
+
+    if (!$found)
+    {
         $new = $xml->addChild('url');
         $new->addChild('loc', $url);
         $new->addChild('lastmod', $lastmod ?: date('Y-m-d'));
     }
+
     $xmlstr = $xml->asXML();
 
     $dom = new DOMDocument('1.0', 'UTF-8');
     $dom->formatOutput = true;
     $dom->loadXML($xmlstr);
+
     $formattedXml = $dom->saveXML();
 
     file_put_contents($sitemap, $formattedXml);
     return true;
 }
 
-function get_sitemap_urls($sitemap = null) {
-    if ($sitemap === null) {
+/**
+ * @return array{loc: string, lastmod: (string | null)}[]
+ */
+function get_sitemap_urls($sitemap = null): array
+{
+    if ($sitemap === null)
+    {
         $sitemap = DOCUMENT_ROOT . '/sitemap.xml';
     }
-    if (!file_exists($sitemap)) {
+
+    if (!file_exists($sitemap))
+    {
         return [];
     }
+
     $xml = simplexml_load_file($sitemap);
-    if (!$xml) {
+    if (!$xml)
+    {
         return [];
     }
+
     $urls = [];
-    foreach ($xml->url as $url) {
+    foreach ($xml->url as $url)
+    {
         $urls[] = [
             'loc' => (string)$url->loc,
-            'lastmod' => isset($url->lastmod) ? (string)$url->lastmod : null
+            'lastmod' => property_exists($url, 'lastmod') && $url->lastmod !== null ? (string)$url->lastmod : null,
         ];
     }
+
     return $urls;
 }
 
-if (php_sapi_name() === 'cli') {
+if (PHP_SAPI === 'cli')
+{
     echo "Generation of the sitemap in progress\n";
     $nb = generate_sitemap();
-    echo "Sitemap generated successfully ($nb URLs).\n";
+    echo "Sitemap generated successfully ({$nb} URLs).\n";
 }

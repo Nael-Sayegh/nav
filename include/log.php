@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 $logged = false;
 
-require_once('Rights.php');
+require_once(__DIR__ . '/Rights.php');
 
-function check_login($session, $connectid)
+function check_login($session, $connectid): bool
 {
     global $bdd, $login, $nolog, $settings, $admin_name;
     require_once($_SERVER['DOCUMENT_ROOT'].'/include/dbconnect.php');
@@ -33,6 +35,7 @@ function check_login($session, $connectid)
                 header('Location: /');
                 exit();
             }
+
             $SQL = <<<SQL
                 UPDATE sessions SET expire=:expire WHERE id=:id
                 SQL;
@@ -48,8 +51,9 @@ function check_login($session, $connectid)
                     setcookie($setting, (string) $settings[$setting], ['expires' => time() + 31557600, 'path' => '/', 'secure' => true, 'httponly' => true, 'samesite' => 'strict']);
                 }
             }
-            unset($setting);
-            unset($sets);
+
+            unset($setting, $sets);
+
             $login['member_rights'] ??= '';
             $login['works'] = isset($login['works']) ? (string)$login['works'] : '0';
             $admin_name = $login['short_name'] ?? '';
@@ -57,28 +61,24 @@ function check_login($session, $connectid)
             $req->closeCursor();
             return true;
         }
-        else
-        {
-            unset($login);
-        }
+
+        unset($login);
     }
+
     $req->closeCursor();
     return false;
 }
 
-if (isset($_COOKIE['session']) && isset($_COOKIE['connectid']))
+if (isset($_COOKIE['session'], $_COOKIE['connectid']))
 {
     $logged = check_login($_COOKIE['session'], $_COOKIE['connectid']);
 }
 
-if (!$logged && isset($_GET['ses']) && isset($_GET['cid']))
+if (!$logged && isset($_GET['ses'], $_GET['cid'])   && $logged = check_login($_GET['ses'], $_GET['cid']))
 {
-    if ($logged = check_login($_GET['ses'], $_GET['cid']))
-    {
-        $expire = time() + 31557600;
-        setcookie('session', (string) $_GET['ses'], ['expires' => $expire, 'path' => '/', 'secure' => true, 'httponly' => true, 'samesite' => 'strict']);
-        setcookie('connectid', $_GET['cid'], ['expires' => $expire, 'path' => '/', 'secure' => true, 'httponly' => true, 'samesite' => 'strict']);
-    }
+    $expire = time() + 31557600;
+    setcookie('session', (string) $_GET['ses'], ['expires' => $expire, 'path' => '/', 'secure' => true, 'httponly' => true, 'samesite' => 'strict']);
+    setcookie('connectid', $_GET['cid'], ['expires' => $expire, 'path' => '/', 'secure' => true, 'httponly' => true, 'samesite' => 'strict']);
 }
 
 if (!$logged && isset($logonly) && $logonly)
@@ -87,23 +87,27 @@ if (!$logged && isset($logonly) && $logonly)
     {
         session_start();
     }
+
     $_SESSION['intended_after_login'] = $_SERVER['REQUEST_URI'];
     http_response_code(403);
     header('Location: /login.php?logonly');
     exit();
 }
+
 if ($logged && $login['rank'] === 'b' && basename((string) $_SERVER['SCRIPT_NAME']) !== 'contact_form.php')
 {
     http_response_code(403);
     require_once($_SERVER['DOCUMENT_ROOT'].'/403/403B.php');
     exit();
 }
+
 if (isset($adminonly) && $adminonly && $login['rank'] !== 'a')
 {
     http_response_code(403);
     require_once($_SERVER['DOCUMENT_ROOT'].'/403/403.php');
     exit();
 }
+
 if (isset($justna) && $justna && $login['works'] === '0')
 {
     header('Location: https://www.blog.nael-accessvision.com/admin/');

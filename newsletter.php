@@ -1,8 +1,8 @@
 <?php
 set_include_path($_SERVER['DOCUMENT_ROOT']);
-require_once('include/log.php');
-require_once('include/consts.php');
-require_once('include/sendMail.php');
+require_once(__DIR__ . '/include/log.php');
+require_once(__DIR__ . '/include/consts.php');
+require_once(__DIR__ . '/include/sendMail.php');
 $stats_page = 'newsletter';
 if (isset($logged) && $logged && (!isset($_GET['noredir']) || isset($_GET['noredir']) && $_GET['noredir'] === false))
 {
@@ -28,7 +28,7 @@ if (isset($_GET['a']) && $_GET['a'] === 's')
     // {
     //     $log .= 'Veuillez renseigner une fréquence d\'envoi valide.<br>';
     // }
-    if (empty($log))
+    if ($log === '' || $log === '0')
     {
         $SQL = <<<SQL
             SELECT id FROM newsletter_mails WHERE mail=:mail LIMIT 1
@@ -80,19 +80,24 @@ if (isset($_GET['a']) && $_GET['a'] === 's')
                 https://{SITE_URL}/nlmod.php?id={$hash}
                 TEXT;
 
-            if (sendMail($_POST['mail'], $subject, $body, $altBody))
-            {
-                $SQL = <<<SQL
+            $SQL = <<<SQL
                 INSERT INTO newsletter_mails (hash, mail, freq, freq_n, notif_site, notif_upd, notif_upd_n, lang, lastmail, lastmail_n) VALUES (:hash, :mail, :frq, :frqn, :notifsite, :notifupd, :notifupdn, :lng, :last, :lastn)
                 SQL;
-                $req = $bdd->prepare($SQL);
-                $req->execute([':hash' => $hash, ':mail' => $_POST['mail'], ':frq' => $freq, ':frqn' => $freq_n,  ':notifsite' => $f_site, ':notifupd' => $f_upd, ':notifupdn' => $f_upd_n, ':lng' => $lang, ':last' => time(), ':lastn' => time()]);
-                $log .= 'Vous êtes bien inscrit à la lettre d\'informations '.$site_name.'.<br>Un email de confirmation vous a été envoyé à '.$_POST['mail'].'.';
+            $req = $bdd->prepare($SQL);
+            $req->execute([':hash' => $hash, ':mail' => $_POST['mail'], ':frq' => $freq, ':frqn' => $freq_n,  ':notifsite' => $f_site, ':notifupd' => $f_upd, ':notifupdn' => $f_upd_n, ':lng' => $lang, ':last' => time(), ':lastn' => time()]);
+            $log .= 'Vous êtes bien inscrit à la lettre d\'informations '.$site_name.'.<br>Un email de confirmation vous a été envoyé à '.$_POST['mail'].'.';
+            header('Connection: close');
+            ignore_user_abort(true);
+            if (function_exists('fastcgi_finish_request'))
+            {
+                fastcgi_finish_request();
             }
             else
             {
-                $log .= 'Erreur pendant l\'envoi du mail.';
+                @ob_end_flush();
+                @flush();
             }
+            sendMail($_POST['mail'], $subject, $body, $altBody);
         }
     }
 }
@@ -101,16 +106,16 @@ if (isset($_GET['stop']))
     $log .= 'Vous avez bien été désinscrit de la lettre d\'informations '.$site_name.'. Un mail de désinscription vous a été envoyé. Vous ne recevrez plus aucun mail de notre part.';
 }
 
-$title = 'Lettre d\'informations'; ?>
+$title = "Lettre d'informations"; ?>
 <!DOCTYPE html>
 <html lang="fr">
-<?php require_once('include/header.php'); ?>
+<?php require_once(__DIR__ . '/include/header.php'); ?>
 <body>
-<?php require_once('include/banner.php'); ?>
+<?php require_once(__DIR__ . '/include/banner.php'); ?>
 <main id="container">
 <h1 id="contenu"><?php print $title; ?></h1>
 <div id="alertZone" role="alert" aria-live="assertive"></div>
-<?php if (!empty($log)): ?>
+<?php if ($log !== '' && $log !== '0'): ?>
 <noscript>
 <p role="alert"><b><?= $log ?></b></p>
 </noscript>
@@ -146,6 +151,6 @@ $title = 'Lettre d\'informations'; ?>
 <input type="submit" value="S'abonner">
 </form>
 </main>
-<?php require_once('include/footer.php'); ?>
+<?php require_once(__DIR__ . '/include/footer.php'); ?>
 </body>
 </html>

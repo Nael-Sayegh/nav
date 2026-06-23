@@ -1,8 +1,10 @@
 <?php
 
-require_once('include/dbconnect.php');
+declare(strict_types=1);
+
+require_once(__DIR__ . '/include/dbconnect.php');
 $logonly = true;
-require_once('include/log.php');
+require_once(__DIR__ . '/include/log.php');
 
 if (isset($_GET['token']) && $_GET['token'] === $login['token'])
 {
@@ -16,9 +18,6 @@ if (isset($_GET['token']) && $_GET['token'] === $login['token'])
     header('Location: /');
     exit();
 }
-else
-{
-    header('Location: /');
-    exit();
-}
+
+header('Location: /');
 exit();

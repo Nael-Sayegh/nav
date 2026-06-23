@@ -19,7 +19,7 @@ if (isset($_GET['to']) && !empty($_GET['to']))
 }
 
 $domain = '';
-if (isset($_GET['domain']) && in_array($_GET['domain'], ['prod','dev','onion','onion_dev']))
+if (isset($_GET['domain']) && in_array($_GET['domain'], ['prod','dev','onion','onion_dev'], true))
 {
     $domain = $_GET['domain'];
 }
@@ -34,7 +34,7 @@ if (isset($_GET['domain']) && in_array($_GET['domain'], ['prod','dev','onion','o
 <script type="text/javascript" src="/scripts/default.js"></script>
 </head>
 <body>
-<?php require_once('include/banner.php'); ?>
+<?php require_once(__DIR__ . '/include/banner.php'); ?>
 <form action="showstats.php" method="get">
 <label for="f1_from">Depuis le (AAAA-MM-JJ)&nbsp;:</label><input type="text" id="f1_from" name="from" value="<?= $from ?>" maxlength="10"><br>
 <label for="f1_to">Jusqu'au (AAAA-MM-JJ)&nbsp;:</label><input type="text" id="f1_to" name="to" value="<?= $to ?>" maxlength="10"><br>
@@ -46,12 +46,12 @@ if (isset($_GET['domain']) && in_array($_GET['domain'], ['prod','dev','onion','o
 <?php
 
 $reqp = '';
-if (!empty($domain))
+if ($domain !== '' && $domain !== '0')
 {
     $reqp = ' domain="'.$domain.'" AND';
 }
 $SQL = <<<SQL
-    SELECT * FROM count_visits WHERE'.$reqp.' date BETWEEN :beg AND :end ORDER BY date ASC
+    SELECT * FROM count_visits WHERE'.{$reqp}.' date BETWEEN :beg AND :end ORDER BY date ASC
     SQL;
 $req = $bdd->prepare($SQL);
 $req->execute([':beg' => $from, ':end' => $to]);
@@ -62,7 +62,7 @@ $maxv = 0;
 while ($data = $req->fetch())
 {
     $visits[] = $data;
-    if (!in_array($data['page'], $pages))
+    if (!in_array($data['page'], $pages, true))
     {
         $pages[] = $data['page'];
     }
@@ -74,7 +74,7 @@ while ($data = $req->fetch())
 
 $visitors = [];
 $SQL = <<<SQL
-    SELECT date,visitors FROM daily_visitors WHERE'.$reqp.' date BETWEEN :beg AND :end ORDER BY date ASC
+    SELECT date,visitors FROM daily_visitors WHERE'.{$reqp}.' date BETWEEN :beg AND :end ORDER BY date ASC
     SQL;
 $req = $bdd->prepare($SQL);
 $req->execute([':beg' => $from, ':end' => $to]);
@@ -109,7 +109,7 @@ $alldvisitors = [];
 $line = false;
 foreach ($visits as &$visit)
 {
-    if ($curdate !== $visit['date'] && !empty($date))
+    if ($curdate !== $visit['date'] && $date !== [])
     {
         echo '<tr';
         if ($line)
@@ -159,7 +159,7 @@ foreach ($visits as &$visit)
     $total += $visit['visits'];
     $subtotal += $visit['visits'];
 }
-if (!empty($date))
+if ($date !== [])
 {
     echo '<tr';
     if ($line)

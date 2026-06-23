@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 $document_root = __DIR__.'/../..';
 require_once $document_root.'/include/config.local.php';
 require_once $document_root.'/include/consts.php';
-function send_discord($message)
+function send_discord($message): void
 {
     global $site_name;
     if (!isDev() && (defined('DISCORD_WEBHOOK_URL') && constant('DISCORD_WEBHOOK_URL')))
@@ -18,6 +20,5 @@ function send_discord($message)
         curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         $response = curl_exec($ch);
-        curl_close($ch);
     }
 }

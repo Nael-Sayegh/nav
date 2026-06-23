@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $tr = [
   '_' => 'signup',
   '_todo_level' => 0,
@@ -14,7 +16,7 @@ $tr = [
   'log_use_username' => 'Ce nom d\'utilisateur est déjà utilisé&#8239;!',
   'log_use_mail' => 'Cette adresse e-mail est déjà utilisée&#8239;!',
   'err_message' => 'Erreur, veuillez réessayer',
-  'form_username' => 'Nom d\'utilisateur&nbsp;:',
+  'form_username' => "Nom d'utilisateur&nbsp;:",
   'form_mail' => 'Adresse e-mail&nbsp;:',
   'form_psw1' => 'Mot de passe&nbsp;:',
   'form_generate_psw' => 'Générer un mot de passe',
@@ -25,5 +27,5 @@ $tr = [
   'form_use_cookies' => <<<ENDSTR
         <p>L'usage des cookies est nécessaire pour utiliser l'espace membres. Vous créer un compte {{site}} confirme que vous acceptez les cookies en vous identifiant.<br>Nous ne partagerons pas votre adresse e-mail avec des tiers. Vous pourrez modifier les paramètres de votre compte ou le supprimer à tout moment.</p>
       ENDSTR,
-  'form_submit' => 'S\'inscrire',
+  'form_submit' => "S'inscrire",
 ];

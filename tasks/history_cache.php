@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $document_root = __DIR__.'/..';
 require_once($document_root.'/include/consts.php');
 $cachedir = $document_root.'/cache/';
@@ -50,6 +52,7 @@ if ($data = $req->fetch())
     {
         $maj_id = $data['id'];
     }
+
     $maj_name = substr((string) $data['name'], 1);
     $maj_date = date('Y-m-d', $data['date']);
     $maj_link = SITE_URL.'/u'.$data['id'];
@@ -97,10 +100,12 @@ foreach ($days as &$day)
             {
                 $html .= ' class="jrnl_space"';
             }
+
             $html .= '>Mis à jour par '.$c['author'].' : <a class="jrnl_sft" href="/a'.$c['id'].'">'.$c['name'].'</a> <span class="jrnl_cat">(<a href="/c'.$c['category'].'">'.$cat[$c['category']].'</a>)</span><p class="jrnl_p">'.$c['description'].'</p></li>';
             $rss .= '<item><title>'.$c['name'].'</title><link>'.SITE_URL.'/a'.$c['id'].'</link><dc:creator>'.$c['author'].'</dc:creator><description>'.$c['description'].'</description><pubDate>'.date('r', $c['date']).'</pubDate></item>';
             $space = true;
         }
+
         unset($c);
     }
 

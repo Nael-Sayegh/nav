@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 set_include_path($_SERVER['DOCUMENT_ROOT']);
 $require_once('include/log.php');
-require_once('include/consts.php');
-require_once('include/sendMail.php');
+require_once(__DIR__ . '/include/consts.php');
+require_once(__DIR__ . '/include/sendMail.php');
 $tr = load_tr($lang, 'confirm');
 
-if (isset($_GET['id']) && isset($_GET['h']))
+if (isset($_GET['id'], $_GET['h']))
 {
     $SQL = <<<SQL
         SELECT id, username, email, signup_date, settings FROM accounts WHERE id=:id AND signup_date<:date AND confirmed=false
@@ -24,13 +26,15 @@ if (isset($_GET['id']) && isset($_GET['h']))
             {
                 $SQL .= ', rank = :adminRank';
             }
-            $SQL .= " WHERE id = :id";
+
+            $SQL .= ' WHERE id = :id';
             $req = $bdd->prepare($SQL);
             $params = [':id' => $data['id']];
             if ($totalAccounts === 1)
             {
                 $params[':adminRank'] = 'a';
             }
+
             $req->execute($params);
             $subject = tr($tr, 'mail_info_subject');
             $username = htmlentities((string) $data['username']);
@@ -41,7 +45,7 @@ if (isset($_GET['id']) && isset($_GET['h']))
                 ['username' => $username,
                 'email' => $data['email'],
                 'id' => $data['id'],
-                'signup_date' => $memberSignupDate]
+                'signup_date' => $memberSignupDate],
             );
             $altBody = tr(
                 $tr,
@@ -49,18 +53,30 @@ if (isset($_GET['id']) && isset($_GET['h']))
                 ['username' => $username,
                 'email' => $data['email'],
                 'id' => $data['id'],
-                'signup_date' => $memberSignupDate]
+                'signup_date' => $memberSignupDate],
             );
-            sendMail($data['email'], $subject, $body, $altBody);
             header('Location: /login.php?confirmed');
             $SQL2 = <<<SQL
                 UPDATE newsletter_mails SET confirm=true, lastmail=:last WHERE mail=:mail
                 SQL;
             $req2 = $bdd->prepare($SQL2);
             $req2->execute([':last' => time(), ':mail' => $data['email']]);
+            header('Connection: close');
+            ignore_user_abort(true);
+            if (function_exists('fastcgi_finish_request'))
+            {
+                fastcgi_finish_request();
+            }
+            else
+            {
+                @ob_end_flush();
+                @flush();
+            }
+            sendMail($data['email'], $subject, $body, $altBody);
             exit();
         }
     }
 }
+
 header('Location: /login.php?confirm_err');
 exit();

@@ -1,10 +1,10 @@
 <?php
 $logonly = true;
-require_once('include/log.php');
+require_once(__DIR__ . '/include/log.php');
 requireMemberRight('view_members');
 $stats_page = 'liste_comptes';
 set_include_path($_SERVER['DOCUMENT_ROOT']);
-require_once('include/consts.php');
+require_once(__DIR__ . '/include/consts.php');
 $css_path .= '<style>#member-list tr:nth-child(odd){background-color:#E0E0E0;}</style>';
 
 $tr = load_tr($lang, 'members_list');
@@ -12,9 +12,9 @@ $title = tr($tr, 'title');
 ?>
 <!DOCTYPE html>
 <html lang="fr">
-<?php require_once('include/header.php'); ?>
+<?php require_once(__DIR__ . '/include/header.php'); ?>
 <body>
-<?php require_once('include/banner.php'); ?>
+<?php require_once(__DIR__ . '/include/banner.php'); ?>
 <main id="container">
 <h1 id="contenu"><?php print $title; ?></h1>
 <div id="js-sort-container" hidden style="margin:1em 0;">
@@ -31,7 +31,7 @@ $title = tr($tr, 'title');
 <thead><tr><th><?= tr($tr, 'table_id_member'); ?></th><th><?= tr($tr, 'table_name'); ?></th><th><?= tr($tr, 'table_signup'); ?></th><th><?= tr($tr, 'table_rank'); ?></th><?php /*<th>Actions</th>*/ ?></tr></thead>
 <tbody id="member-list">
 <?php
-include_once('include/user_rank.php');
+include_once(__DIR__ . '/include/user_rank.php');
 $SQL = <<<SQL
     SELECT accounts.id AS account_id, accounts.username AS account_name, accounts.signup_date AS account_signup_date, accounts.rank AS account_rank, accounts.settings AS settings, team.id AS team_id
     FROM accounts
@@ -60,7 +60,7 @@ foreach ($bdd->query($SQL) as $data)
           || ($sets['bd_m'] == 2 && date('n') == 3 && $sets['bd_d'] == 29 && date('L')))
         ) ? ' 🎂' : '',
         date('d/m/Y', $data['account_signup_date']),
-        urank($data['account_rank'])
+        urank($data['account_rank']),
     );
     $n++;
 }
@@ -69,7 +69,7 @@ foreach ($bdd->query($SQL) as $data)
 </table>
 <?= tr($tr, 'table_count_members', ['count' => $n]); ?>
 </main>
-<?php require_once('include/footer.php'); ?>
+<?php require_once(__DIR__ . '/include/footer.php'); ?>
 <script>
     document.addEventListener('DOMContentLoaded', function()
     {

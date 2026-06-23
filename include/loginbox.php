@@ -1,6 +1,8 @@
 <?php
 
-include_once 'user_rank.php';
+declare(strict_types=1);
+
+include_once __DIR__ . '/user_rank.php';
 
 function getUnreadCount()
 {
@@ -13,20 +15,21 @@ function getUnreadCount()
     return $req->fetchColumn();
 }
 
-function getDisplayName()
+function getDisplayName(): string
 {
     global $login, $settings, $admin_name;
     $name = htmlentities((string) $login['username'], ENT_QUOTES, 'UTF-8');
     if ($login['rank'] === 'a')
     {
-        $name .= " ({$admin_name})";
+        $name .= sprintf(' (%s)', $admin_name);
     }
+
     $d = getdate();
     $isBd = isset($settings['bd_m'], $settings['bd_d']) && (($settings['bd_m'] == $d['mon'] && $settings['bd_d'] == $d['mday']) || ($settings['bd_m'] == 2 && $d['mon'] == 3 && $settings['bd_d'] == 29 && $d['mday'] == 1 && $d['year'] % 4 === 0));
     return $name . ($isBd ? ' 🎂' : '');
 }
 
-function buildUserMenu(int $nNotifs)
+function buildUserMenu(int $nNotifs): array
 {
     global $login, $tr0, $site_name;
     $displayName = getDisplayName();
@@ -36,13 +39,14 @@ function buildUserMenu(int $nNotifs)
     {
         if (!str_contains((string) $_SERVER['PHP_SELF'], '/admin/index.php') && in_array($login['works'], ['1','2'], true))
         {
-            $items[] = ['href' => '/admin', 'label' => tr($tr0, 'loginbox_adminlink')." ({$site_name})"];
+            $items[] = ['href' => '/admin', 'label' => tr($tr0, 'loginbox_adminlink').sprintf(' (%s)', $site_name)];
         }
+
         if (in_array($login['works'], ['0','2'], true))
         {
             $cid = urlencode((string) $_COOKIE['connectid']);
             $ses = urlencode((string) $_COOKIE['session']);
-            $items[] = ['href' => "https://www.blog.nael-accessvision.com/admin?cid={$cid}&ses={$ses}", 'label' => tr($tr0, 'loginbox_adminlink').' (Blog nael-accessvision)'];
+            $items[] = ['href' => sprintf('https://www.blog.nael-accessvision.com/admin?cid=%s&ses=%s', $cid, $ses), 'label' => tr($tr0, 'loginbox_adminlink').' (Blog nael-accessvision)'];
         }
     }
 
@@ -57,12 +61,12 @@ function buildUserMenu(int $nNotifs)
     $items[] = ['href'  => '/home.php#notifs', 'label' => $notifLabel];
 
     $token = urlencode((string) $login['token']);
-    $items[] = ['href' => "/logout.php?token={$token}", 'label' => tr($tr0, 'loginbox_logoutlink')." ({$displayName})"];
+    $items[] = ['href' => '/logout.php?token=' . $token, 'label' => tr($tr0, 'loginbox_logoutlink').sprintf(' (%s)', $displayName)];
 
     return $items;
 }
 
-function renderLoginBox($login, $logged, $settings)
+function renderLoginBox($login, $logged, $settings): void
 {
     global $bdd, $site_name, $tr0;
     if (isset($logged) && $logged)
@@ -71,11 +75,12 @@ function renderLoginBox($login, $logged, $settings)
         $displayName = getDisplayName();
 
         $menuItems = buildUserMenu($nNotifs);
-        echo "<div id=\"loginbox\"><details><summary>{$displayName}</summary><ul>";
-        foreach ($menuItems as $item)
+        echo sprintf('<div id="loginbox"><details><summary>%s</summary><ul>', $displayName);
+        foreach ($menuItems as $menuItem)
         {
-            echo '<li><a role="menuitem" class="hlink" href="'.$item['href'].'">'.$item['label'].'</a></li>';
+            echo '<li><a role="menuitem" class="hlink" href="'.$menuItem['href'].'">'.$menuItem['label'].'</a></li>';
         }
+
         echo '</ul></details></div>';
     }
     else

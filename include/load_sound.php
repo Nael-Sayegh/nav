@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 if (isset($_COOKIE['audio']) && ($_COOKIE['audio'] === '10' || preg_match('#[1-9]#', (string) $_COOKIE['audio'])))
 {
     echo '<audio id="007t007x" src="'.$sound_path.'" autoplay></audio>';
@@ -12,5 +14,6 @@ if (isset($_COOKIE['audio']) && ($_COOKIE['audio'] === '10' || preg_match('#[1-9
     {
         echo '0.'.$_COOKIE['audio'];
     }
+
     echo ';</script>';
 }

@@ -24,7 +24,7 @@ if (isset($_GET['act']) && $_GET['act'] === 'form')
 <script type="text/javascript" src="/scripts/default.js"></script>
 </head>
 <body>
-<?php require_once('include/banner.php'); ?>
+<?php require_once(__DIR__ . '/include/banner.php'); ?>
 <div id="alertZone" role="alert" aria-live="assertive"></div>
 <?php if (!empty($log)): ?>
 <noscript>

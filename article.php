@@ -6,12 +6,12 @@ if (!isset($_GET['id']))
     exit();
 }
 set_include_path($_SERVER['DOCUMENT_ROOT']);
-require_once('include/log.php');
-require_once('include/consts.php');
-require_once('include/isbot.php');
-require_once('include/package_managers.php');
-require_once('include/sendMail.php');
-require_once('include/lib/MDConverter.php');
+require_once(__DIR__ . '/include/log.php');
+require_once(__DIR__ . '/include/consts.php');
+require_once(__DIR__ . '/include/isbot.php');
+require_once(__DIR__ . '/include/package_managers.php');
+require_once(__DIR__ . '/include/sendMail.php');
+require_once(__DIR__ . '/include/lib/MDConverter.php');
 if (filter_var($_GET['id'], FILTER_VALIDATE_INT) !== false)
 {
     $SQL = <<<SQL
@@ -167,6 +167,17 @@ if (isset($_GET['comment']) && isset($_POST['text']) && isset($logged) && $logge
         }
         if (!empty($emails))
         {
+            header('Connection: close');
+            ignore_user_abort(true);
+            if (function_exists('fastcgi_finish_request'))
+            {
+                fastcgi_finish_request();
+            }
+            else
+            {
+                @ob_end_flush();
+                @flush();
+            }
             sendMail(array_keys($emails), $subject, $body, $altBody);
         }
         exit();
@@ -290,13 +301,13 @@ foreach ($bdd->query($SQL) as $data)
 ?>
 <!DOCTYPE html>
 <html lang="<?= $lang ?>">
-<?php require_once('include/header.php'); ?>
+<?php require_once(__DIR__ . '/include/header.php'); ?>
 <body>
-<?php require_once('include/banner.php'); ?>
+<?php require_once(__DIR__ . '/include/banner.php'); ?>
 <main id="container">
 <h1 id="contenu"><?php print $title; ?></h1>
 <?php
-if (isset($logged) && $logged && $login['rank'] === 'a' && in_array($login['works'], ['1', '2']) && checkAdminRights('manage_comments'))
+if (isset($logged) && $logged && $login['rank'] === 'a' && in_array($login['works'], ['1', '2'], true) && checkAdminRights('manage_comments'))
 { ?>
 <ul>
 <li><a href="/admin/sw_mod.php?id=<?= $sw['id'] ?>"><?= str_replace('{{title}}', $title, tr($tr, 'adminlink_article').' '.$sw['name']) ?></a></li>
@@ -350,7 +361,7 @@ foreach ($files as $data)
         $data['hits'],
         $data['filesize'],
         htmlspecialchars((string) $data['title']),
-        htmlspecialchars((string) $data['name'])
+        htmlspecialchars((string) $data['name']),
     );
     echo '<td class="sw_file_ltd"><a class="sw_file_link" href="/dl/';
     if (empty($data['label']))
@@ -582,7 +593,7 @@ if (isset($logged) && $logged && (checkMemberRights('comment_articles') || ($log
 }*/ ?>
 <fieldset><legend><?= tr($tr, 'comments_send') ?></legend>
 <p><?= tr($tr, 'comments_warn') ?></p>
-<p><?= tr($tr, 'comments_nickname', ['nickname' => getUsernameById($login['id'])]) ?></p>
+<p><?= tr($tr, 'comments_nickname', ['nickname' => $login['usernamek']]) ?></p>
 <label for="fc_text"><?= tr($tr, 'comments_text') ?></label><br>
 <textarea id="fc_text" class="ta" name="text" maxlength="1023" onkeyup="close_confirm=true"><?php /*if (isset($_POST['text']) && strlen((string) $_POST['text']) <= 1023)
 {
@@ -599,7 +610,7 @@ else
 }*/ ?>-->
 </div>
 </main>
-<?php require_once('include/footer.php');
+<?php require_once(__DIR__ . '/include/footer.php');
 
 if (isset($logged) && $logged)
 { ?>

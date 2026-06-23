@@ -5,7 +5,7 @@ $titlePAdm = 'Versions du site';
 require_once($_SERVER['DOCUMENT_ROOT'].'/include/log.php');
 require_once($_SERVER['DOCUMENT_ROOT'].'/include/consts.php');
 requireAdminRight('publish_versions');
-if (isset($_GET['add']) && isset($_POST['name']) && isset($_POST['text']))
+if (isset($_GET['add'], $_POST['name'], $_POST['text']))
 {
     require_once($_SERVER['DOCUMENT_ROOT'].'/tasks/codestat.php');
     $codestat_n_files = -1;
@@ -43,7 +43,7 @@ if (isset($_GET['delete']))
     $req->execute([':id' => $_GET['delete']]);
     require_once($_SERVER['DOCUMENT_ROOT'].'/tasks/history_cache.php');
 }
-if (isset($_GET['mod2']) && isset($_POST['name']) && isset($_POST['text']))
+if (isset($_GET['mod2'], $_POST['name'], $_POST['text']))
 {
     $SQL = <<<SQL
         UPDATE site_updates SET name=:name, text=:text, authors=:author WHERE id=:id
@@ -62,7 +62,7 @@ if (isset($_GET['mod2']) && isset($_POST['name']) && isset($_POST['text']))
 <script type="text/javascript" src="/scripts/default.js"></script>
 </head>
 <body>
-<?php require_once('include/banner.php'); ?>
+<?php require_once(__DIR__ . '/include/banner.php'); ?>
 <table border="1">
 <thead><tr><th>ID</th><th>Numéro de version</th><th>Date</th><th>Actions</th></tr></thead>
 <tbody>

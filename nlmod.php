@@ -1,8 +1,8 @@
 <?php
 set_include_path($_SERVER['DOCUMENT_ROOT']);
-require_once('include/log.php');
-require_once('include/consts.php');
-require_once('include/sendMail.php');
+require_once(__DIR__ . '/include/log.php');
+require_once(__DIR__ . '/include/consts.php');
+require_once(__DIR__ . '/include/sendMail.php');
 $log = '';
 
 if (!isset($_GET['id']))
@@ -37,9 +37,19 @@ if ($nldata = $req->fetch())
             Vous avez bien été désabonné de la lettre d'informations {$site_name}.
             Ceci sera notre dernier mail, nous sommes tristes de vous voir partir et nous espérons vous revoir bientôt sur {SITE_URL}
             TEXT;
-        sendMail($nldata['mail'], $subject, $body, $altBody);
-
         header('Location: /newsletter.php?stop');
+        header('Connection: close');
+        ignore_user_abort(true);
+        if (function_exists('fastcgi_finish_request'))
+        {
+            fastcgi_finish_request();
+        }
+        else
+        {
+            @ob_end_flush();
+            @flush();
+        }
+        sendMail($nldata['mail'], $subject, $body, $altBody);
         exit();
     }
     if (isset($_GET['mod']))
@@ -65,7 +75,7 @@ if ($nldata = $req->fetch())
         // $f_site = 0;
         // if (isset($_POST['notif_site']) && $_POST['notif_site'] === 'on')
         // {
-            // $f_site = 1;
+        // $f_site = 1;
         // }
 
         $f_upd = 0;
@@ -80,7 +90,7 @@ if ($nldata = $req->fetch())
             $f_upd_n = 1;
         }
         $f_lang = $nldata['lang'];
-        if (isset($_POST['lang']) && in_array($_POST['lang'], $langs_prio))
+        if (isset($_POST['lang']) && in_array($_POST['lang'], $langs_prio, true))
         {
             $f_lang = $_POST['lang'];
         }
@@ -107,13 +117,13 @@ else
     exit();
 }
 
-$title = 'Lettre d\'informations';
+$title = "Lettre d'informations";
 $stats_page = 'nlmod'; ?>
 <!DOCTYPE html>
 <html lang="<?= $lang ?>">
-<?php require_once('include/header.php'); ?>
+<?php require_once(__DIR__ . '/include/header.php'); ?>
 <body>
-<?php require_once('include/banner.php'); ?>
+<?php require_once(__DIR__ . '/include/banner.php'); ?>
 <main id="container">
 <h1 id="contenu"><?php print $title; ?></h1>
 <?php
@@ -122,7 +132,7 @@ if (isset($_GET['redir']) && $_GET['redir'])
     echo '<p>Comme vous êtes connecté en tant que '.$login['username'].', vous avez été redirigé vers les paramètres de la lettre d\'informations correspondants à l\'adresse mail '.$login['email'].'.<br>Si vous souhaitez inscrire une autre adresse&nbsp;: <a href="newsletter.php?noredir=true">accédez à la page d\'abonnement par défaut</a>.</p>';
 } ?>
 <div id="alertZone" role="alert" aria-live="assertive"></div>
-<?php if (!empty($log)): ?>
+<?php if ($log !== '' && $log !== '0'): ?>
 <noscript>
 <p role="alert"><b><?= $log ?></b></p>
 </noscript>
@@ -197,6 +207,6 @@ if (isset($_GET['redir']) && $_GET['redir'])
 </form>
 <p>Ne plus recevoir de lettres d'information&nbsp;: <a href="?stop&id=<?= $nldata['hash'] ?>">Se désabonner</a></p>
 </main>
-<?php require_once('include/footer.php'); ?>
+<?php require_once(__DIR__ . '/include/footer.php'); ?>
 </body>
 </html>

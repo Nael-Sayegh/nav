@@ -1,16 +1,16 @@
 <?php
 $nolog = true;
-require_once('include/log.php');
+require_once(__DIR__ . '/include/log.php');
 $stats_page = 'signup';
 set_include_path($_SERVER['DOCUMENT_ROOT']);
-require_once('include/consts.php');
-require_once('include/lib/mtcaptcha/lib/class.mtcaptchalib.php');
+require_once(__DIR__ . '/include/consts.php');
+require_once(__DIR__ . '/include/lib/mtcaptcha/lib/class.mtcaptchalib.php');
 
 $tr = load_tr($lang, 'signup');
 $title = tr($tr, 'title');
 
 $log = '';
-if (isset($_GET['a']) && $_GET['a'] === 'form' && isset($_POST['username']) && isset($_POST['mail']) && isset($_POST['psw']) && isset($_POST['rpsw']))
+if (isset($_GET['a']) && $_GET['a'] === 'form' && isset($_POST['username'], $_POST['mail'], $_POST['psw'], $_POST['rpsw']))
 {
     if (strlen((string) $_POST['username']) > 32 || strlen((string) $_POST['username']) < 3)
     {
@@ -24,7 +24,7 @@ if (isset($_GET['a']) && $_GET['a'] === 'form' && isset($_POST['username']) && i
     {
         $log .= '<li>'.tr($tr, 'log_diff_psw').'</li>';
     }
-    if (strlen($_POST['psw']) > 128 || strlen($_POST['psw']) < 8)
+    if (strlen((string) $_POST['psw']) > 128 || strlen((string) $_POST['psw']) < 8)
     {
         $log .= '<li>'.tr($tr, 'log_lenght_psw').'</li>';
     }
@@ -34,7 +34,7 @@ if (isset($_GET['a']) && $_GET['a'] === 'form' && isset($_POST['username']) && i
     {
         $log .= '<li>'.tr($tr, 'log_captcha').'</li>';
     }
-    if (empty($log))
+    if ($log === '' || $log === '0')
     {
         $username = $_POST['username'];
         $SQL = <<<SQL
@@ -81,14 +81,14 @@ if (isset($_GET['a']) && $_GET['a'] === 'form' && isset($_POST['username']) && i
                     exit();
                 }
             }
-            $password = password_hash($_POST['psw'], PASSWORD_DEFAULT);
+            $password = password_hash((string) $_POST['psw'], PASSWORD_DEFAULT);
             $mhash = hash('sha512', strval(time() + random_int(1000000, 99999999)).$password.strval(random_int(100000, 99999999)));
             $settings = ['mhash' => $mhash,'menu' => '0','fontsize' => '16','date' => '0'];
             if (isset($_COOKIE['menu']) && $_COOKIE['menu'] === '1')
             {
                 $settings['menu'] = '1';
             }
-            if (isset($_COOKIE['fontsize']) && in_array($_COOKIE['fontsize'], ['11','16','20','24']))
+            if (isset($_COOKIE['fontsize']) && in_array($_COOKIE['fontsize'], ['11','16','20','24'], true))
             {
                 $settings['fontsize'] = $_COOKIE['fontsize'];
             }
@@ -106,7 +106,7 @@ if (isset($_GET['a']) && $_GET['a'] === 'form' && isset($_POST['username']) && i
             $id = $bdd->lastInsertId();
 
 
-            include('include/sendconfirm.php');
+            include(__DIR__ . '/include/sendconfirm.php');
             send_confirm($id, $email, $mhash, $username);
             header('Location: /login.php?signed='.$id.'&mail='.sha1((string) $email));
 
@@ -135,13 +135,13 @@ if (isset($_GET['a']) && $_GET['a'] === 'form' && isset($_POST['username']) && i
 ?>
 <!DOCTYPE html>
 <html lang="<?= $lang; ?>">
-<?php require_once('include/header.php'); ?>
+<?php require_once(__DIR__ . '/include/header.php'); ?>
 <body>
-<?php require_once('include/banner.php'); ?>
+<?php require_once(__DIR__ . '/include/banner.php'); ?>
 <main id="container">
 <h1 id="contenu"><?php print $title; ?></h1>
 <div id="alertZone" role="alert" aria-live="assertive"></div>
-<?php if (!empty($log)): ?>
+<?php if ($log !== '' && $log !== '0'): ?>
 <noscript>
 <ul id="log" role="alert"><?= $log ?></ul>
 </noscript>
@@ -177,7 +177,7 @@ if (isset($_GET['a']) && $_GET['a'] === 'form' && isset($_POST['username']) && i
 <input type="submit" value="<?= tr($tr, 'form_submit'); ?>">
 </form>
 </main>
-<?php require_once('include/footer.php'); ?>
+<?php require_once(__DIR__ . '/include/footer.php'); ?>
 <script>
     document.addEventListener('DOMContentLoaded', function()
     {

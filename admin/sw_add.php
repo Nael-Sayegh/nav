@@ -2,7 +2,7 @@
 $logonly = true;
 $adminonly = true;
 $justna = true;
-$titlePAdm = 'Ajout d\'un article';
+$titlePAdm = "Ajout d'un article";
 require_once($_SERVER['DOCUMENT_ROOT'].'/include/log.php');
 require_once($_SERVER['DOCUMENT_ROOT'].'/include/consts.php');
 require_once($_SERVER['DOCUMENT_ROOT'].'/include/sitemap.php');
@@ -17,7 +17,7 @@ foreach ($bdd->query($SQL) as $data)
     $categories[$data['id']] = $data['name'];
 }
 
-if (isset($_GET['form']) && isset($_POST['sname']) && isset($_POST['category']))
+if (isset($_GET['form'], $_POST['sname'], $_POST['category']))
 {
     $sname = '';
     if (strlen((string) $_POST['sname']) < 256 && !empty($_POST['sname']))
@@ -42,7 +42,7 @@ if (isset($_GET['form']) && isset($_POST['sname']) && isset($_POST['category']))
     $f_lang = '';
     if (isset($_POST['lang']) && !empty($_POST['lang']))
     {
-        if (in_array($_POST['lang'], $langs_prio))
+        if (in_array($_POST['lang'], $langs_prio, true))
         {
             $f_lang = $_POST['lang'];
         }
@@ -102,7 +102,7 @@ if (isset($_GET['form']) && isset($_POST['sname']) && isset($_POST['category']))
         }
 
         $social = isset($_POST['social']) && $_POST['social'] === 'on';
-        $published = !empty($_POST['published']) ? 1 : 0;
+        $published = empty($_POST['published']) ? 0 : 1;
     }
 
     if (empty($log))
@@ -121,7 +121,10 @@ if (isset($_GET['form']) && isset($_POST['sname']) && isset($_POST['category']))
                 SQL;
             $req = $bdd->prepare($SQL);
             $req->execute([':swid' => $lastid, ':lng' => $f_lang, ':date' => time(), ':name' => $name, ':text' => $text, ':keywords' => $keywords, ':desc' => $description, ':website' => $website, ':author' => $admin_name, ':published' => $published]);
-            if ($published) update_sitemap_url($site_url.'/a'.$lastid);
+            if ($published)
+            {
+                update_sitemap_url($site_url.'/a'.$lastid);
+            }
 
             if ($social)
             {
@@ -150,7 +153,7 @@ if (isset($_GET['form']) && isset($_POST['sname']) && isset($_POST['category']))
 <script type="text/javascript" src="/scripts/default.js"></script>
 </head>
 <body>
-<?php require_once('include/banner.php'); ?>
+<?php require_once(__DIR__ . '/include/banner.php'); ?>
 <div id="alertZone" role="alert" aria-live="assertive"></div>
 <?php if (!empty($log)): ?>
 <noscript>

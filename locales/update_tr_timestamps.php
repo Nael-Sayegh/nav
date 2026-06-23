@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $changedFiles = trim(shell_exec('git diff --cached --name-only'));
 
 $time = time();

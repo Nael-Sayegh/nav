@@ -7,7 +7,7 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/include/log.php');
 require_once($_SERVER['DOCUMENT_ROOT'].'/include/consts.php');
 requireAdminRight('manage_team');
 
-if (isset($_GET['add']) && isset($_POST['name']) && isset($_POST['status']) && isset($_POST['age']) && isset($_POST['short_name']) && isset($_POST['bio']) && isset($_POST['works']) && isset($_POST['mastodon']))
+if (isset($_GET['add'], $_POST['name'], $_POST['status'], $_POST['age'], $_POST['short_name'], $_POST['bio'], $_POST['works'], $_POST['mastodon']))
 {
     $account_id = null;
     if (isset($_POST['account_id']) && !empty($_POST['account_id']))
@@ -16,7 +16,7 @@ if (isset($_GET['add']) && isset($_POST['name']) && isset($_POST['status']) && i
     }
     $posted = $_POST['rights'] ?? [];
     $rightsMap = [];
-    foreach (ALL_ADMIN_RIGHTS as $key => $_label)
+    foreach (array_keys(ALL_ADMIN_RIGHTS) as $key)
     {
         $rightsMap[$key] = in_array($key, $posted, true) ? 1 : 0;
     }
@@ -25,7 +25,7 @@ if (isset($_GET['add']) && isset($_POST['name']) && isset($_POST['status']) && i
         INSERT INTO team (name, status, date, age, account_id, short_name, bio, works, mastodon, rights) VALUES(:name,:status,:date,:age,:acc,:short,:bio,:works,:masto,:rights)
         SQL;
     $req = $bdd->prepare($SQL);
-    $req->execute([':name' => $_POST['name'], ':status' => $_POST['status'], ':date' => time(), ':age' => strtotime(preg_replace('/^(\d{2})\/(\d{2})\/(\d{4})$/', '$3-$2-$1', $_POST['age'])), ':acc' => $account_id, ':short' => $_POST['short_name'], ':bio' => $_POST['bio'], ':works' => $_POST['works'], ':masto' => $_POST['mastodon'], ':rights' => $json]);
+    $req->execute([':name' => $_POST['name'], ':status' => $_POST['status'], ':date' => time(), ':age' => strtotime((string) preg_replace('/^(\d{2})\/(\d{2})\/(\d{4})$/', '$3-$2-$1', (string) $_POST['age'])), ':acc' => $account_id, ':short' => $_POST['short_name'], ':bio' => $_POST['bio'], ':works' => $_POST['works'], ':masto' => $_POST['mastodon'], ':rights' => $json]);
 }
 if (isset($_GET['delete']))
 {
@@ -35,11 +35,11 @@ if (isset($_GET['delete']))
     $req = $bdd->prepare($SQL);
     $req->execute([':id' => $_GET['delete']]);
 }
-if (isset($_GET['mod2']) && isset($_POST['name']) && isset($_POST['status']) && isset($_POST['age']) && isset($_POST['account_id']) && isset($_POST['short_name']) && isset($_POST['bio']) && isset($_POST['works']) && isset($_POST['mastodon']))
+if (isset($_GET['mod2'], $_POST['name'], $_POST['status'], $_POST['age'], $_POST['account_id'], $_POST['short_name'], $_POST['bio'], $_POST['works'], $_POST['mastodon']))
 {
     $posted = $_POST['rights'] ?? [];
     $rightsMap = [];
-    foreach (ALL_ADMIN_RIGHTS as $key => $_label)
+    foreach (array_keys(ALL_ADMIN_RIGHTS) as $key)
     {
         $rightsMap[$key] = in_array($key, $posted, true) ? 1 : 0;
     }
@@ -48,7 +48,7 @@ if (isset($_GET['mod2']) && isset($_POST['name']) && isset($_POST['status']) && 
         UPDATE team SET name=:name, status=:status, age=:age, account_id=:acc, short_name=:short, bio=:bio, works=:works, mastodon=:masto, rights=:rights WHERE id=:id
         SQL;
     $req = $bdd->prepare($SQL);
-    $req->execute([':name' => htmlentities((string) $_POST['name']), ':status' => $_POST['status'], ':age' => strtotime(preg_replace('/^(\d{2})\/(\d{2})\/(\d{4})$/', '$3-$2-$1', $_POST['age'])), ':acc' => $_POST['account_id'], ':short' => $_POST['short_name'], ':bio' => $_POST['bio'], ':works' => $_POST['works'], ':masto' => $_POST['mastodon'], ':rights' => $json, ':id' => $_GET['mod2']]);
+    $req->execute([':name' => htmlentities((string) $_POST['name']), ':status' => $_POST['status'], ':age' => strtotime((string) preg_replace('/^(\d{2})\/(\d{2})\/(\d{4})$/', '$3-$2-$1', (string) $_POST['age'])), ':acc' => $_POST['account_id'], ':short' => $_POST['short_name'], ':bio' => $_POST['bio'], ':works' => $_POST['works'], ':masto' => $_POST['mastodon'], ':rights' => $json, ':id' => $_GET['mod2']]);
 }
 ?>
 <!DOCTYPE html>
@@ -60,7 +60,7 @@ if (isset($_GET['mod2']) && isset($_POST['name']) && isset($_POST['status']) && 
 <script type="text/javascript" src="/scripts/default.js"></script>
 </head>
 <body>
-<?php require_once('include/banner.php'); ?>
+<?php require_once(__DIR__ . '/include/banner.php'); ?>
 <table border="1">
 <thead><tr><th>Numéro d'équipier</th><th>Nom</th><th>Nom court</th><th>Statut(s)</th><th>Date</th><th>Âge</th><th>Mastodon</th><th>Droits</th><th>Actions</th></tr></thead>
 <tbody>

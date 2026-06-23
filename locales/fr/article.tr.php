@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $tr = [
   '_' => 'article',
   '_todo_level' => 0,
@@ -25,7 +27,7 @@ $tr = [
   'packages_title' => 'Paquets pour <em>{{title}}</em>',
   'packages_manager' => 'Gestionnaire',
   'packages_name' => 'Paquet',
-  'packages_info' => 'Plus d\'infos',
+  'packages_info' => "Plus d'infos",
   'packages_install_cmd' => 'Commande&nbsp;:',
   'packages_platform' => 'Plateforme',
   'packages_comment' => 'Commentaire',

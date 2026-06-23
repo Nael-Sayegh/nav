@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $tr = [
   '_' => 'sendconfirm',
   '_todo_level' => 0,

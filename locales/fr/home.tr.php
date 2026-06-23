@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $tr = [
   '_' => 'home',
   '_todo_level' => 0,
@@ -24,16 +26,16 @@ $tr = [
   'profile_id' => 'Numéro de membre&nbsp;: {{id}}',
   'profile_signup_date' => 'Inscrit depuis le {{date}}',
   'profile_birthday' => 'Anniversaire&nbsp;: {{date}}',
-  'profile_happy_birthday' => 'Aujourd\'hui&nbsp;: bon anniversaire',
+  'profile_happy_birthday' => "Aujourd'hui&nbsp;: bon anniversaire",
   'notifs_read_all' => 'Tout marquer comme lu',
   'notifs_new_comment' => 'Nouveau commentaire sur {{link}}',
   'notifs_read' => 'marquer comme lu',
   'notifs_unread' => 'marquer comme non lu',
   'settings' => 'Paramètres',
   'settings_account' => 'Paramètres du compte',
-  'settings_name' => 'Nom d\'utilisateur&nbsp;:',
+  'settings_name' => "Nom d'utilisateur&nbsp;:",
   'settings_mail' => 'Adresse e-mail&nbsp;:',
-  'settings_notifcom' => 'M\'avertir d\'un nouveau commentaire par e-mail&nbsp;:',
+  'settings_notifcom' => "M'avertir d'un nouveau commentaire par e-mail&nbsp;:",
   'settings_birthday' => 'Anniversaire&nbsp;:',
   'settings_birthday_month' => 'Mois&nbsp;:',
   'settings_birthday_day' => 'Jour&nbsp;:',

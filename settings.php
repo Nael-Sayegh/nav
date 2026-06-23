@@ -1,7 +1,7 @@
 <?php
 set_include_path($_SERVER['DOCUMENT_ROOT']);
-require_once('include/log.php');
-require_once('include/consts.php');
+require_once(__DIR__ . '/include/log.php');
+require_once(__DIR__ . '/include/consts.php');
 $tr = load_tr($lang, 'settings');
 if (isset($_GET['act']) && $_GET['act'] === 'form')
 {
@@ -11,16 +11,12 @@ if (isset($_GET['act']) && $_GET['act'] === 'form')
         $menu = '1';
     }
     setcookie('menu', $menu, ['expires' => time() + 31536000, 'path' => '/', 'secure' => true, 'httponly' => true, 'samesite' => 'strict']);
-
     $fontsize = '20';
-    if (isset($_POST['fontsize']) && in_array($_POST['fontsize'], ['11','16','20','24']))
+    if (isset($_POST['fontsize']) && in_array($_POST['fontsize'], ['11','16','20','24'], true))
     {
         $fontsize = $_POST['fontsize'];
     }
     setcookie('fontsize', (string) $fontsize, ['expires' => time() + 31536000, 'path' => '/', 'secure' => true, 'httponly' => true, 'samesite' => 'strict']);
-
-
-
     if ($logged && isset($_POST['token']) && $_POST['token'] === $login['token'])
     {
         $settings = json_decode((string) $login['settings'], true);
@@ -32,11 +28,10 @@ if (isset($_GET['act']) && $_GET['act'] === 'form')
         $req = $bdd->prepare($SQL);
         $req->execute([':set' => json_encode($settings), ':id' => $login['id']]);
     }
-
     header('Location: /');
     exit();
 }
-elseif (isset($_GET['act']) && $_GET['act'] === '0')
+if (isset($_GET['act']) && $_GET['act'] === '0')
 {
     if ($logged && isset($_POST['token']) && $_POST['token'] === $login['token'])
     {
@@ -61,9 +56,9 @@ $stats_page = 'parametres';
 $title = tr($tr, 'title'); ?>
 <!DOCTYPE html>
 <html lang="<?= $lang; ?>">
-<?php require_once('include/header.php'); ?>
+<?php require_once(__DIR__ . '/include/header.php'); ?>
 <body>
-<?php require_once('include/banner.php'); ?>
+<?php require_once(__DIR__ . '/include/banner.php'); ?>
 <main id="container">
 <h1 id="contenu"><?php print $title; ?></h1>
 <?= tr($tr, 'maintext') ?>
@@ -109,6 +104,6 @@ if ($logged)
 <input type="submit" value="<?= tr($tr, 'resetbtn') ?>">
 </form>
 </main>
-<?php require_once('include/footer.php'); ?>
+<?php require_once(__DIR__ . '/include/footer.php'); ?>
 </body>
 </html>

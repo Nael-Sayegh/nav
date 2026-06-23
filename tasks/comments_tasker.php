@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $document_root = __DIR__.'/..';
 require_once($document_root.'/include/consts.php');
 

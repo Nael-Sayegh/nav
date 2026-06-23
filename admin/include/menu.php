@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 if (basename((string) $_SERVER['SCRIPT_NAME']) === 'index.php')
 {
 
@@ -39,12 +41,15 @@ if (basename((string) $_SERVER['SCRIPT_NAME']) === 'index.php')
     {
         $menu['Autre'][] = ['href'  => CONTROLPANEL_URL, 'label' => CONTROLPANEL_NAME, 'right' => 'access_control_panel'];
     }
+
     if ((defined('WEBMAIL_URL') && ($webMailUrl = constant('WEBMAIL_URL'))) || (defined('WEBMAIL_NAME') && ($webMailName = constant('WEBMAIL_NAME'))))
     {
         $menu['Autre'][] = ['href' => WEBMAIL_URL, 'label' => WEBMAIL_NAME, 'right' => 'access_webmail'];
     }
+
     renderAdminMenu($menu);
 }
+
 switch ($_SERVER['DOCUMENT_URI'])
 {
     case '/admin/sw_mod.php':

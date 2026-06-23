@@ -3,7 +3,7 @@
     "description": "ProgAccess dependencies",
     "version": "20.0.0",
     "require": {
-        "phpmailer/phpmailer": "^6.9",
+        "phpmailer/phpmailer": "^7.0",
         "erusev/parsedown": "^1.7",
         "eleirbag89/mastodonbotphp": "^0.1.0",
         "composer/ca-bundle": "^1.5",

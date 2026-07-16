@@ -152,13 +152,12 @@ function markNewsletterCampaignDone(int $campaignId): void
 }
 
 /**
- * Traite un seul destinataire pris dans la file, de façon atomique : la
- * sélection (avec verrouillage de ligne) et la mise à jour du statut sont
- * dans la même transaction, ce qui évite qu'un autre passage en parallèle
- * (ex : appui sur « Reprendre l'envoi » pendant qu'une chaîne est toujours
- * active) ne traite deux fois le même destinataire.
+ * Processes a single recipient from the queue atomically: the selection
+ * (with row locking) and the status update happen in the same transaction,
+ * so a concurrent pass (e.g. a manual retry triggered while a background
+ * chain is still running) never processes the same recipient twice.
  *
- * Retourne false si la file ne contient plus rien à traiter pour l'instant.
+ * Returns false when there is currently nothing left to process.
  */
 function processNextNewsletterCampaignRecipient(array $campaign): bool
 {
@@ -228,12 +227,11 @@ function processNextNewsletterCampaignRecipient(array $campaign): bool
 }
 
 /**
- * Lance en arrière-plan, détaché de la requête HTTP en cours, une nouvelle
- * passe du moteur d'envoi pour la campagne donnée. Ne bloque jamais l'appelant
- * (ni un admin qui clique sur « Envoyer », ni une passe qui vient de finir son
- * budget de temps) : c'est cet enchaînement de passes courtes, sans cron, qui
- * fait progresser la file jusqu'à épuisement (cf. plan_fiabilisation_newsletter.txt,
- * section 3.3).
+ * Launches a new background pass of the sending engine for the given
+ * campaign, detached from the current request. Never blocks the caller
+ * (an admin submitting the send form, or a pass that just used up its time
+ * budget): this self-relaunching chain of short passes is what drives the
+ * queue to completion without relying on a cron job.
  */
 function launchNewsletterCampaignPass(int $campaignId): void
 {

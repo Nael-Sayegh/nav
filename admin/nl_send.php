@@ -25,11 +25,9 @@ if (isset($_GET['act']) && $_GET['act'] === 'form')
 if (isset($_GET['act']) && $_GET['act'] === 'sendnl')
 {
     $site = $_POST['site'] ?? 'site1';
-    // L'envoi n'est plus fait ici en direct : il est mis en file d'attente
-    // puis traité par petites passes auto-limitées en temps (voir
-    // tasks/nl_campaign_sender.php et plan_fiabilisation_newsletter.txt),
-    // pour garantir que tous les inscrits reçoivent le mail même si la liste
-    // est grande.
+    // Sending is no longer done directly here: it is queued and processed in
+    // small, time-boxed passes (see tasks/nl_campaign_sender.php), so that
+    // every subscriber receives the mail even when the list is large.
     $campaignId = createNewsletterCampaign((string) $_POST['obj'], (string) $_POST['text'], 'Ce mail est uniquement disponible au format HTML', $site, $login['id'] ?? null);
     launchNewsletterCampaignPass($campaignId);
     header('Location: nl_campaigns.php?id='.$campaignId);

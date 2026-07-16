@@ -2,16 +2,15 @@
 
 declare(strict_types=1);
 
-// Traite une campagne de newsletter (cf. include/newsletter_campaigns.php) par
-// petites passes auto-limitées en temps : jamais toute la file en une seule
-// exécution, toujours un arrêt volontaire avant la limite d'exécution du
-// serveur (connue ou non), avec reprise garantie par l'état persisté en base.
-// Voir plan_fiabilisation_newsletter.txt, sections 3.2 et 3.3.
+// Processes a newsletter campaign (see include/newsletter_campaigns.php) in
+// short, time-boxed passes: never the whole queue in a single execution,
+// always a voluntary stop before the server's execution time limit (known or
+// not), with guaranteed resumption from the state persisted in the database.
 //
-// Ce script s'invoque uniquement en CLI, avec l'identifiant de campagne en
-// premier argument : il n'est jamais exposé en HTTP. Il se relance lui-même
-// (cf. launchNewsletterCampaignPass()) tant qu'il reste des destinataires à
-// traiter, sans dépendre d'un cron.
+// This script is only ever invoked from the CLI, with the campaign id as its
+// first argument: it is never exposed over HTTP. It relaunches itself (see
+// launchNewsletterCampaignPass()) as long as recipients remain, without
+// depending on a cron job.
 
 $noct = true;
 
@@ -26,15 +25,15 @@ function nlCampaignTimeBudgetSeconds(): int
     $configured = (int) ini_get('max_execution_time');
     if ($configured > 0)
     {
-        // On ne consomme qu'une partie du budget réel : la marge restante
-        // couvre le temps de connexion SMTP, la génération du mail suivant,
-        // etc., pour être certain de s'arrêter avant d'être tué.
+        // Only spend part of the real budget: the remaining margin covers
+        // the SMTP connection time, building the next email, etc., so the
+        // script is sure to stop on its own before being killed.
         return max(5, (int) floor($configured * 0.7));
     }
 
-    // Le serveur peut annoncer une limite "illimitée" (0) qui ne l'est pas
-    // toujours réellement : on garde quand même un plafond de sécurité par
-    // défaut plutôt que de dépendre de cette hypothèse.
+    // The server may report an "unlimited" time (0) that is not actually
+    // unlimited in practice: keep a default safety cap instead of relying
+    // on that assumption.
     return 45;
 }
 
@@ -48,7 +47,7 @@ if ($campaignId <= 0)
 $campaign = getNewsletterCampaign($campaignId);
 if (!$campaign)
 {
-    fwrite(STDERR, 'Campagne introuvable : '.$campaignId."\n");
+    fwrite(STDERR, 'Campaign not found: '.$campaignId."\n");
     exit(1);
 }
 

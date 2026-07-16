@@ -61,13 +61,13 @@ function nlCampaignStatusLabel(string $status): string
 foreach (listNewsletterCampaigns() as $campaign)
 {
     $counts = getNewsletterCampaignRecipientCounts((int) $campaign['id']);
-    $enEchec = $counts['failed'] + $counts['failed_permanent'];
+    $failedCount = $counts['failed'] + $counts['failed_permanent'];
     echo '<tr>';
     echo '<td>'.htmlspecialchars((string) $campaign['subject'], ENT_QUOTES, 'UTF-8').'</td>';
     echo '<td>'.htmlspecialchars(nlCampaignStatusLabel((string) $campaign['status']), ENT_QUOTES, 'UTF-8').'</td>';
     echo '<td>'.$counts['total'].'</td>';
     echo '<td>'.$counts['sent'].'</td>';
-    echo '<td>'.$enEchec.'</td>';
+    echo '<td>'.$failedCount.'</td>';
     echo '<td>'.$counts['pending'].'</td>';
     echo '<td>'.date('d/m/Y H:i', (int) $campaign['created_at']).'</td>';
     echo '<td>'.((int) $campaign['last_progress_at'] > 0 ? date('d/m/Y H:i', (int) $campaign['last_progress_at']) : '-').'</td>';

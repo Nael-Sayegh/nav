@@ -1,8 +1,7 @@
--- À exécuter manuellement dans la base de données (ce projet n'a pas de système
--- de migration automatisé, cf. admin/adminer pour l'exécuter).
+-- Run manually against the database (this project has no automated
+-- migration system, use admin/adminer to run it).
 --
--- Tables support de la file d'attente d'envoi de newsletter en plusieurs
--- passes (cf. plan_fiabilisation_newsletter.txt, section 3.1).
+-- Tables backing the newsletter sending queue, processed in multiple passes.
 
 CREATE SEQUENCE newsletter_campaigns_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1;
 

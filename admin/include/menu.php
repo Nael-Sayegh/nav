@@ -17,9 +17,10 @@ if (basename((string) $_SERVER['SCRIPT_NAME']) === 'index.php')
             ['href' => 'publication.php', 'label' => 'Publications sociales', 'right' => 'manage_publications'],
         ],
         'Lettre d’informations' => [
-            ['href' => 'nl_send.php', 'label' => 'Lancer un envoi maintenant',     'right' => 'manage_newsletter'],
-            ['href' => 'nl_last.php', 'label' => 'Réinitialiser date dernier envoi','right' => 'manage_newsletter'],
-            ['href' => 'nl_list.php', 'label' => 'Voir les abonnés',               'right' => 'manage_newsletter'],
+            ['href' => 'nl_send.php',      'label' => 'Lancer un envoi maintenant',      'right' => 'manage_newsletter'],
+            ['href' => 'nl_campaigns.php', 'label' => 'Suivi des envois',                'right' => 'manage_newsletter'],
+            ['href' => 'nl_last.php',      'label' => 'Réinitialiser date dernier envoi','right' => 'manage_newsletter'],
+            ['href' => 'nl_list.php',      'label' => 'Voir les abonnés',                'right' => 'manage_newsletter'],
         ],
         'Contenu technique' => [
             ['href' => 'manage_sitemap.php','label' => 'Gérer le sitemap','right' => 'manage_sitemap'],
@@ -60,10 +61,11 @@ switch ($_SERVER['DOCUMENT_URI'])
         break;
     case 'showstats.php':
     case 'nl_list.php':
+    case 'nl_campaigns.php':
         echo '<details><summary>Menu</summary><ul style="list-style-type: none;"><li><a href="nl_send.php">Envoyer la lettre d\'informations</a></li></ul></details>';
         break;
     case 'nl_send.php':
-        echo '<details><summary>Menu</summary><ul style="list-style-type: none;"><li><a href="nl_list.php">Voir les inscrits à la lettre d\'informations</a></li></ul></details>';
+        echo '<details><summary>Menu</summary><ul style="list-style-type: none;"><li><a href="nl_campaigns.php">Suivi des envois</a></li><li><a href="nl_list.php">Voir les inscrits à la lettre d\'informations</a></li></ul></details>';
         break;
     case 'up_publish.php':
         echo '<details><summary>Menu</summary><ul style="list-style-type: none;"><li><a href="cache_update.php">Caches</a></li></ul></details>';

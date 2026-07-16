@@ -4,7 +4,7 @@ $justna = true;
 $titlePAdm = "Envoyer la lettre d'informations";
 require_once($_SERVER['DOCUMENT_ROOT'].'/include/log.php');
 require_once($_SERVER['DOCUMENT_ROOT'].'/include/consts.php');
-require_once($_SERVER['DOCUMENT_ROOT'].'/include/sendMail.php');
+require_once($_SERVER['DOCUMENT_ROOT'].'/include/newsletter_campaigns.php');
 requireAdminRight('manage_newsletter');
 
 if (isset($_GET['act']) && $_GET['act'] === 'form')
@@ -25,49 +25,15 @@ if (isset($_GET['act']) && $_GET['act'] === 'form')
 if (isset($_GET['act']) && $_GET['act'] === 'sendnl')
 {
     $site = $_POST['site'] ?? 'site1';
-    $allMails = [];
-    $buildSQL = (fn (string $column): string => sprintf('SELECT mail,hash FROM newsletter_mails WHERE %s = true', $column));
-    if ($site === 'site1' || $site === 'both')
-    {
-        $req = $bdd->prepare($buildSQL('notif_upd'));
-        $req->execute();
-        while ($data = $req->fetch())
-        {
-            if (isset($allMails[$data['mail']]))
-            {
-                continue;
-            }
-            $allMails[$data['mail']] = $data['hash'];
-        }
-    }
-    if ($site === 'site2' || $site === 'both')
-    {
-        $req = $bdd->prepare($buildSQL('notif_upd_n'));
-        $req->execute();
-        while ($data = $req->fetch())
-        {
-            if (isset($allMails[$data['mail']]))
-            {
-                continue;
-            }
-            $allMails[$data['mail']] = $data['hash'];
-        }
-    }
-    header('Connection: close');
-    ignore_user_abort(true);
-    if (function_exists('fastcgi_finish_request'))
-    {
-        fastcgi_finish_request();
-    }
-    else
-    {
-        @ob_end_flush();
-        @flush();
-    }
-    foreach ($allMails as $email => $hash)
-    {
-        sendMail($email, $_POST['obj'], str_replace('{userid}', $hash, $_POST['text']), 'Ce mail est uniquement disponible au format HTML');
-    }
+    // L'envoi n'est plus fait ici en direct : il est mis en file d'attente
+    // puis traité par petites passes auto-limitées en temps (voir
+    // tasks/nl_campaign_sender.php et plan_fiabilisation_newsletter.txt),
+    // pour garantir que tous les inscrits reçoivent le mail même si la liste
+    // est grande.
+    $campaignId = createNewsletterCampaign((string) $_POST['obj'], (string) $_POST['text'], 'Ce mail est uniquement disponible au format HTML', $site, $login['id'] ?? null);
+    launchNewsletterCampaignPass($campaignId);
+    header('Location: nl_campaigns.php?id='.$campaignId);
+    exit();
 }
 ?>
 <!DOCTYPE html>

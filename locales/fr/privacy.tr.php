@@ -24,7 +24,7 @@ $tr = [
 <h2>2. Données personnelles collectées</h2>
 <p>Dans le cadre de l\'exploitation de notre site vitrine et de notre blog, nous sommes amenés à collecter uniquement les données personnelles strictement nécessaires aux services proposés, notamment&nbsp:</p>
 <ul>
-<li>Adresse e-mail (pour l'envoi de la newsletter e-mail)</li>
+<li>Adresse e-mail (pour l\'envoi de la newsletter e-mail)</li>
 <li>Numéro de téléphone portable (pour l'envoi d'informations par SMS)</li>
 <li>Données de connexion et de navigation (adresse IP, type de navigateur, pages consultées) lors de votre visite sur le site.</li>
 </ul>

@@ -42,6 +42,7 @@ if (defined('CESIUM_URL') && ($cesiumUrl = constant('CESIUM_URL')))
 </details>
 <?php endif; ?>
 <a href="legal.php"><?php echo tr($tr0, 'footer_mention'); ?></a><br>
+<a href="privacy.php"><?php echo tr($tr0, 'footer_privacy'); ?></a><br>
 Copyright &copy 2020-<?php print date('Y'); ?> <?= tr($tr0, 'footer_copyright', ['site' => $site_name]) ?><br>
 <p><?php getContentLastModif(); ?><br>
 <?php getVersionFromGit(); ?></p>

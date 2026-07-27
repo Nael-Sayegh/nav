@@ -100,4 +100,5 @@ $tr = [
       ENDSTR,
   'footer_cgv' => 'Conditions générales de vente (S\'ouvre dans un nouvel onglet)',
   'footer_privacy' => 'Politique de confidentialité',
+  'fotter_cgu' => 'Conditions générales d\'utilisation',
 ];

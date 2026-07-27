@@ -2,9 +2,9 @@
 set_include_path($_SERVER['DOCUMENT_ROOT']);
 require_once(__DIR__ . '/include/log.php');
 require_once(__DIR__ . '/include/consts.php');
-$tr = load_tr($lang, 'privacy');
+$tr = load_tr($lang, 'cgu');
 $title = tr($tr, 'title');
-$stats_page = 'privacy'; ?>
+$stats_page = 'cgu'; ?>
 <!DOCTYPE html>
 <html lang="<?= $lang; ?>">
 <?php require_once(__DIR__ . '/include/header.php'); ?>

@@ -36,7 +36,7 @@ $tr = [
 </thead>
 <tbody>
 <tr><td>Envoi de la newsletter par e-mail</td><td>Votre consentement préalable</td></tr>
-<tr><td>Envoi d'informations ou d'offres par SMS</td><td>Votre consentement préalable</td></tr>
+<tr><td>Envoi d\'informations par SMS</td><td>Votre consentement préalable</td></tr>
 <tr><td>Réponse aux demandes de contact ou d\'information</td><td>Intérêt légitime / Mesures précontractuelles</td></tr>
 <tr><td>Assurer la sécurité du site et analyse de navigation</td><td>Intérêt légitime</td></tr>
 </tbody>

@@ -45,12 +45,12 @@ $tr = [
 <p>Vos données à caractère personnel sont strictement confidentielles. Elles ne sont jamais vendues, louées ou cédées à des tiers à des fins commerciales.</p>
 <p>Elles peuvent toutefois être transmises à des prestataires techniques tiers agissant en qualité de sous-traitants au sens du RGPD, uniquement pour la bonne exécution des finalités décrites ci-dessus&nbsp:</p>
 <ul>
-<li>Notre prestataire d'envoi de SMS&nbsp: Spot-Hit (pour le routage et la gestion des campagnes SMS)</li>
+<li>Notre prestataire d\'envoi de SMS&nbsp: Spot-Hit (pour le routage et la gestion des campagnes SMS)</li>
 <li>Nos outils techniques internes d\'envoi d\'e-mails&nbsp: pour la diffusion sécurisée de notre newsletter</li>
 </ul>
 <p>Tous nos sous-traitants sont tenus par des obligations strictes de confidentialité et de sécurité conformément au RGPD.</p>
 <h2>5. Transfert de données hors de l\'Union Européenne</h2>
-<p>Vos données personnelles sont stockées et traitées au sein de l\'Union Européenne et ne font l'objet d'aucun transfert vers des pays situés hors de l\'Union Européenne.</p>
+<p>Vos données personnelles sont stockées et traitées au sein de l\'Union Européenne et ne font l\'objet d\'aucun transfert vers des pays situés hors de l\'Union Européenne.</p>
 <h2>6. Durée de conservation des données</h2>
 <p>Nous conservons vos données personnelles uniquement pendant la durée nécessaire à la réalisation des finalités pour lesquelles elles ont été collectées&nbsp:</p>
 <ul>
@@ -71,7 +71,7 @@ $tr = [
 <h3>Comment exercer vos droits ?</h3>
 <p>Pour exercer l\'un de ces droits, il vous suffit de nous contacter&nbsp:</p>
 <ul>
-<li>Par e-mail à l'adresse&nbsp: <a href="mailto:infos@nael-accessvision.com">infos@nael-accessvision.com</a></li>
+<li>Par e-mail à l\'adresse&nbsp: <a href="mailto:infos@nael-accessvision.com">infos@nael-accessvision.com</a></li>
 </ul>
 <p>Si vous estimez, après nous avoir contactés, que vos droits ne sont pas respectés, vous pouvez adresser une réclamation auprès de l\'autorité de contrôle compétente en France&nbsp: la CNIL (Commission Nationale de l\'Informatique et des Libertés) sur leur site web&nbsp: <a href="https://www.cnil.fr">www.cnil.fr</a>.</p></p>
 <h2>8. Cookies et traceurs</h2>

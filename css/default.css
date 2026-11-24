@@ -31,7 +31,7 @@ font-size: 187.5%;
 width: 100%;
 font-weight: 400;
 text-decoration: none;
-height: 40px;
+min-height: 40px;
 /* border-bottom: 1px solid #045fb4; */
 margin-bottom: 30px;  
 }
@@ -41,7 +41,7 @@ font-size: 140%;
 width: 100%;
 font-weight: 400;
 text-decoration: none;
-height: 30px;
+min-height: 30px;
 /* border-bottom: 1px solid #04B404; */
 margin-bottom: 20px;  
 }

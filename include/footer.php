@@ -18,7 +18,6 @@ $titlemodifie = str_replace(' ', ' ', $title);
 <?= tr($tr0, 'footer_blog'); ?><br>
 <h2><?php echo tr($tr0, 'footer_youtube'); ?></h2><br aria-hidden="true">
 <span class="youtube"><a href=https://www.youtube.com/channel/UC1Ot4mhqH0LtRJj0C4ctzPw>Nael accessvision</a><br><br aria-hidden="true"></span>
-<a href="contact.php"><?php tr($tr0,'footer_contact'); ?></a><br>
 <?php
 include(__DIR__ . '/stats.php');
 if ((defined('FB_URL') && constant('FB_URL')) || (defined('MASTO_URL') && constant('MASTO_URL')) || (defined('CESIUM_URL') && constant('CESIUM_URL'))): ?>

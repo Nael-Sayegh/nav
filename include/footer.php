@@ -5,7 +5,7 @@ $titlemodifie = str_replace(' ', ' ', $title);
 <footer id="footer">
 <a class="sr_only" href="#hautpage" accesskey="H"><?= tr($tr0, 'footer_toplink') ?></a>
 <div id="social_share" role="complementary">
-<details>
+<details open>
 <summary><?= tr($tr0, 'footer_share') ?></summary>
 <ul>
 <li><a href="https://www.facebook.com/sharer.php?u=<?php print $permalink; ?>&t=<?php print $titlemodifie; ?>" target="_blank" title="<?= tr($tr0, 'footer_fb') ?>"><img src="/images/facebook.png" alt="<?= tr($tr0, 'footer_fb') ?>"></a></li>
